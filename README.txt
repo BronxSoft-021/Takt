@@ -1,3 +1,23 @@
+BronxSoft Takt 0.20.18 alfa
+18. 11. 2026.
+
+Pult: novi izgled, računar kao miksета.
+
+NOVO
+- Pult: procesor, grafička karta, memorija, svaki disk i ventilatori su kanali, svaki sa dva VU
+  merača (npr. opterećenje i temperatura) i vrhom koji stoji pa polako pada.
+- Solo panel: izabrani kanal desno, sa grafikonom, stubićima svih niti procesora i tabelom
+  senzora (Sada, Najmanje, Prosek, Najviše).
+- Tasteri S i M na svakom kanalu: S ga stavlja desno, M ga skuplja u usku traku (pamti se).
+- Novo merenje: zauzeće commit-a, kao drugi merač RAM kanala.
+- Zaglavlje sa ritmom čitanja (♩ 1 s), stanjem nadzora i dugmetom za podešavanja.
+
+DORADE
+- Ravna dugmad sa malim zaobljenjem umesto ispupčenih pilula.
+- Poruke i upozorenja tiho u donjoj traci umesto žute trake.
+- Manje veličina slova i zaobljenja, bez kartica u karticama.
+
+
 BronxSoft Takt 0.15.15 alfa
 18. 11. 2026.
 

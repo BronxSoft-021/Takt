@@ -44,8 +44,10 @@ public sealed class LazniIzvor : IIzvorSenzora
             (Grupa.Memorija, "Memorija", "Zauzeće", Jedinica.Procenat, 48, 6, 200),
             (Grupa.Memorija, "Memorija", "Slobodno", Jedinica.Megabajt, 8200, 900, 200),
             (Grupa.Memorija, "Memorija", "Brzina memorije", Jedinica.Megaherc, 3200, 0, 1),
+            (Grupa.Memorija, "Memorija", "Zauzeće commit-a", Jedinica.Procenat, 57, 7, 200),
 
             (Grupa.Diskovi, "NVMe SSD", "Temperatura", Jedinica.Celzijus, 41, 4, 150),
+            (Grupa.Diskovi, "NVMe SSD", "Aktivnost", Jedinica.Procenat, 12, 11, 25),
             (Grupa.Diskovi, "NVMe SSD", "Zdravlje", Jedinica.Procenat, 98, 0, 1),
             (Grupa.Diskovi, "NVMe SSD", "Životni vek (preostalo)", Jedinica.Procenat, 96, 0, 1),
 

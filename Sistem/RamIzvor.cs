@@ -23,6 +23,7 @@ public sealed class RamIzvor : IIzvorSenzora
         _senzori.Add(new Senzor(new SenzorKljuc(Grupa.Memorija, "Računar", "Commit"), Jedinica.Megabajt));
         _senzori.Add(new Senzor(new SenzorKljuc(Grupa.Memorija, "Računar", "Pagefile (procena)"), Jedinica.Megabajt));
         _senzori.Add(new Senzor(new SenzorKljuc(Grupa.Memorija, "Računar", "Brzina memorije"), Jedinica.Megaherc));
+        _senzori.Add(new Senzor(new SenzorKljuc(Grupa.Memorija, "Računar", "Zauzeće commit-a"), Jedinica.Procenat));
     }
 
     public string Naziv => "Memorija";
@@ -40,7 +41,7 @@ public sealed class RamIzvor : IIzvorSenzora
             _brzina = Brzina();
         }
 
-        long ukupno = 0, slobodno = 0, commit = 0, stranica = 0;
+        long ukupno = 0, slobodno = 0, commit = 0, granica = 0, stranica = 0;
 
         var status = new MemoryStatusEx { dwLength = (uint)Marshal.SizeOf<MemoryStatusEx>() };
         if (GlobalMemoryStatusEx(ref status))
@@ -54,7 +55,11 @@ public sealed class RamIzvor : IIzvorSenzora
         if (GetPerformanceInfo(ref info, info.cb))
         {
             stranica = info.PageSize.ToInt64();
-            if (stranica > 0) commit = info.CommitTotal.ToInt64() * stranica / 1_048_576;
+            if (stranica > 0)
+            {
+                commit = info.CommitTotal.ToInt64() * stranica / 1_048_576;
+                granica = info.CommitLimit.ToInt64() * stranica / 1_048_576;
+            }
         }
 
         vrednosti[1] = ukupno > 0 ? ukupno - slobodno : null;
@@ -65,6 +70,9 @@ public sealed class RamIzvor : IIzvorSenzora
         // Pagefile is what is committed but no longer fits in the memory in use. An estimate, and it is labelled so.
         vrednosti[5] = commit > 0 && ukupno > 0 ? Math.Max(0, commit - (ukupno - slobodno)) : null;
         vrednosti[6] = _brzina;
+
+        // Commit against its limit (RAM + pagefile): the second meter of the RAM channel. Windows' own numbers.
+        vrednosti[7] = commit > 0 && granica > 0 ? Math.Round(commit * 100.0 / granica, 0) : null;
 
         return new Snimak(DateTime.Now, vrednosti);
     }

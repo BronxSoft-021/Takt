@@ -20,11 +20,12 @@ public static class Slike
             // Long enough for the real source to take a few readings, so the chart is not a single dot.
             await Task.Delay(2400);
 
-            foreach (var ekran in vm.Ekrani.ToList())
+            // One picture per channel in solo; "Disk 1" becomes "Disk-1.png".
+            foreach (var kanal in vm.Kanali.ToList())
             {
-                vm.Ekran = ekran;
+                vm.Kanal = kanal;
                 await Task.Delay(400);
-                Sacuvaj(prozor, Path.Combine(folder, $"{ekran.Grupa}.png"));
+                Sacuvaj(prozor, Path.Combine(folder, $"{kanal.Naslov.Replace(' ', '-').Replace(".", "")}.png"));
             }
 
             vm.PrikaziPodesavanja();

@@ -1,0 +1,146 @@
+<UserControl x:Class="Takt.Prikaz.SoloPanel"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:prikaz="clr-namespace:Takt.Prikaz">
+
+    <Border Style="{StaticResource Kartica}" Padding="18,16,18,12">
+        <Grid>
+            <!-- A channel with sensors: header, chart, threads, table -->
+            <Grid Visibility="{Binding Prazan, Converter={StaticResource BoolUNevidljivost}}">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" MinHeight="140" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="1.3*" />
+                </Grid.RowDefinitions>
+
+                <Grid Grid.Row="0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Style="{StaticResource NaslovStrane}" Text="{Binding Naslov}" />
+                            <TextBlock Text="{Binding Uredjaj}" Style="{StaticResource OpisStrane}" Margin="10,0,0,2"
+                                       VerticalAlignment="Bottom" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" />
+                        </StackPanel>
+                        <TextBlock Text="{Binding Detalj.Izabran.Ime}" Style="{StaticResource Natpis}" Margin="0,4,0,0" />
+                    </StackPanel>
+                    <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Bottom"
+                                DataContext="{Binding Detalj.Izabran}">
+                        <TextBlock Style="{StaticResource BrojNivo}" Text="{Binding BrojPrikaz}" FontSize="28" />
+                        <TextBlock Text="{Binding JedinicaPrikaz}" Foreground="{StaticResource Mutan}" FontSize="12"
+                                   Margin="5,0,0,5" VerticalAlignment="Bottom" />
+                    </StackPanel>
+                </Grid>
+
+                <prikaz:Grafikon Grid.Row="1" Margin="0,12,0,12"
+                                 Prsten="{Binding Detalj.Izabran.Prsten}"
+                                 Mera="{Binding Detalj.Izabran.Senzor.Jedinica}"
+                                 Tik="{Binding Detalj.Izabran.Tik}"
+                                 Perioda="{Binding DataContext.Perioda, RelativeSource={RelativeSource AncestorType=Window}}" />
+
+                <!-- Every thread of the processor, like the meters of a multitrack -->
+                <StackPanel Grid.Row="2" Margin="0,0,0,12"
+                            Visibility="{Binding ImaJezgra, Converter={StaticResource BoolUVidljivost}}">
+                    <TextBlock Text="{Binding JezgraNaslov}" Style="{StaticResource Natpis}" Margin="0,0,0,5" />
+                    <ItemsControl ItemsSource="{Binding Jezgra}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel Orientation="Horizontal" />
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border Width="14" Height="34" Margin="0,0,4,0" Background="#22272B" CornerRadius="2"
+                                        ToolTip="{Binding Vrednost}">
+                                    <Border Background="{StaticResource Akcenat}" CornerRadius="2"
+                                            RenderTransformOrigin="0.5,1">
+                                        <Border.RenderTransform>
+                                            <ScaleTransform ScaleY="{Binding Udeo, FallbackValue=0}" />
+                                        </Border.RenderTransform>
+                                    </Border>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </StackPanel>
+
+                <!-- The table: every sensor of the device -->
+                <DockPanel Grid.Row="3">
+                    <Grid DockPanel.Dock="Top" Margin="8,0,18,4">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="88" />
+                            <ColumnDefinition Width="88" />
+                            <ColumnDefinition Width="88" />
+                            <ColumnDefinition Width="88" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="Senzor" Style="{StaticResource Natpis}" />
+                        <TextBlock Grid.Column="1" Text="Sada" Style="{StaticResource Natpis}" TextAlignment="Right" />
+                        <TextBlock Grid.Column="2" Text="Najmanje" Style="{StaticResource Natpis}" TextAlignment="Right" />
+                        <TextBlock Grid.Column="3" Text="Prosek" Style="{StaticResource Natpis}" TextAlignment="Right" />
+                        <TextBlock Grid.Column="4" Text="Najviše" Style="{StaticResource Natpis}" TextAlignment="Right" />
+                    </Grid>
+
+                    <Button DockPanel.Dock="Bottom" Style="{StaticResource Veza}" Margin="0,4,0,0"
+                            Content="{Binding Detalj.SkriveniTekst}" Click="NaSkrivene"
+                            ToolTip="Senzori koje biblioteka navodi, ali na ovom računaru još nisu dali broj - obično traže potpuni nadzor."
+                            Visibility="{Binding Detalj.ImaSkrivenih, Converter={StaticResource BoolUVidljivost}}" />
+
+                    <Border BorderBrush="{StaticResource Linija}" BorderThickness="0,1,0,0">
+                        <ListBox Style="{StaticResource Spisak}"
+                                 ItemsSource="{Binding Detalj.Pogled}"
+                                 SelectedItem="{Binding Detalj.Izabran, Mode=TwoWay}">
+                            <ListBox.GroupStyle>
+                                <GroupStyle>
+                                    <GroupStyle.HeaderTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding Name}" Style="{StaticResource NaslovSekcije}"
+                                                       Margin="8,10,0,3" />
+                                        </DataTemplate>
+                                    </GroupStyle.HeaderTemplate>
+                                </GroupStyle>
+                            </ListBox.GroupStyle>
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="88" />
+                                            <ColumnDefinition Width="88" />
+                                            <ColumnDefinition Width="88" />
+                                            <ColumnDefinition Width="88" />
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Text="{Binding Ime}" FontSize="12.5" Foreground="{StaticResource Tekst}"
+                                                   TextTrimming="CharacterEllipsis" VerticalAlignment="Center" />
+                                        <TextBlock Grid.Column="1" Text="{Binding Vrednost}" Style="{StaticResource BrojNivo}"
+                                                   FontSize="12.5" TextAlignment="Right" />
+                                        <TextBlock Grid.Column="2" Text="{Binding Najmanje}" Style="{StaticResource Broj}"
+                                                   Foreground="{StaticResource Mutan}" FontSize="12.5" TextAlignment="Right" />
+                                        <TextBlock Grid.Column="3" Text="{Binding Prosek}" Style="{StaticResource Broj}"
+                                                   Foreground="{StaticResource Mutan}" FontSize="12.5" TextAlignment="Right" />
+                                        <TextBlock Grid.Column="4" Text="{Binding Najvise}" Style="{StaticResource Broj}"
+                                                   Foreground="{StaticResource Mutan}" FontSize="12.5" TextAlignment="Right" />
+                                    </Grid>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+                    </Border>
+                </DockPanel>
+            </Grid>
+
+            <!-- A channel without sensors: why, and the one button that would bring them -->
+            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" MaxWidth="440"
+                        Visibility="{Binding Prazan, Converter={StaticResource BoolUVidljivost}}">
+                <TextBlock Text="{Binding Naslov}" Style="{StaticResource NaslovStrane}" HorizontalAlignment="Center" />
+                <TextBlock Text="{Binding Detalj.PorukaPrazno}" Foreground="{StaticResource Mutan}" FontSize="12.5"
+                           TextWrapping="Wrap" TextAlignment="Center" Margin="0,8,0,0" LineHeight="19" />
+                <Button Style="{StaticResource Dugme}" Content="Uključi potpuni nadzor"
+                        HorizontalAlignment="Center" Margin="0,16,0,0" Click="NaPomocnika"
+                        Visibility="{Binding DataContext.PomocnikMoguc, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource BoolUVidljivost}}" />
+            </StackPanel>
+        </Grid>
+    </Border>
+</UserControl>

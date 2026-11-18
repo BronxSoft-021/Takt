@@ -6,7 +6,10 @@ using Takt.Sistem;
 
 namespace Takt.Vm;
 
-/// <summary>The window's brain: owns the source of readings, builds one screen per group and keeps the status line.</summary>
+/// <summary>
+/// The window's brain: owns the source of readings, builds the console (one channel per part of the computer)
+/// and keeps the status line. The right side shows the solo channel or the settings.
+/// </summary>
 public sealed class ProzorVm : ObservableObject, IDisposable
 {
     private readonly Dispatcher _dispatcher;
@@ -17,7 +20,7 @@ public sealed class ProzorVm : ObservableObject, IDisposable
     private Nadzor? _nadzor;
     private PomocnikKlijent? _pomocnik;
     private object? _prikaz;
-    private EkranVm? _ekran;
+    private KanalVm? _kanal;
     private string _stanje = "";
     private string _vrstaStanja = "ceka";
     private string? _upozorenje;
@@ -48,14 +51,10 @@ public sealed class ProzorVm : ObservableObject, IDisposable
 
     public PodesavanjaVm PodesavanjaVm { get; }
 
-    public ObservableCollection<EkranVm> Ekrani { get; } = [];
+    /// <summary>The console, left to right: CPU, GPU, RAM, disks, fans.</summary>
+    public ObservableCollection<KanalVm> Kanali { get; } = [];
 
-    /// <summary>The tiles at the top: one headline number per group, at most four.</summary>
-    public ObservableCollection<PregledVm> Pregled { get; } = [];
-
-    public bool ImaPregled => Pregled.Count > 0;
-
-    /// <summary>What the right side shows: an <see cref="EkranVm"/> or <see cref="PodesavanjaVm"/>.</summary>
+    /// <summary>What the right side shows: a <see cref="KanalVm"/> (solo) or <see cref="PodesavanjaVm"/>.</summary>
     public object? Prikaz
     {
         get => _prikaz;
@@ -70,17 +69,23 @@ public sealed class ProzorVm : ObservableObject, IDisposable
     /// <summary>True while the sensors are still opening: the window shows "Učitavam senzore…" instead of nothing.</summary>
     public bool NemaPrikaza => _prikaz is null;
 
-    /// <summary>Lights the settings button at the bottom of the left column while that screen is open.</summary>
     public bool PodesavanjaOtvorena => _prikaz is PodesavanjaVm;
 
-    /// <summary>Selected in the left column. Null while the settings are open.</summary>
-    public EkranVm? Ekran
+    /// <summary>The channel in solo. Null while the settings are open.</summary>
+    public KanalVm? Kanal
     {
-        get => _ekran;
+        get => _kanal;
         set
         {
-            if (!SetProperty(ref _ekran, value)) return;
-            if (value is not null) Prikaz = value;
+            if (_kanal == value) return;
+            if (_kanal is not null) _kanal.Solo = false;
+            _kanal = value;
+            if (value is not null)
+            {
+                value.Solo = true;
+                Prikaz = value;
+            }
+            OnPropertyChanged();
         }
     }
 
@@ -117,6 +122,9 @@ public sealed class ProzorVm : ObservableObject, IDisposable
 
     /// <summary>Seconds between readings in this run; the chart turns it into "pre 2 min".</summary>
     public int Perioda => _rad.Osvezavanje;
+
+    /// <summary>The beat in the header: "♩ 1 s".</summary>
+    public string Ritam => $"♩ {_rad.Osvezavanje} s";
 
     public string Verzija => Izmene.Trenutna.Oznaka;
 
@@ -165,16 +173,14 @@ public sealed class ProzorVm : ObservableObject, IDisposable
             _nadzor.NoviUzorak += _ => ZakaziOsvezavanje();
             _nadzor.Poruka += poruka => _dispatcher.BeginInvoke(new Action(() => Upozorenje = poruka));
 
-            // Readings before the screens are shown: the list starts with real numbers, and a tile can pick
-            // a sensor that actually has a value on this computer (load, when the temperature needs a driver).
+            // Readings before the console is shown: the meters start with real numbers.
             if (!izvor.Pravi)
                 for (int i = 0; i < 180; i++) _nadzor.UzmiJednom();
             else
                 _nadzor.UzmiJednom();
 
-            NapraviEkrane();
+            NapraviPult();
             Osvezi();
-            NapraviPregled();
             _nadzor.Pokreni();
             PostaviStanje(izvor);
             OnPropertyChanged(nameof(PomocnikMoguc));
@@ -268,77 +274,50 @@ public sealed class ProzorVm : ObservableObject, IDisposable
     private async Task PonovoOtvoriAsync(PomocnikKlijent klijent)
     {
         var stari = _nadzor;
+        string? soloKljuc = _kanal?.Kljuc;
         _nadzor = null;
         _pomocnik = null;
         Prikaz = null;
-        Ekran = null;
-        Ekrani.Clear();
-        Pregled.Clear();
-        OnPropertyChanged(nameof(ImaPregled));
+        Kanal = null;
+        Kanali.Clear();
         Upozorenje = null;
 
         if (stari is not null) await Task.Run(() => stari.Dispose());
 
         await PokreniAsync(klijent);
+
+        // The same channel stays in solo after the helper brought more sensors.
+        if (soloKljuc is not null && Kanali.FirstOrDefault(k => k.Kljuc == soloKljuc) is { } isti)
+            Kanal = isti;
     }
 
-    private void NapraviEkrane()
+    private void NapraviPult()
     {
         if (_nadzor is null) return;
 
-        Ekrani.Clear();
-        foreach (var grupa in GrupaOpis.Redosled)
+        var senzori = new List<SenzorVm>(_nadzor.Senzori.Count);
+        for (int i = 0; i < _nadzor.Senzori.Count; i++)
+            senzori.Add(new SenzorVm(_nadzor.Senzori[i], i, _nadzor.Istorija[i]));
+
+        Kanali.Clear();
+        foreach (var kanal in KanalVm.Napravi(senzori))
         {
-            var senzori = new List<SenzorVm>();
-            for (int i = 0; i < _nadzor.Senzori.Count; i++)
-            {
-                if (_nadzor.Senzori[i].Grupa != grupa) continue;
-                senzori.Add(new SenzorVm(_nadzor.Senzori[i], i, _nadzor.Istorija[i]));
-            }
-            Ekrani.Add(new EkranVm(grupa, senzori));
+            kanal.Utisan = Podesavanja.Utisani.Contains(kanal.Kljuc);
+            Kanali.Add(kanal);
         }
 
-        Ekran = Ekrani.FirstOrDefault(e => e.Senzori.Count > 0) ?? Ekrani.FirstOrDefault();
+        Kanal = Kanali.FirstOrDefault(k => !k.Prazan && !k.Utisan) ?? Kanali.FirstOrDefault();
     }
 
-    /// <summary>The tiles: the groups that have something to show, up to four, each with its headline sensor.</summary>
-    private void NapraviPregled()
+    /// <summary>M on a strip: the channel folds into a narrow band, and the choice is remembered.</summary>
+    public void Utisaj(KanalVm kanal)
     {
-        Pregled.Clear();
+        kanal.Utisan = !kanal.Utisan;
 
-        foreach (var ekran in Ekrani)
-        {
-            if (ekran.Senzori.Count == 0) continue;
-            Pregled.Add(new PregledVm(ekran, Glavni(ekran)));
-            if (Pregled.Count == 4) break;
-        }
-
-        OnPropertyChanged(nameof(ImaPregled));
-    }
-
-    /// <summary>Names that deserve to be the big number, best first; the rest falls back to the first with a value.</summary>
-    private static readonly string[] GlavnaImena =
-    [
-        "Temperatura procesora", "Temperatura", "Temperatura jezgra 1", "Temperatura paketa",
-        "Opterećenje procesora", "Zauzeće", "Zauzeće VRAM", "Opterećenje",
-        "Ventilator 1", "Ventilator",
-    ];
-
-    public static SenzorVm? Glavni(EkranVm ekran)
-    {
-        // Only a sensor that has a value: on a computer without the driver the processor temperature is "—",
-        // and a tile reading "—" looks broken. Load is the honest fallback.
-        foreach (var ime in GlavnaImena)
-            if (ekran.Senzori.FirstOrDefault(s => s.Ime == ime && s.Broj is not null) is { } nadjen)
-                return nadjen;
-
-        return ekran.Senzori.FirstOrDefault(s => s.Broj is not null) ?? ekran.Senzori.FirstOrDefault();
-    }
-
-    public void PrikaziGrupu(Grupa grupa)
-    {
-        if (Ekrani.FirstOrDefault(e => e.Grupa == grupa) is { } ekran)
-            Ekran = ekran;
+        Podesavanja.Utisani.Remove(kanal.Kljuc);
+        if (kanal.Utisan) Podesavanja.Utisani.Add(kanal.Kljuc);
+        if (!ReferenceEquals(_rad, Podesavanja)) _rad.Utisani = [.. Podesavanja.Utisani];
+        if (!_rad.ProbniPodaci || ReferenceEquals(_rad, Podesavanja)) Podesavanja.Sacuvaj();
     }
 
     private void PostaviStanje(IIzvorSenzora izvor)
@@ -347,27 +326,26 @@ public sealed class ProzorVm : ObservableObject, IDisposable
         {
             { Pravi: false } => ("Probni podaci", "probno"),
             PomocnikKlijent => ("Potpuni nadzor", "pomocnik"),
-            { Senzori.Count: > 0 } when Admin.JeAdmin => ("Pravi senzori · administrator", "pomocnik"),
-            { Senzori.Count: > 0 } => ("Pravi senzori", "pravo"),
+            { Senzori.Count: > 0 } when Admin.JeAdmin => ("Potpuni nadzor · administrator", "pomocnik"),
+            { Senzori.Count: > 0 } => ("Ograničen nadzor", "pravo"),
             _ => ("Nema podataka", "nema"),
         };
 
         if (!izvor.Pravi)
         {
-            Upozorenje = "Prikazani su probni podaci, ne stvarna merenja. U Podešavanjima isključi „Probni podaci“.";
+            Upozorenje = "Prikazani su probni podaci, ne stvarna merenja. U podešavanjima isključi „Probni podaci“.";
             return;
         }
 
         if (izvor.Senzori.Count == 0)
         {
             Upozorenje = (izvor.Poruka ?? "Nijedan senzor nije dostupan.") +
-                         " Uključi potpuni nadzor ili probne podatke u Podešavanjima.";
+                         " Uključi potpuni nadzor ili probne podatke u podešavanjima.";
             return;
         }
 
         if (!Admin.JeAdmin && izvor is not PomocnikKlijent)
-            Upozorenje = "Temperatura procesora, potrošnja, ventilatori i diskovi traže drajver i administratora. " +
-                         "Ostalo se čita i sada.";
+            Upozorenje = "Temperatura procesora, potrošnja, ventilatori i diskovi traže potpuni nadzor (administrator).";
     }
 
     private void Osvezi()
@@ -381,13 +359,27 @@ public sealed class ProzorVm : ObservableObject, IDisposable
         if (_nadzor.Izvor.Poruka is { } poruka) Upozorenje = poruka;
 
         Vreme = snimak.Vreme.ToString("HH:mm:ss");
-        foreach (var ekran in Ekrani)
-            ekran.Osvezi(snimak, najmanje, najvise);
+        var sada = DateTime.Now;
+        foreach (var kanal in Kanali)
+        {
+            kanal.Detalj.Osvezi(snimak, najmanje, najvise);
+            kanal.Osvezi(sada);
+        }
     }
 
+    private KanalVm? _prePodesavanja;
+
+    /// <summary>Opens the settings in place of the solo panel; the same button closes them and the channel returns.</summary>
     public void PrikaziPodesavanja()
     {
-        Ekran = null;
+        if (Prikaz is PodesavanjaVm)
+        {
+            Kanal = _prePodesavanja ?? Kanali.FirstOrDefault(k => !k.Prazan) ?? Kanali.FirstOrDefault();
+            return;
+        }
+
+        _prePodesavanja = _kanal;
+        Kanal = null;
         Prikaz = PodesavanjaVm;
     }
 
@@ -396,6 +388,7 @@ public sealed class ProzorVm : ObservableObject, IDisposable
         _rad.Osvezavanje = sekundi;
         _nadzor?.PromeniPeriodu(sekundi);
         OnPropertyChanged(nameof(Perioda));
+        OnPropertyChanged(nameof(Ritam));
     }
 
     private bool ObrisiIstoriju()

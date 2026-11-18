@@ -134,7 +134,7 @@ public sealed class SenzorVm : ObservableObject
     /// Where a temperature stops being comfortable. A graphics hotspot and VRAM run hotter by design, a disk
     /// cooler; everything else (processor, card, board) shares one pair.
     /// </summary>
-    private (double Toplo, double Vruce)? Pragovi()
+    public (double Toplo, double Vruce)? Pragovi()
     {
         if (Senzor.Jedinica != Jedinica.Celzijus || JeGranica) return null;
 

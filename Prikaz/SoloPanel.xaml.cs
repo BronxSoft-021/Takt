@@ -4,16 +4,16 @@ using Takt.Vm;
 
 namespace Takt.Prikaz;
 
-/// <summary>One screen for one group. The content comes from <see cref="EkranVm"/>, this file has no logic.</summary>
-public partial class EkranSenzora : UserControl
+/// <summary>The channel in solo: chart, threads and the table of the device's sensors. No logic here.</summary>
+public partial class SoloPanel : UserControl
 {
-    public EkranSenzora() => InitializeComponent();
+    public SoloPanel() => InitializeComponent();
 
     private void NaPomocnika(object sender, RoutedEventArgs e) =>
         _ = (Window.GetWindow(this)?.DataContext as ProzorVm)?.UkljuciPomocnikaAsync();
 
     private void NaSkrivene(object sender, RoutedEventArgs e)
     {
-        if (DataContext is EkranVm ekran) ekran.SviSenzori = !ekran.SviSenzori;
+        if (DataContext is KanalVm kanal) kanal.Detalj.SviSenzori = !kanal.Detalj.SviSenzori;
     }
 }

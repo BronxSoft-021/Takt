@@ -22,6 +22,19 @@ public static class Izmene
     [
         new("alfa", "18. 11. 2026.",
         [
+            "Pult: računar je miksета, a procesor, grafička karta, memorija, svaki disk i ventilatori su kanali, svaki sa dva VU merača (npr. opterećenje i temperatura) i vrhom koji stoji pa polako pada.",
+            "Solo panel: izabrani kanal desno, sa grafikonom, stubićima svih niti procesora i tabelom senzora (Sada, Najmanje, Prosek, Najviše).",
+            "Tasteri S i M na svakom kanalu: S ga stavlja desno, M ga skuplja u usku traku, a program to pamti.",
+            "Novo merenje: zauzeće commit-a (koliko je memorije obećano od RAM-a i pagefile-a zajedno), kao drugi merač RAM kanala.",
+            "Zaglavlje sa ritmom čitanja (♩ 1 s), stanjem nadzora i dugmetom za podešavanja, koja se otvaraju na mestu solo panela.",
+        ],
+        [
+            "Ravna dugmad sa malim zaobljenjem umesto ispupčenih pilula.",
+            "Poruke i upozorenja tiho u donjoj traci umesto žute trake preko celog prozora.",
+            "Manje veličina slova i zaobljenja, bez kartica u karticama: sve deluje mirnije.",
+        ]),
+        new("alfa", "18. 11. 2026.",
+        [
             "Temperatura diska postaje žuta i crvena po granicama koje prijavljuje sam disk, a te granice stoje pod svojim naslovom „Granice koje prijavljuje uređaj“.",
         ],
         [

@@ -20,6 +20,9 @@ public sealed class Podesavanja
 
     public string Faza { get; set; } = "alfa";
 
+    /// <summary>Channels the user muted (M) on the console, by <c>KanalVm.Kljuc</c>.</summary>
+    public List<string> Utisani { get; set; } = [];
+
     public static Podesavanja Ucitaj()
     {
         try
@@ -55,13 +58,19 @@ public sealed class Podesavanja
     /// A separate copy for one run. A screenshot or <c>--probno</c> run changes its copy (fake data, no history)
     /// and the user's saved choices stay as they were, even if "Sačuvaj" is pressed during that run.
     /// </summary>
-    public Podesavanja Kopija() => (Podesavanja)MemberwiseClone();
+    public Podesavanja Kopija()
+    {
+        var kopija = (Podesavanja)MemberwiseClone();
+        kopija.Utisani = [.. Utisani];
+        return kopija;
+    }
 
     /// <summary>Refuses values the program cannot work with (a hand-edited file must not break it).</summary>
     public Podesavanja Ispravno()
     {
         if (Osvezavanje is not (1 or 2 or 5)) Osvezavanje = 1;
         if (IstorijaDana is not (1 or 7 or 30 or 90)) IstorijaDana = 7;
+        Utisani ??= [];
         return this;
     }
 }
