@@ -24,6 +24,15 @@ public static class Izmene
         [
         ],
         [
+            "Usluga se instalira u Program Files i radi odande, a ne iz foldera u koji svaki program može da piše - tako niko ne može da joj podmetne svoj kod.",
+            "Usluga čuva istoriju i dnevnik u zaključanom folderu C:\\ProgramData\\BronxSoft Takt, a ne više u korisnikovom folderu.",
+            "Usluga sluša „Čuvaj istoriju“, broj dana, osvežavanje i „Obriši istoriju“ iz podešavanja, bez ponovnog pokretanja (u roku od pola minuta).",
+            "Takt može da radi samo jednom: drugo pokretanje (npr. ikonica na desktopu dok je program u traci) samo otvori prozor prvog.",
+        ]),
+        new("alfa", "18. 11. 2026.",
+        [
+        ],
+        [
             "„Podešavanja“ iz menija ikonice više ne mogu da otvore program umesto podešavanja: prvi klik ih otvara, a svaki sledeći ih ostavlja otvorena (ranije su se zatvarala i vraćala pult, jer je meni zvao isto dugme koje radi kao preklopnik).",
             "Pult koji se napravi posle otvaranja podešavanja ih više ne pretekne, a posle pokretanja pomoćnika ostaješ gde si bio — u podešavanjima ili u istom kanalu.",
         ]),

@@ -12,12 +12,13 @@ namespace Takt.Vm;
 public sealed class PodesavanjaVm : ObservableObject
 {
     private readonly Sistem.Podesavanja _podesavanja;
-    private readonly Func<bool> _obrisiIstoriju;
+    private readonly Func<string> _obrisiIstoriju;
     private readonly Action<int> _promeniOsvezavanje;
     private string _poruka = "";
     private bool _potvrdaBrisanja;
 
-    public PodesavanjaVm(Sistem.Podesavanja podesavanja, Func<bool> obrisiIstoriju, Action<int> promeniOsvezavanje)
+    /// <param name="obrisiIstoriju">Deletes the history and says what happened (now, or "the service will").</param>
+    public PodesavanjaVm(Sistem.Podesavanja podesavanja, Func<string> obrisiIstoriju, Action<int> promeniOsvezavanje)
     {
         _podesavanja = podesavanja;
         _obrisiIstoriju = obrisiIstoriju;
@@ -158,7 +159,8 @@ public sealed class PodesavanjaVm : ObservableObject
     {
         _podesavanja.Sacuvaj();
         PotvrdaBrisanja = false;
-        Poruka = "Sačuvano. Osvežavanje i broj dana važe odmah, ostalo posle ponovnog pokretanja.";
+        Poruka = "Sačuvano. Osvežavanje i broj dana važe odmah, ostalo posle ponovnog pokretanja " +
+                 "(usluga, ako je instalirana, prihvata izmene sama za pola minuta).";
     }
 
     public void OtvoriFolder()
@@ -186,6 +188,6 @@ public sealed class PodesavanjaVm : ObservableObject
         }
 
         PotvrdaBrisanja = false;
-        Poruka = _obrisiIstoriju() ? "Istorija je obrisana." : "Brisanje nije uspelo, razlog je u greske.log.";
+        Poruka = _obrisiIstoriju();
     }
 }

@@ -10,10 +10,12 @@ namespace TaktSluzba;
 /// </summary>
 public sealed class TaktServis : ServiceBase
 {
+    private readonly Func<Podesavanja> _ucitaj;
     private UsluzniMotor? _motor;
 
-    public TaktServis()
+    public TaktServis(Func<Podesavanja> ucitaj)
     {
+        _ucitaj = ucitaj;
         ServiceName = Instalacija.Ime;
         CanStop = true;
         CanShutdown = true;
@@ -22,7 +24,7 @@ public sealed class TaktServis : ServiceBase
 
     protected override void OnStart(string[] args)
     {
-        _motor = new UsluzniMotor(Podesavanja.Ucitaj());
+        _motor = new UsluzniMotor(_ucitaj);
         _motor.Pokreni();
         Dnevnik.Upisi("Usluga: pokrenuta.");
     }

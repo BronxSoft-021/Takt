@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
@@ -16,8 +16,8 @@
     <RuntimeIdentifier>win-x64</RuntimeIdentifier>
     <SelfContained>false</SelfContained>
     <!-- keep in step with the top entry of Izmene.cs (a test checks they match) -->
-    <Version>0.28.31</Version>
-    <InformationalVersion>0.28.31-alfa</InformationalVersion>
+    <Version>0.28.35</Version>
+    <InformationalVersion>0.28.35-alfa</InformationalVersion>
     <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
     <Product>BronxSoft Takt</Product>
     <AssemblyTitle>BronxSoft Takt</AssemblyTitle>

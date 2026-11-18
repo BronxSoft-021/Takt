@@ -46,6 +46,10 @@ public static class Spisak
         ("prevod: zauzeće VRAM u procentima", PrevodTestovi.Vram),
         ("pomoćnik: spisak i uzorak stižu kroz cev", PomocnikTest.Cev),
         ("usluga: služi prozor, puni istoriju i prima sledeći", UslugaTest.Posluzuje),
+        ("usluga: radi iz svoje kopije, ne iz dist", BezbednostTestovi.KopijaUsluge),
+        ("usluga: podmetnuta veza umesto foldera se uklanja", BezbednostTestovi.FolderBezVeze),
+        ("usluga: sluša čuvanje i brisanje istorije", BezbednostTestovi.UslugaSlusaPodesavanja),
+        ("prozor: samo jedan Takt, drugi otvara prvog", BezbednostTestovi.JedanTakt),
         ("izmene: broj verzije se poklapa sa Takt.csproj", IzmeneTestovi.Verzija),
     ];
 }

@@ -6,14 +6,27 @@ using TaktSluzba;
 if (args.Contains("--instaliraj")) return Instalacija.Instaliraj(args);
 if (args.Contains("--ukloni")) return Instalacija.Ukloni();
 
-// The service runs as LocalSystem, whose %APPDATA% is not the user's: instalacija zato upiše putanju u binPath.
-var podaci = Instalacija.Argument(args, "--podaci");
-if (!string.IsNullOrWhiteSpace(podaci))
-    Environment.SetEnvironmentVariable("TAKT_PODACI", Path.GetFullPath(podaci));
+// The service writes only into its own locked folder in ProgramData (history and log): never into the user's
+// %APPDATA%, which anything running as that user could turn into a link. Set before anything logs.
+Environment.SetEnvironmentVariable("TAKT_PODACI", PodaciUsluge.Folder);
+try
+{
+    PodaciUsluge.Pripremi();
+}
+catch (Exception ex)
+{
+    Takt.Dnevnik.Greska("Usluga: priprema foldera podataka", ex);
+}
+
+// The user's settings (history on/off, days, refresh, "delete history") are only read, from the folder the
+// installer wrote into the service's command line.
+var korisnik = Instalacija.Argument(args, "--korisnik");
+var podesavanja = korisnik is null ? null : Path.Combine(Path.GetFullPath(korisnik), "podesavanja.json");
+Func<Podesavanja> ucitaj = () => podesavanja is null ? new Podesavanja() : Podesavanja.Ucitaj(podesavanja);
 
 if (args.Contains("--konzola"))
 {
-    using var motor = new UsluzniMotor(Podesavanja.Ucitaj());
+    using var motor = new UsluzniMotor(ucitaj);
     using var kraj = new ManualResetEventSlim(false);
     Console.CancelKeyPress += (_, dogadjaj) =>
     {
@@ -27,5 +40,5 @@ if (args.Contains("--konzola"))
     return 0;
 }
 
-ServiceBase.Run(new TaktServis());
+ServiceBase.Run(new TaktServis(ucitaj));
 return 0;

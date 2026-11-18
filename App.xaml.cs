@@ -12,6 +12,7 @@ public partial class App : Application
     private ProzorVm? _vm;
     private GlavniProzor? _prozor;
     private Traka? _traka;
+    private JedanPrimerak? _primerak;
     private bool _izlazim;
     private bool _testniRad;
     private bool _probno;
@@ -53,6 +54,22 @@ public partial class App : Application
         // helper are made on the first "Otvori Takt", so a boot with Takt costs no UAC question and almost
         // nothing else; the service, if installed, keeps reading and filling the history meanwhile.
         bool uTraci = e.Args.Contains("--u-traci") && !_testniRad;
+
+        // One Takt per session: a second start (desktop icon while the first sits in the tray) shows the first
+        // one's window and leaves. Started by Windows with a copy already running, it just leaves.
+        if (!_testniRad)
+        {
+            _primerak = new JedanPrimerak();
+            if (!_primerak.Prvi)
+            {
+                if (!uTraci) _primerak.JaviPrvom();
+                _primerak.Dispose();
+                _primerak = null;
+                Shutdown();
+                return;
+            }
+            _primerak.Slusaj(() => Dispatcher.BeginInvoke(new Action(OtvoriProzor)));
+        }
 
         NapraviTraku();
 
@@ -199,6 +216,8 @@ public partial class App : Application
         _traka?.Dispose();
         _traka = null;
         _vm?.Dispose();
+        _primerak?.Dispose();
+        _primerak = null;
         base.OnExit(e);
     }
 }

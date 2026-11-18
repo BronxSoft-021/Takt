@@ -476,7 +476,36 @@ public sealed class ProzorVm : ObservableObject, IDisposable
         OnPropertyChanged(nameof(Ritam));
     }
 
-    private bool ObrisiIstoriju()
+    /// <summary>
+    /// Empties the window's own history and asks the service to empty its own. The service keeps its history in a
+    /// folder the window may only read, so the request is a mark in the user's settings file, which the service
+    /// reads every half minute. Returns what the settings screen says.
+    /// </summary>
+    private string ObrisiIstoriju()
+    {
+        bool lokalno = ObrisiLokalnuIstoriju();
+
+        try
+        {
+            // Only the mark is written: whatever else is changed on the screen and not saved stays unsaved.
+            long sada = DateTime.UtcNow.Ticks;
+            var naDisku = Sistem.Podesavanja.Ucitaj();
+            naDisku.ObrisiIstorijuZahtev = sada;
+            naDisku.Sacuvaj();
+            Podesavanja.ObrisiIstorijuZahtev = sada;
+        }
+        catch (Exception ex)
+        {
+            Dnevnik.Greska("Zahtev usluzi za brisanje istorije", ex);
+        }
+
+        if (!lokalno) return "Brisanje nije uspelo, razlog je u greske.log.";
+        return _pomocnik is { JeUsluga: true }
+            ? "Istorija je obrisana. Usluga briše i svoju u roku od pola minuta."
+            : "Istorija je obrisana.";
+    }
+
+    private bool ObrisiLokalnuIstoriju()
     {
         if (_nadzor is not null) return _nadzor.ObrisiIstoriju();
 

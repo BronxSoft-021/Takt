@@ -10,18 +10,29 @@ namespace Takt.Sistem;
 /// window is open, so the history fills while the program is closed), another serves the window over the pipe.
 /// Two threads, not one: a window that never connects must not stop the readings, and a reading must not wait
 /// for a window.
+/// The user's choices (history on or off, how many days, how often to read, "delete the history") come from the
+/// user's settings file, read again every half minute: the window cannot write to the service, so the service
+/// follows the file.
 /// </summary>
 public sealed class UsluzniMotor : IDisposable
 {
-    private readonly Podesavanja _podesavanja;
-    private readonly bool _pisiIstoriju;
+    /// <summary>How often the user's settings are read again.</summary>
+    public static readonly TimeSpan ProveraPodesavanja = TimeSpan.FromSeconds(30);
+
+    private readonly Func<Podesavanja> _ucitaj;
+    private readonly bool _smeIstoriju;
     private readonly int _svakihUzoraka;
-    private readonly int _perioda;
+    private readonly string _bazaFajl;
 
     private readonly object _bravaSnimka = new();
     private readonly object _bravaBaze = new();
     private readonly object _bravaCevi = new();
     private readonly ManualResetEventSlim _kraj = new(false);
+
+    private Podesavanja _podesavanja;
+    private DateTime _procitano = DateTime.MinValue;
+    private long _obrisanoDo;
+    private volatile int _perioda;
 
     private IIzvorSenzora? _izvor;
     private IReadOnlyList<Senzor> _senzori = [];
@@ -33,12 +44,26 @@ public sealed class UsluzniMotor : IDisposable
     private volatile bool _radi;
     private int _uzoraka;
 
-    public UsluzniMotor(Podesavanja podesavanja, bool pisiIstoriju = true, int svakihUzoraka = 60)
+    /// <summary>Fixed settings, for a test.</summary>
+    public UsluzniMotor(Podesavanja podesavanja, bool pisiIstoriju = true, int svakihUzoraka = 60, string? baza = null)
+        : this(() => podesavanja, pisiIstoriju, svakihUzoraka, baza)
     {
-        _podesavanja = podesavanja;
-        _pisiIstoriju = pisiIstoriju;
+    }
+
+    /// <param name="ucitaj">Reads the user's settings; called at start and every <see cref="ProveraPodesavanja"/>.</param>
+    /// <param name="pisiIstoriju">False forbids history whatever the settings say (tests).</param>
+    /// <param name="baza">The history file; by default <see cref="Putanje.Baza"/> (the service's own folder).</param>
+    public UsluzniMotor(Func<Podesavanja> ucitaj, bool pisiIstoriju = true, int svakihUzoraka = 60, string? baza = null)
+    {
+        _ucitaj = ucitaj;
+        _smeIstoriju = pisiIstoriju;
         _svakihUzoraka = Math.Max(1, svakihUzoraka);
-        _perioda = Math.Max(1, podesavanja.Osvezavanje) * 1000;
+        _bazaFajl = baza ?? Putanje.Baza;
+        _podesavanja = UcitajBezbedno(new Podesavanja());
+
+        // A request to delete that was already there when the service started is old: it does not delete again.
+        _obrisanoDo = _podesavanja.ObrisiIstorijuZahtev;
+        _perioda = Math.Max(1, _podesavanja.Osvezavanje) * 1000;
     }
 
     public bool Radi => _radi;
@@ -49,13 +74,20 @@ public sealed class UsluzniMotor : IDisposable
     /// <summary>How many sensors the engine has; a test checks that the list reaches the window.</summary>
     public int BrojSenzora => _senzori.Count;
 
+    /// <summary>True while the history file is open (the user's "Čuvaj istoriju" is on).</summary>
+    public bool PiseIstoriju
+    {
+        get { lock (_bravaBaze) return _baza is not null; }
+    }
+
     public void Pokreni()
     {
         if (_radi) return;
 
         _izvor = new SlozeniIzvor(new LhmIzvor(), new RamIzvor());
         _senzori = _izvor.Senzori;
-        OtvoriBazu();
+        Primeni(_podesavanja);
+        _procitano = DateTime.UtcNow;
 
         _radi = true;
         _uzimanje = new Thread(Uzimaj) { IsBackground = true, Name = "Takt uzimanje" };
@@ -76,13 +108,66 @@ public sealed class UsluzniMotor : IDisposable
             _cev = null;
         }
 
-        _uzimanje?.Join(TimeSpan.FromSeconds(5));
+        bool uzimanjeStalo = _uzimanje?.Join(TimeSpan.FromSeconds(5)) ?? true;
         _sluzenje?.Join(TimeSpan.FromSeconds(5));
         _uzimanje = null;
         _sluzenje = null;
 
-        _izvor?.Dispose();
-        _izvor = null;
+        // A reading still running (a disk waking up can take seconds) must not lose its source under it; the
+        // process is ending anyway, and the library is closed with it.
+        if (uzimanjeStalo)
+        {
+            _izvor?.Dispose();
+            _izvor = null;
+        }
+        else
+        {
+            Dnevnik.Upisi("Usluga: čitanje se nije završilo za 5 s; izvor se ne zatvara ispod njega.");
+        }
+    }
+
+    /// <summary>Reads the user's settings again and applies what changed. Public so a test can call it at once.</summary>
+    public void OsveziPodesavanja()
+    {
+        _procitano = DateTime.UtcNow;
+        Primeni(UcitajBezbedno(_podesavanja));
+    }
+
+    private Podesavanja UcitajBezbedno(Podesavanja dosadasnja)
+    {
+        try
+        {
+            return _ucitaj().Ispravno();
+        }
+        catch (Exception ex)
+        {
+            Dnevnik.Greska("Usluga: čitanje podešavanja", ex);
+            return dosadasnja;
+        }
+    }
+
+    private void Primeni(Podesavanja novo)
+    {
+        _podesavanja = novo;
+        _perioda = Math.Max(1, novo.Osvezavanje) * 1000;
+
+        lock (_bravaBaze)
+        {
+            bool treba = _smeIstoriju && novo.Istorija;
+            if (treba && _baza is null) OtvoriBazu();
+            if (!treba && _baza is not null)
+            {
+                _baza.Dispose();
+                _baza = null;
+                Dnevnik.Upisi("Usluga: istorija je isključena u podešavanjima; upis staje.");
+            }
+
+            if (novo.ObrisiIstorijuZahtev > _obrisanoDo)
+            {
+                _obrisanoDo = novo.ObrisiIstorijuZahtev;
+                ObrisiIstoriju();
+            }
+        }
     }
 
     /// <summary>The readings: one every period, into the history and into the shared "latest" for the window.</summary>
@@ -92,6 +177,8 @@ public sealed class UsluzniMotor : IDisposable
         {
             try
             {
+                if (DateTime.UtcNow - _procitano >= ProveraPodesavanja) OsveziPodesavanja();
+
                 var snimak = _izvor!.Uzmi();
                 lock (_bravaSnimka) _poslednji = snimak;
 
@@ -177,33 +264,29 @@ public sealed class UsluzniMotor : IDisposable
         }
     }
 
+    /// <summary>Under <see cref="_bravaBaze"/>.</summary>
     private void OtvoriBazu()
     {
-        if (!_pisiIstoriju) return;
-
-        lock (_bravaBaze)
+        try
         {
-            try
-            {
-                _baza = new Baza(Putanje.Baza);
-                _baza.UpisiSenzore(_senzori);
-            }
-            catch (Exception ex)
-            {
-                Dnevnik.Greska("Usluga: baza", ex);
-                _baza?.Dispose();
-                _baza = null;
-                Poruka = "Istorija se ne čuva: " + ex.Message;
-            }
+            _baza = new Baza(_bazaFajl);
+            _baza.UpisiSenzore(_senzori);
+        }
+        catch (Exception ex)
+        {
+            Dnevnik.Greska("Usluga: baza", ex);
+            _baza?.Dispose();
+            _baza = null;
+            Poruka = "Istorija se ne čuva: " + ex.Message;
         }
     }
 
     private void Upisi(Snimak snimak)
     {
-        if (_baza is null) return;
-
         lock (_bravaBaze)
         {
+            if (_baza is null) return;
+
             try
             {
                 if (++_uzoraka % _svakihUzoraka != 0) return;
@@ -221,6 +304,28 @@ public sealed class UsluzniMotor : IDisposable
             {
                 Dnevnik.Greska("Usluga: upis istorije", ex);
             }
+        }
+    }
+
+    /// <summary>Under <see cref="_bravaBaze"/>. Empties the history whether or not it is being written now.</summary>
+    private void ObrisiIstoriju()
+    {
+        try
+        {
+            if (_baza is not null)
+            {
+                _baza.ObrisiSve();
+            }
+            else if (File.Exists(_bazaFajl))
+            {
+                using var baza = new Baza(_bazaFajl);
+                baza.ObrisiSve();
+            }
+            Dnevnik.Upisi("Usluga: istorija je obrisana na zahtev iz prozora.");
+        }
+        catch (Exception ex)
+        {
+            Dnevnik.Greska("Usluga: brisanje istorije", ex);
         }
     }
 

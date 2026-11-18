@@ -41,13 +41,25 @@ public sealed class Podesavanja
     /// <summary>True once the "still running in the tray" balloon has been shown.</summary>
     public bool ObjasnjenoUTraci { get; set; }
 
-    public static Podesavanja Ucitaj()
+    /// <summary>
+    /// When the user last asked to delete the history (UTC ticks). The service reads the user's settings but
+    /// cannot be written to by the window, so "Obriši istoriju" leaves this mark and the service acts on it.
+    /// </summary>
+    public long ObrisiIstorijuZahtev { get; set; }
+
+    public static Podesavanja Ucitaj() => Ucitaj(Putanje.Podesavanja);
+
+    /// <summary>
+    /// Reads the settings from a given file. The service uses this for the user's file: it only reads it, and
+    /// every value goes through <see cref="Ispravno"/>, so a hand-edited or hostile file cannot push it anywhere.
+    /// </summary>
+    public static Podesavanja Ucitaj(string fajl)
     {
         try
         {
-            if (File.Exists(Putanje.Podesavanja))
+            if (File.Exists(fajl))
             {
-                var procitano = JsonSerializer.Deserialize<Podesavanja>(File.ReadAllText(Putanje.Podesavanja));
+                var procitano = JsonSerializer.Deserialize<Podesavanja>(File.ReadAllText(fajl));
                 if (procitano is not null) return procitano.Ispravno();
             }
         }

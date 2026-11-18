@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
@@ -10,7 +10,7 @@
     <SelfContained>false</SelfContained>
     <AssemblyName>TaktSluzba</AssemblyName>
     <RootNamespace>TaktSluzba</RootNamespace>
-    <Version>0.28.31</Version>
+    <Version>0.28.35</Version>
     <Product>BronxSoft Takt - usluga</Product>
     <Company>BronxSoft</Company>
     <Copyright>BronxSoft 2026</Copyright>

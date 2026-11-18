@@ -1,4 +1,23 @@
-﻿BronxSoft Takt 0.28.31 alfa
+﻿BronxSoft Takt 0.28.35 alfa
+18. 11. 2026.
+
+Bezbednija usluga i samo jedan Takt (posle pregleda koda).
+
+DORADE
+- Usluga se instalira u Program Files i radi odande, a ne iz foldera u koji svaki program može da
+  piše - tako niko ne može da joj podmetne svoj kod.
+- Usluga čuva istoriju i dnevnik u zaključanom folderu C:\ProgramData\BronxSoft Takt, a ne više u
+  korisnikovom folderu.
+- Usluga sluša "Čuvaj istoriju", broj dana, osvežavanje i "Obriši istoriju" iz podešavanja, bez
+  ponovnog pokretanja (u roku od pola minuta).
+- Takt može da radi samo jednom: drugo pokretanje samo otvori prozor prvog.
+
+ZNAJ
+- Ko je već instalirao uslugu: pokreni ponovo "TaktSluzba.exe --instaliraj" kao administrator, da se
+  usluga preseli u Program Files. Stara istorija ostaje u %APPDATA%\BronxSoft Takt.
+
+
+BronxSoft Takt 0.28.31 alfa
 18. 11. 2026.
 
 DORADE
