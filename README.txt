@@ -1,4 +1,18 @@
-﻿BronxSoft Takt 0.28.35 alfa
+﻿BronxSoft Takt 0.29.36 alfa
+18. 11. 2026.
+
+Takt kao instaliran program.
+
+NOVO
+- Takt se instalira u C:\Program Files\BronxSoft Takt (prozor i usluga zajedno, uvek ista verzija);
+  precice na desktopu i u Start meniju otvaraju instalirani Takt. "Instaliraj Takt.bat" sve napravi i
+  instalira jednim klikom (Windows pita za dozvolu jednom).
+
+DORADE
+- Usluga (TaktSluzba.exe) ima istu ikonicu kao Takt.
+
+
+BronxSoft Takt 0.28.35 alfa
 18. 11. 2026.
 
 Bezbednija usluga i samo jedan Takt (posle pregleda koda).

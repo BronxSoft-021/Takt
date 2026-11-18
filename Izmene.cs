@@ -22,6 +22,13 @@ public static class Izmene
     [
         new("alfa", "18. 11. 2026.",
         [
+            "Takt se instalira kao pravi program u C:\\Program Files\\BronxSoft Takt (prozor i usluga zajedno, uvek ista verzija), a prečice na desktopu i u Start meniju otvaraju instalirani Takt, ne razvojnu kopiju; „Instaliraj Takt.bat“ sve napravi i instalira jednim klikom.",
+        ],
+        [
+            "Usluga (TaktSluzba.exe) ima istu ikonicu kao Takt.",
+        ]),
+        new("alfa", "18. 11. 2026.",
+        [
         ],
         [
             "Usluga se instalira u Program Files i radi odande, a ne iz foldera u koji svaki program može da piše - tako niko ne može da joj podmetne svoj kod.",

@@ -10,10 +10,13 @@
     <SelfContained>false</SelfContained>
     <AssemblyName>TaktSluzba</AssemblyName>
     <RootNamespace>TaktSluzba</RootNamespace>
-    <Version>0.28.35</Version>
+    <Version>0.29.36</Version>
+    <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
     <Product>BronxSoft Takt - usluga</Product>
     <Company>BronxSoft</Company>
     <Copyright>BronxSoft 2026</Copyright>
+    <!-- The same icon as Takt.exe: in Explorer and in the list of services it is one program. -->
+    <ApplicationIcon>..\assets\app.ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>

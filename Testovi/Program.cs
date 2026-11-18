@@ -9,6 +9,10 @@ Directory.CreateDirectory(radni);
 Environment.SetEnvironmentVariable("TAKT_PODACI", Path.Combine(radni, "podaci"));
 Spisak.Radni = radni;
 
+// Our own pipe: the installed service holds the real one ("BronxSoftTakt-nadzor"), and a test must neither talk
+// to it nor fight it for the name. Child processes (the helper test) inherit this.
+Environment.SetEnvironmentVariable("TAKT_CEV", "BronxSoftTakt-test-" + Environment.ProcessId);
+
 // What the real hardware says right now: Testovi --popis [fajl]. Run as administrator for the full list.
 if (args.Length >= 1 && args[0] == "--popis")
     return Popis.Senzora(args.Length >= 2 ? args[1] : Path.Combine(radni, "popis.txt"));

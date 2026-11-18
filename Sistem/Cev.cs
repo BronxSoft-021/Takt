@@ -11,7 +11,12 @@ namespace Takt.Sistem;
 /// </summary>
 public static class Cev
 {
-    public const string Ime = "BronxSoftTakt-nadzor";
+    /// <summary>
+    /// "BronxSoftTakt-nadzor". TAKT_CEV changes it for one process only: the tests use their own name, or the
+    /// installed service (which holds the real pipe) would answer them, or refuse them.
+    /// </summary>
+    public static string Ime { get; } =
+        Environment.GetEnvironmentVariable("TAKT_CEV") is { Length: > 0 } zadato ? zadato : "BronxSoftTakt-nadzor";
 
     public static NamedPipeServerStream Napravi()
     {

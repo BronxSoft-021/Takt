@@ -35,6 +35,8 @@ public static class BezbednostTestovi
         Proveri.Da(!File.Exists(Path.Combine(cilj, "stari.dll")), "stara kopija je ispražnjena");
         Proveri.Da(Instalacija.Folder.StartsWith(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles),
             StringComparison.OrdinalIgnoreCase), "prava kopija ide u Program Files");
+        Proveri.Jednako(Path.Combine(Instalacija.Folder, "Takt.exe"), Instalacija.Prozor,
+            "prečice otvaraju prozor iz instalirane kopije, ne iz dist");
         return Task.CompletedTask;
     }
 
