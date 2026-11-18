@@ -26,6 +26,7 @@ public static class Spisak
         ("redosled: jezgro 2 pre jezgra 10", PrikazTestovi.Prirodno),
         ("grafikon: koliko je star najstariji uzorak", PrikazTestovi.PreKoliko),
         ("ekran: senzori bez vrednosti se sklanjaju", PrikazTestovi.Skriveni),
+        ("ekran: granice diska nisu merenja", PrikazTestovi.GraniceDiska),
         ("protokol: spisak i uzorak kroz tekst", ProtokolTestovi.SpisakIUzorak),
         ("prevod: imena senzora na srpski", PrevodTestovi.Imena),
         ("prevod: zauzeće VRAM u procentima", PrevodTestovi.Vram),

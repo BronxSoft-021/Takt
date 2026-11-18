@@ -78,4 +78,34 @@ public static class PrikazTestovi
         Proveri.Da(!ekran.ImaSkrivenih, "nema više skrivenih");
         return Task.CompletedTask;
     }
+
+    /// <summary>"Kritična granica 84 °C" is a limit: no colour, no bar; the drive's temperature is marked against it.</summary>
+    public static Task GraniceDiska()
+    {
+        const string disk = "Samsung SSD 970 EVO Plus 500GB";
+        var senzori = new[]
+        {
+            new Senzor(new SenzorKljuc(Grupa.Diskovi, disk, "Temperatura"), Jedinica.Celzijus),
+            new Senzor(new SenzorKljuc(Grupa.Diskovi, disk, Granice.Upozorenje), Jedinica.Celzijus),
+            new Senzor(new SenzorKljuc(Grupa.Diskovi, disk, Granice.Kriticna), Jedinica.Celzijus),
+        };
+        var vm = senzori.Select((s, i) => new SenzorVm(s, i, new Prsten(10))).ToList();
+        var ekran = new EkranVm(Grupa.Diskovi, vm);
+
+        ekran.Osvezi(new Snimak(DateTime.Now, [62, 70, 84]), [62, 70, 84], [62, 70, 84]);
+
+        var kriticna = vm[2];
+        Proveri.Da(kriticna.JeGranica, "kritična granica je granica");
+        Proveri.Jednako("", kriticna.Nivo, "granica nije ni topla ni vruća");
+        Proveri.Da(!kriticna.ImaUdeo, "granica nema traku popunjenosti");
+        Proveri.Jednako("Granice koje prijavljuje uređaj", kriticna.Vrsta, "granice imaju svoj naslov");
+
+        // 62 °C is above the general disk mark (55) but below this drive's own warning limit (70).
+        Proveri.Jednako("", vm[0].Nivo, "62 °C je ispod granice upozorenja ovog diska");
+        ekran.Osvezi(new Snimak(DateTime.Now, [75, 70, 84]), [62, 70, 84], [75, 70, 84]);
+        Proveri.Jednako("toplo", vm[0].Nivo, "preko granice upozorenja");
+        ekran.Osvezi(new Snimak(DateTime.Now, [85, 70, 84]), [62, 70, 84], [85, 70, 84]);
+        Proveri.Jednako("vruce", vm[0].Nivo, "preko kritične granice");
+        return Task.CompletedTask;
+    }
 }

@@ -22,6 +22,15 @@ public static class Izmene
     [
         new("alfa", "18. 11. 2026.",
         [
+            "Temperatura diska postaje žuta i crvena po granicama koje prijavljuje sam disk, a te granice stoje pod svojim naslovom „Granice koje prijavljuje uređaj“.",
+        ],
+        [
+            "„Kritična granica“ diska (npr. 84 °C) više nije crvena kao da je disk vruć - to je granica, ne merenje.",
+            "Senzori diska su na srpskom: Temperatura, Temperatura senzora 1, Rezervni blokovi, Istrošenost, Ukupno pročitano i upisano, Brzina čitanja i upisa, Aktivnost.",
+            "Ukupno pročitano i upisano na disk piše se u GB i TB (bilo je pogrešno u MB/s), a brzina čitanja i upisa diska se sada vidi.",
+        ]),
+        new("alfa", "18. 11. 2026.",
+        [
             "Novi izgled: ikonica programa u zaglavlju, ikonice u levoj koloni, oznaka stanja u boji (pravi senzori, potpuni nadzor, probni podaci), izdignuta dugmad i pregledno „Šta je novo“.",
             "Pločice na vrhu pokazuju i ime senzora, a spisak je podeljen po vrstama (Temperature, Takt, Potrošnja…) sa trakom popunjenosti; visoka temperatura postaje žuta, a previsoka crvena.",
             "Grafikon: pod mišem pokazuje vrednost i koliko je pre očitana, ispod piše koliko unazad seže („pre 2 min“), a uz najmanje i najviše stoje prosek i trenutna vrednost.",

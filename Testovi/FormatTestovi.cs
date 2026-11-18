@@ -16,6 +16,7 @@ public static class FormatTestovi
         Proveri.Jednako("8,0 GB", Format.Vrednost(8200, Jedinica.Megabajt), "gigabajt i više se piše u GB");
         Proveri.Jednako("15,3 GB", Format.Vrednost(15698, Jedinica.Megabajt), "zauzeto");
         Proveri.Jednako(("31,9", "GB"), Format.Delovi(32681, Jedinica.Megabajt), "broj i oznaka posebno");
+        Proveri.Jednako("37,42 TB", Format.Vrednost(37.42 * 1_048_576, Jedinica.Megabajt), "ukupno upisano na disk");
 
         Proveri.Jednako("—", Format.Vrednost(null, Jedinica.Celzijus), "nema vrednosti");
         Proveri.Jednako("", Format.Oznaka(Jedinica.Nepoznato), "nepoznata jedinica nema oznaku");

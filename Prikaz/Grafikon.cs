@@ -162,7 +162,10 @@ public sealed class Grafikon : FrameworkElement
         if (korak < 0.01) decimala = 3;
 
         // Memory of a gigabyte and more is labelled in GB, like the number above the chart.
-        bool uGb = Format.UGigabajte(najvise, Mera);
+        double delilac = Mera != Jedinica.Megabajt ? 1
+            : Math.Abs(najvise) >= 1_048_576 ? 1_048_576
+            : Math.Abs(najvise) >= 1024 ? 1024 : 1;
+        bool uGb = delilac > 1;
 
         var olovkaMreze = new Pen(linija, 1) { DashStyle = new DashStyle([3, 4], 0) };
         for (int i = 0; i <= 4; i++)
@@ -172,7 +175,7 @@ public sealed class Grafikon : FrameworkElement
             dc.DrawLine(olovkaMreze, new Point(levo, y), new Point(levo + sirinaCrteza, y));
 
             double vrednost = najvise - deo * (najvise - najmanje);
-            var tekst = uGb ? (vrednost / 1024).ToString(decimala > 0 ? "F2" : "F1", Kultura)
+            var tekst = uGb ? (vrednost / delilac).ToString(decimala > 0 || delilac > 1024 ? "F2" : "F1", Kultura)
                             : Format.Broj(vrednost, Mera, decimala);
             var oznaka = Tekst(tekst, 10, mutan, dpi);
             dc.DrawText(oznaka, new Point(levo + sirinaCrteza + 9, y - oznaka.Height / 2));

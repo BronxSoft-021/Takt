@@ -1,3 +1,21 @@
+BronxSoft Takt 0.15.15 alfa
+18. 11. 2026.
+
+Diskovi sa pomoćnikom: granice, imena i jedinice.
+
+NOVO
+- Temperatura diska postaje žuta i crvena po granicama koje prijavljuje sam disk, a te granice
+  stoje pod svojim naslovom "Granice koje prijavljuje uređaj".
+
+DORADE
+- "Kritična granica" diska (npr. 84 °C) više nije crvena kao da je disk vruć - to je granica,
+  ne merenje.
+- Senzori diska su na srpskom: Temperatura, Temperatura senzora 1, Rezervni blokovi, Istrošenost,
+  Ukupno pročitano i upisano, Brzina čitanja i upisa, Aktivnost.
+- Ukupno pročitano i upisano na disk piše se u GB i TB (bilo je pogrešno u MB/s), a brzina
+  čitanja i upisa diska se sada vidi.
+
+
 BronxSoft Takt 0.14.12 alfa
 18. 11. 2026.
 

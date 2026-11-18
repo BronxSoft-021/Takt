@@ -30,8 +30,18 @@ public sealed class SenzorVm : ObservableObject
     public string Ime => Senzor.Ime;
     public string Uredjaj => Senzor.Uredjaj;
 
+    /// <summary>A limit the part reports about itself ("Kritična granica 84 °C"), not a reading.</summary>
+    public bool JeGranica => Granice.JeGranica(Ime);
+
+    /// <summary>
+    /// The drive's own warning and critical limits, when it reports them: its temperature turns amber and red
+    /// at those marks instead of the general ones. Set once by <see cref="EkranVm"/>.
+    /// </summary>
+    public SenzorVm? GranicaToplo { get; set; }
+    public SenzorVm? GranicaVruce { get; set; }
+
     /// <summary>The heading the row sits under in the list: "Temperature", "Takt", "Ventilatori"…</summary>
-    public string Vrsta => Senzor.Jedinica switch
+    public string Vrsta => JeGranica ? "Granice koje prijavljuje uređaj" : Senzor.Jedinica switch
     {
         Jedinica.Celzijus => "Temperature",
         Jedinica.Procenat => "Opterećenje i zauzeće",
@@ -102,7 +112,7 @@ public sealed class SenzorVm : ObservableObject
     /// How full the thin bar under the row is, 0 to 1. Only for values with a natural ceiling of a hundred
     /// (percent and degrees); a clock or a fan has no "full", so it gets no bar rather than an invented one.
     /// </summary>
-    public double? Udeo => Broj is { } broj && Senzor.Jedinica is Jedinica.Procenat or Jedinica.Celzijus
+    public double? Udeo => !JeGranica && Broj is { } broj && Senzor.Jedinica is Jedinica.Procenat or Jedinica.Celzijus
         ? Math.Clamp(broj / 100, 0, 1)
         : null;
 
@@ -126,7 +136,14 @@ public sealed class SenzorVm : ObservableObject
     /// </summary>
     private (double Toplo, double Vruce)? Pragovi()
     {
-        if (Senzor.Jedinica != Jedinica.Celzijus) return null;
+        if (Senzor.Jedinica != Jedinica.Celzijus || JeGranica) return null;
+
+        // The drive knows best: its own limits, when it gives them (one is enough, the other follows from it).
+        double? toplo = GranicaToplo?.Broj, vruce = GranicaVruce?.Broj;
+        if (toplo is { } t && vruce is { } v && v > t) return (t, v);
+        if (vruce is { } samoVruce) return (samoVruce - 10, samoVruce);
+        if (toplo is { } samoToplo) return (samoToplo, samoToplo + 10);
+
         if (Senzor.Grupa == Grupa.Diskovi) return (55, 65);
         if (Senzor.Grupa == Grupa.Grafika && (Ime.Contains("Hotspot") || Ime.Contains("VRAM"))) return (95, 105);
         return (80, 90);

@@ -31,6 +31,15 @@ public static class PrevodTestovi
         Proveri.Jednako("Ventilator 2", LhmIzvor.Prevedi(Grupa.Hladjenje, "Fan #2", Jedinica.Obrtaj), "ventilator 2");
         Proveri.Jednako("Temperatura 1", LhmIzvor.Prevedi(Grupa.Hladjenje, "Temperature #1", Jedinica.Celzijus), "temperatura 1");
         Proveri.Jednako("Životni vek", LhmIzvor.Prevedi(Grupa.Diskovi, "Remaining Life", Jedinica.Procenat), "životni vek");
+        Proveri.Jednako("Temperatura", LhmIzvor.Prevedi(Grupa.Diskovi, "Composite Temperature", Jedinica.Celzijus), "NVMe temperatura");
+        Proveri.Jednako("Temperatura senzora 2", LhmIzvor.Prevedi(Grupa.Diskovi, "Temperature #2", Jedinica.Celzijus), "NVMe senzor");
+        Proveri.Jednako("Kritična granica", LhmIzvor.Prevedi(Grupa.Diskovi, "Critical Temperature", Jedinica.Celzijus), "granica, ne merenje");
+        Proveri.Jednako("Granica upozorenja", LhmIzvor.Prevedi(Grupa.Diskovi, "Warning Temperature", Jedinica.Celzijus), "granica upozorenja");
+        Proveri.Jednako("Ukupno upisano", LhmIzvor.Prevedi(Grupa.Diskovi, "Data Written", Jedinica.Megabajt), "upisano");
+        Proveri.Jednako("Brzina čitanja", LhmIzvor.Prevedi(Grupa.Diskovi, "Read Rate", Jedinica.MegabajtUSekundi), "brzina");
+        Proveri.Jednako(Jedinica.Megabajt, LhmIzvor.JedinicaZa(LibreHardwareMonitor.Hardware.SensorType.Data).Jedinica, "Data je količina");
+        Proveri.Jednako(1024.0, LhmIzvor.JedinicaZa(LibreHardwareMonitor.Hardware.SensorType.Data).Faktor, "Data stiže u GB");
+        Proveri.Jednako(Jedinica.MegabajtUSekundi, LhmIzvor.JedinicaZa(LibreHardwareMonitor.Hardware.SensorType.Throughput).Jedinica, "protok");
 
         // Unknown names stay as they are: a technical name is better than a wrong translation.
         Proveri.Jednako("Neka nova stvar", LhmIzvor.Prevedi(Grupa.Grafika, "Neka nova stvar", Jedinica.Nepoznato), "nepoznato");

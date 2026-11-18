@@ -37,6 +37,10 @@ public static class Format
     /// </summary>
     public static (string Broj, string Oznaka) Delovi(double vrednost, Jedinica jedinica)
     {
+        // A disk's lifetime totals run into terabytes: "37,42 TB", not "38318,1 GB".
+        if (jedinica == Jedinica.Megabajt && Math.Abs(vrednost) >= 1_048_576)
+            return ((vrednost / 1_048_576).ToString("F2", Kultura), "TB");
+
         if (UGigabajte(vrednost, jedinica))
             return ((vrednost / 1024).ToString("F1", Kultura), "GB");
 

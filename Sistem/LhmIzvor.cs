@@ -14,11 +14,14 @@ public sealed class LhmIzvor : IIzvorSenzora
     private readonly Computer? _racunar;
     private readonly List<Senzor> _senzori = [];
     private readonly List<ISensor?> _izvori = [];
+    private readonly List<double> _faktori = [];
     private readonly List<(int Mesto, int Gore, int Dole)> _izvedeni = [];
     private string? _poruka;
 
     /// <summary>One sensor on its way in: the library's own, or one worked out from two others.</summary>
-    private sealed record Stavka(Senzor Senzor, ISensor? Izvor, SenzorKljuc? Gore = null, SenzorKljuc? Dole = null);
+    /// <c>Faktor</c> turns the library's unit into ours (GB → MB, B/s → MB/s).
+    private sealed record Stavka(Senzor Senzor, ISensor? Izvor, SenzorKljuc? Gore = null, SenzorKljuc? Dole = null,
+        double Faktor = 1);
 
     public LhmIzvor()
     {
@@ -49,6 +52,7 @@ public sealed class LhmIzvor : IIzvorSenzora
                 mesta[stavka.Senzor.Kljuc.Tekst] = _senzori.Count;
                 _senzori.Add(stavka.Senzor);
                 _izvori.Add(stavka.Izvor);
+                _faktori.Add(stavka.Faktor);
             }
 
             foreach (var stavka in stavke)
@@ -93,7 +97,7 @@ public sealed class LhmIzvor : IIzvorSenzora
 
                 try
                 {
-                    vrednosti[i] = Ocitaj(izvor, _senzori[i].Jedinica);
+                    vrednosti[i] = Ocitaj(izvor, _senzori[i].Jedinica) * _faktori[i];
                 }
                 catch (Exception ex)
                 {
@@ -165,13 +169,13 @@ public sealed class LhmIzvor : IIzvorSenzora
         {
             foreach (var senzor in hardver.Sensors)
             {
-                var jedinica = JedinicaZa(senzor.SensorType);
+                var (jedinica, faktor) = JedinicaZa(senzor.SensorType);
                 if (jedinica == Jedinica.Nepoznato) continue;
                 if (Zanemari(senzor.Name, jedinica)) continue;
 
                 var osnovno = Prevedi(g, senzor.Name, jedinica);
                 var ime = Jedinstveno(osnovno, uredjaj, g, jedinica, stavke);
-                stavke.Add(new Stavka(new Senzor(new SenzorKljuc(g, uredjaj, ime), jedinica), senzor));
+                stavke.Add(new Stavka(new Senzor(new SenzorKljuc(g, uredjaj, ime), jedinica), senzor, Faktor: faktor));
             }
         }
 
@@ -224,7 +228,9 @@ public sealed class LhmIzvor : IIzvorSenzora
     {
         if (ime is "Temperatura" or "Temperatura procesora" or "Temperatura paketa") return 0;
         if (ime.StartsWith("Temperatura jezgra", StringComparison.Ordinal)) return 1;
+        if (ime.StartsWith("Temperatura senzora", StringComparison.Ordinal)) return 1;
         if (ime == "Hotspot") return 2;
+        if (Merenje.Granice.JeGranica(ime)) return 5; // limits after every reading of the same unit
 
         if (ime is "Opterećenje" or "Opterećenje procesora") return 0;
         if (ime.StartsWith("Opterećenje jezgra", StringComparison.Ordinal)) return 1;
@@ -282,20 +288,41 @@ public sealed class LhmIzvor : IIzvorSenzora
         {
             Grupa.Grafika => Grafika(ime, jedinica),
             Grupa.Procesor => Procesor(ime, jedinica, broj),
-            Grupa.Diskovi => ime switch
-            {
-                "Temperature" => "Temperatura",
-                "Used Space" => "Zauzeće",
-                "Remaining Life" or "Life" => "Životni vek",
-                "Percentage Used" => "Istrošenost",
-                "Total Bytes Written" => "Ukupno upisano",
-                "Power On Hours" => "Radni sati",
-                _ => ime,
-            },
+            Grupa.Diskovi => Disk(ime, broj),
             Grupa.Hladjenje => Hladjenje(ime, broj),
             _ => ime,
         };
     }
+
+    /// <summary>
+    /// Disks. "Warning/Critical Temperature" are not readings but the limits the drive itself reports (the
+    /// temperature where it starts to slow down or shut off); they are named as limits so nobody reads them
+    /// as heat, and <see cref="Vm.SenzorVm"/> uses them as that drive's warm and hot marks.
+    /// </summary>
+    private static string Disk(string ime, string? broj) => ime switch
+    {
+        "Temperature" or "Composite Temperature" or "Drive Temperature" => "Temperatura",
+        _ when ime.StartsWith("Temperature #", StringComparison.Ordinal) => $"Temperatura senzora {broj}",
+        "Warning Temperature" => Merenje.Granice.Upozorenje,
+        "Critical Temperature" => Merenje.Granice.Kriticna,
+        "Available Spare" => "Rezervni blokovi",
+        "Available Spare Threshold" => Merenje.Granice.Rezerva,
+        "Used Space" => "Zauzeće",
+        "Free Space" or "Available Free Space" => "Slobodan prostor",
+        "Total Space" => "Ukupan prostor",
+        "Remaining Life" or "Life" => "Životni vek",
+        "Percentage Used" => "Istrošenost",
+        "Data Read" => "Ukupno pročitano",
+        "Data Written" or "Total Bytes Written" => "Ukupno upisano",
+        "Read Activity" => "Aktivnost čitanja",
+        "Write Activity" => "Aktivnost upisa",
+        "Total Activity" => "Aktivnost",
+        "Read Rate" => "Brzina čitanja",
+        "Write Rate" => "Brzina upisa",
+        "Power On Hours" => "Radni sati",
+        "Power On Count" => "Broj uključivanja",
+        _ => ime,
+    };
 
     private static string Grafika(string ime, Jedinica jedinica) => ime switch
     {
@@ -386,18 +413,23 @@ public sealed class LhmIzvor : IIzvorSenzora
         _ => null,
     };
 
-    private static Jedinica JedinicaZa(SensorType tip) => tip.ToString() switch
+    /// <summary>
+    /// Our unit for the library's sensor type, and the factor to get there. The library gives "Data" in GB
+    /// (disk totals), "SmallData" in MB and "Throughput" in bytes per second.
+    /// </summary>
+    public static (Jedinica Jedinica, double Faktor) JedinicaZa(SensorType tip) => tip.ToString() switch
     {
-        "Temperature" => Jedinica.Celzijus,
-        "Load" or "Level" => Jedinica.Procenat,
-        "Clock" => Jedinica.Megaherc,
-        "Fan" => Jedinica.Obrtaj,
-        "Voltage" => Jedinica.Volt,
-        "Power" => Jedinica.Vat,
-        "Current" => Jedinica.Amper,
-        "Data" => Jedinica.MegabajtUSekundi,
-        "SmallData" => Jedinica.Megabajt,
-        _ => Jedinica.Nepoznato,
+        "Temperature" => (Jedinica.Celzijus, 1),
+        "Load" or "Level" => (Jedinica.Procenat, 1),
+        "Clock" => (Jedinica.Megaherc, 1),
+        "Fan" => (Jedinica.Obrtaj, 1),
+        "Voltage" => (Jedinica.Volt, 1),
+        "Power" => (Jedinica.Vat, 1),
+        "Current" => (Jedinica.Amper, 1),
+        "Data" => (Jedinica.Megabajt, 1024),
+        "SmallData" => (Jedinica.Megabajt, 1),
+        "Throughput" => (Jedinica.MegabajtUSekundi, 1.0 / 1_048_576),
+        _ => (Jedinica.Nepoznato, 1),
     };
 
     public void Dispose()

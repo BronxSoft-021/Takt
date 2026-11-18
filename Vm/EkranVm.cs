@@ -20,6 +20,14 @@ public sealed class EkranVm : ObservableObject
         Senzori = new ObservableCollection<SenzorVm>(senzori);
         _izabran = Senzori.FirstOrDefault();
 
+        // A drive's temperatures are marked against that drive's own limits.
+        foreach (var senzor in Senzori)
+        {
+            if (senzor.Senzor.Jedinica != Jedinica.Celzijus || senzor.JeGranica) continue;
+            senzor.GranicaToplo = Senzori.FirstOrDefault(s => s.Uredjaj == senzor.Uredjaj && s.Ime == Granice.Upozorenje);
+            senzor.GranicaVruce = Senzori.FirstOrDefault(s => s.Uredjaj == senzor.Uredjaj && s.Ime == Granice.Kriticna);
+        }
+
         // The list is grouped under small headings (Temperature, Takt…) and, once some sensors have a value,
         // leaves out the ones that never had one. They are one click away, never deleted.
         var pogled = new ListCollectionView(Senzori) { Filter = Prikazati };
