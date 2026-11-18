@@ -1,4 +1,17 @@
-﻿BronxSoft Takt 0.33.39 alfa
+﻿BronxSoft Takt 0.33.43 alfa
+18. 11. 2026.
+
+Ventilatori matične ploče.
+
+DORADE
+- Ventilatori i temperature maticne ploce se sada vide (npr. 7 ventilatora na ASUS TUF B550): Takt je
+  trazio spisak senzora pre prvog citanja, a ploca ih prijavi tek posle njega.
+- Kanal "Vent." uzima ventilatore koji se okrecu i pod imenom pise "Maticna ploca".
+- Neimenovane temperature ploce se ne boje i ne pale lampicu (neprikacen ulaz cesto pokazuje 80-90 °C).
+- Naponi ploce na srpskom.
+
+
+BronxSoft Takt 0.33.39 alfa
 18. 11. 2026.
 
 Za igre: Scena, FPS, sesije i clip lampice.

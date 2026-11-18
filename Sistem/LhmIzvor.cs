@@ -41,6 +41,14 @@ public sealed class LhmIzvor : IIzvorSenzora
             racunar.Open();
             _racunar = racunar;
 
+            // The board's fans and temperatures (Super I/O) appear in the library's list only after they have been
+            // read once: a fan is "switched on" by its first reading. Listing right after Open() left the fan
+            // channel empty on a board the library supports (ASUS TUF B550, 18. 11. 2026). Two readings, a moment
+            // apart, before the list is made; a fan that is not connected reads 0 and rightly stays out.
+            foreach (var hardver in racunar.Hardware) Osvezi(hardver);
+            Thread.Sleep(300);
+            foreach (var hardver in racunar.Hardware) Osvezi(hardver);
+
             var stavke = new List<Stavka>();
             foreach (var hardver in racunar.Hardware)
                 Popisi(hardver, null, stavke);
@@ -389,6 +397,12 @@ public sealed class LhmIzvor : IIzvorSenzora
         _ when ime.StartsWith("Voltage #", StringComparison.Ordinal) => $"Napon {broj}",
         _ when ime.StartsWith("Pump #", StringComparison.Ordinal) => $"Pumpa {broj}",
         "Fan" => "Ventilator",
+        // The Super I/O's named voltages (Nuvoton NCT6798D on ASUS TUF B550, 18. 11. 2026).
+        "Vcore" => "Napon procesora (ploča)",
+        "CMOS Battery" => "Baterija CMOS-a",
+        "+3V Standby" => "+3 V u mirovanju",
+        "+3.3V" => "+3,3 V",
+        "CPU Termination" => "Terminacija procesora",
         _ => ime,
     };
 

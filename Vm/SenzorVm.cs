@@ -138,6 +138,12 @@ public sealed class SenzorVm : ObservableObject
     {
         if (Senzor.Jedinica != Jedinica.Celzijus || JeGranica) return null;
 
+        // The board's numbered temperatures ("Temperatura 3"): nobody knows what they measure on this board, and an
+        // unconnected input often reads a steady 80-90 °C. No warm or hot colour, no clip light, for what may be
+        // nothing at all; the number itself is still shown.
+        if (Senzor.Grupa == Grupa.Hladjenje && Ime.StartsWith("Temperatura ", StringComparison.Ordinal)
+            && char.IsAsciiDigit(Ime[^1])) return null;
+
         // The drive knows best: its own limits, when it gives them (one is enough, the other follows from it).
         double? toplo = GranicaToplo?.Broj, vruce = GranicaVruce?.Broj;
         if (toplo is { } t && vruce is { } v && v > t) return (t, v);

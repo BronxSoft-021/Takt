@@ -22,6 +22,15 @@ public static class Izmene
     [
         new("alfa", "18. 11. 2026.",
         [
+        ],
+        [
+            "Ventilatori i temperature matične ploče se sada vide (npr. 7 ventilatora na ASUS TUF B550): Takt je tražio spisak senzora pre prvog čitanja, a ploča ih prijavi tek posle njega.",
+            "Kanal „Vent.“ uzima ventilatore koji se okreću (ne prazne priključke od 0 o/min) i pod imenom piše „Matična ploča“ umesto dugačkog imena čipa.",
+            "Neimenovane temperature ploče („Temperatura 3“) se ne boje žuto ni crveno i ne pale lampicu: neprikačen ulaz često pokazuje 80-90 °C.",
+            "Naponi ploče na srpskom (napon procesora, baterija CMOS-a, +3 V u mirovanju…).",
+        ]),
+        new("alfa", "18. 11. 2026.",
+        [
             "Scena (dugme ili F11, Esc izlazi): veliki pult preko celog drugog ekrana, za gledanje krajičkom oka dok igraš; gore igra, dole pet velikih kanala sa po jednim dodatnim redom (najopterećenije jezgro, VRAM, najtopliji disk).",
             "FPS igre: usluga meri kadrove preko Windows-ovih događaja (bez ubacivanja u igru), a Scena pokazuje FPS, 1% low, vreme kadra i grafikon najdužeg kadra svake sekunde, gde se štucanje vidi kao šiljak.",
             "Sesije igara: svaka igra duža od minuta se snima sama i posle nje Takt pravi izveštaj (trajanje, FPS, 1% low, štucanja, najviše temperature, koliko je VRAM bio pun, najopterećenije jezgro) - dugme „Sesije“.",

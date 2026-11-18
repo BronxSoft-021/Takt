@@ -87,6 +87,15 @@ public sealed class UsluzniMotor : IDisposable
 
         _izvor = new SlozeniIzvor(new LhmIzvor(), new RamIzvor());
         _senzori = _izvor.Senzori;
+
+        // What the hardware gave, per part, and the board's own sensors by name: a report like "no fans" can be
+        // checked from the log, without running anything as administrator.
+        Dnevnik.Upisi("Usluga: senzori - " + string.Join(", ", _senzori.GroupBy(s => s.Grupa)
+            .Select(g => $"{GrupaOpis.Naslov(g.Key)} {g.Count()}")) + ".");
+        var hladjenje = _senzori.Where(s => s.Grupa == Grupa.Hladjenje).Select(s => $"{s.Ime} ({s.Uredjaj})").ToList();
+        Dnevnik.Upisi(hladjenje.Count == 0
+            ? "Usluga: ploča ne daje nijedan senzor hlađenja."
+            : "Usluga: hlađenje - " + string.Join(", ", hladjenje) + ".");
         Primeni(_podesavanja);
         _procitano = DateTime.UtcNow;
 

@@ -410,7 +410,7 @@ public sealed class ProzorVm : ObservableObject, IDisposable
             senzori.Add(new SenzorVm(_nadzor.Senzori[i], i, _nadzor.Istorija[i]));
 
         Kanali.Clear();
-        foreach (var kanal in KanalVm.Napravi(senzori))
+        foreach (var kanal in KanalVm.Napravi(senzori, _nadzor.Poslednji))
         {
             kanal.Utisan = Podesavanja.Utisani.Contains(kanal.Kljuc);
             Kanali.Add(kanal);

@@ -57,13 +57,13 @@ public static class GrupaOpis
 
     /// <summary>
     /// Empty although the driver and administrator are both there: then nothing more can be asked of the user, and
-    /// saying "turn on full monitoring" would send them in circles. On the developer's PC (18. 11. 2026) the board
-    /// gives no fans at all: LibreHardwareMonitor does not recognise its Super I/O chip.
+    /// saying "turn on full monitoring" would send them in circles.
     /// </summary>
     private static string PraznoUzPotpunNadzor(Grupa grupa) => grupa switch
     {
-        Grupa.Hladjenje => "Matična ploča ovog računara ne daje ventilatore ni svoje temperature: LibreHardwareMonitor " +
-                           "ne prepoznaje njen Super I/O čip. Ventilator grafičke karte je na kanalu GPU.",
+        Grupa.Hladjenje => "Matična ploča ovog računara ne daje ventilatore ni svoje temperature ni uz potpuni nadzor " +
+                           "(čip za ventilatore nije prepoznat ili nijedan ventilator nije priključen na ploču). " +
+                           "Ventilator grafičke karte je na kanalu GPU.",
         Grupa.Diskovi => "Nijedan disk ne daje temperaturu ni SMART (npr. diskovi preko nekih USB kućišta ili RAID-a).",
         _ => "Ovaj deo računara ne daje senzore ni uz potpuni nadzor.",
     };

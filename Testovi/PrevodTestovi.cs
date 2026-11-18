@@ -30,6 +30,15 @@ public static class PrevodTestovi
 
         Proveri.Jednako("Ventilator 2", LhmIzvor.Prevedi(Grupa.Hladjenje, "Fan #2", Jedinica.Obrtaj), "ventilator 2");
         Proveri.Jednako("Temperatura 1", LhmIzvor.Prevedi(Grupa.Hladjenje, "Temperature #1", Jedinica.Celzijus), "temperatura 1");
+        Proveri.Jednako("Napon procesora (ploča)", LhmIzvor.Prevedi(Grupa.Hladjenje, "Vcore", Jedinica.Volt), "Vcore sa ploče");
+        Proveri.Jednako("Baterija CMOS-a", LhmIzvor.Prevedi(Grupa.Hladjenje, "CMOS Battery", Jedinica.Volt), "baterija");
+        Proveri.Jednako("Temperatura CCD1", LhmIzvor.Prevedi(Grupa.Procesor, "CCD1 (Tdie)", Jedinica.Celzijus), "Ryzen CCD");
+        Proveri.Jednako("Takt magistrale", LhmIzvor.Prevedi(Grupa.Procesor, "Bus Speed", Jedinica.Megaherc), "magistrala");
+
+        // A numbered board temperature has no warm/hot marks: it may be an empty input reading 87 °C.
+        var plocaTemp = new Takt.Vm.SenzorVm(new Senzor(new SenzorKljuc(Grupa.Hladjenje, "Ploča", "Temperatura 3"), Jedinica.Celzijus), 0, new Prsten(2));
+        plocaTemp.Osvezi(87, 87, 87);
+        Proveri.Jednako("", plocaTemp.Nivo, "neimenovana temperatura ploče se ne boji");
         Proveri.Jednako("Životni vek", LhmIzvor.Prevedi(Grupa.Diskovi, "Remaining Life", Jedinica.Procenat), "životni vek");
         Proveri.Jednako("Temperatura", LhmIzvor.Prevedi(Grupa.Diskovi, "Composite Temperature", Jedinica.Celzijus), "NVMe temperatura");
         Proveri.Jednako("Temperatura senzora 2", LhmIzvor.Prevedi(Grupa.Diskovi, "Temperature #2", Jedinica.Celzijus), "NVMe senzor");

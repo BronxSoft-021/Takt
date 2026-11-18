@@ -143,7 +143,11 @@ public sealed class KanalVm : ObservableObject
     public string Uredjaj => _izabraniPodkanal?.Uredjaj ?? _uredjaj;
 
     /// <summary>The small line under the name: "Ryzen 5 5600", or "6 diskova" for the group.</summary>
-    public string Kratko => JeGrupa ? BrojDiskova(Podkanali.Count) : Skrati(_uredjaj);
+    public string Kratko => JeGrupa ? BrojDiskova(Podkanali.Count)
+        // The board's sensors come as "ASUS TUF GAMING B550-PLUS WIFI II › Nuvoton NCT6798D": far too wide for a
+        // strip. The full name stays in the tool tip and the solo panel.
+        : _uredjaj.Contains('›') ? "Matična ploča"
+        : Skrati(_uredjaj);
 
     /// <summary>The sensors in the solo panel; for the disk group, those of the chosen disk.</summary>
     public EkranVm Detalj
@@ -403,7 +407,9 @@ public sealed class KanalVm : ObservableObject
     /// for all the disks and one for the fans. A part with no sensors still gets its strip (pale), so the console
     /// always shows where disks and fans would be once full monitoring is on.
     /// </summary>
-    public static List<KanalVm> Napravi(IReadOnlyList<SenzorVm> sviSenzori)
+    /// <param name="prvi">The first reading, if there is one: the fan strip then takes fans that turn, not the
+    /// empty headers a board also reports (0 rpm).</param>
+    public static List<KanalVm> Napravi(IReadOnlyList<SenzorVm> sviSenzori, Snimak? prvi = null)
     {
         var kanali = new List<KanalVm>();
 
@@ -446,7 +452,9 @@ public sealed class KanalVm : ObservableObject
 
         // Fans live on the board and on the cards; the strip shows the first two the board gives.
         var ventilatori = sviSenzori.Where(s => s.Senzor.Grupa == Grupa.Hladjenje).ToList();
-        var obrtaji = ventilatori.Where(s => s.Senzor.Jedinica == Jedinica.Obrtaj).ToList();
+        var obrtaji = ventilatori.Where(s => s.Senzor.Jedinica == Jedinica.Obrtaj)
+            .OrderBy(s => prvi?.Ovo(s.Indeks) is > 0 ? 0 : 1)   // stable: among the turning ones, the board's order
+            .ToList();
         kanali.Add(new KanalVm($"{Grupa.Hladjenje}|", "Vent.",
             ventilatori.Select(s => s.Uredjaj).FirstOrDefault() ?? "Hlađenje",
             new EkranVm(Grupa.Hladjenje, ventilatori),
