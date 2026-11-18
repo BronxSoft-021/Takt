@@ -15,6 +15,8 @@ public sealed class IgraVm : ObservableObject
     private bool _aktivna;
     private string _ime = "";
     private string? _putanja;
+    private int _pid = -1;
+    private string _proces = "";
     private ImageSource? _ikona;
     private double? _fps, _low1, _frametime;
     private int _tik;
@@ -97,8 +99,13 @@ public sealed class IgraVm : ObservableObject
             return;
         }
 
-        if (!Aktivna || igra.Putanja != _putanja || igra.Ime != Ime)
+        // The same game is the same process: compared by pid and the raw process name. Comparing the raw name
+        // with the shortened one ("SWGR-Win64-Shipping" against "SWGR") made every reading look like a new game,
+        // and the chart was wiped every second (first real game, 18. 11. 2026).
+        if (!Aktivna || igra.Pid != _pid || igra.Ime != _proces)
         {
+            _pid = igra.Pid;
+            _proces = igra.Ime;
             _putanja = igra.Putanja;
             Ime = LepoIme(igra.Ime);
             Ikona = Slicica(igra.Putanja);

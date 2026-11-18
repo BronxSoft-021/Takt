@@ -234,7 +234,7 @@ public sealed class KanalVm : ObservableObject
             if (Prazan) return DrugiTekst;
 
             if (Jezgra.Where(j => j.Broj is not null).MaxBy(j => j.Broj) is { } jezgro)
-                return $"{jezgro.Ime.Replace("Opterećenje ", "")}: {jezgro.Vrednost}";
+                return $"{ImeJezgra(jezgro.Ime)}: {jezgro.Vrednost}";
 
             if (Detalj.Grupa == Grupa.Grafika && Detalj.Senzori.FirstOrDefault(s => s.Ime == "VRAM zauzeto") is { Broj: not null } vram)
                 return $"{Desni?.Senzor.Vrednost ?? ""} · VRAM {vram.Vrednost}".TrimStart(' ', '·');
@@ -393,6 +393,10 @@ public sealed class KanalVm : ObservableObject
             ime = ime.Replace(deo, "", StringComparison.OrdinalIgnoreCase);
         return ime.Trim();
     }
+
+    /// <summary>"Opterećenje jezgra 6" → "jezgro 6": the sensor's name is in the genitive, a label is not.</summary>
+    public static string ImeJezgra(string imeSenzora) =>
+        imeSenzora.Replace("Opterećenje jezgra ", "jezgro ").Replace("Opterećenje ", "");
 
     public static string BrojDiskova(int n) => n switch
     {

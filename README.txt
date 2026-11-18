@@ -1,4 +1,15 @@
-﻿BronxSoft Takt 0.33.43 alfa
+﻿BronxSoft Takt 0.33.45 alfa
+18. 11. 2026.
+
+Posle prve prave igre.
+
+DORADE
+- Grafikon najduzeg kadra u Sceni raste dok igra traje (brisao se svake sekunde), a ikonica igre se
+  ne cita iznova svake sekunde.
+- Ispod CPU kanala pise "jezgro 6: 74 %" umesto "jezgra 6", isto u izvestaju sesije.
+
+
+BronxSoft Takt 0.33.43 alfa
 18. 11. 2026.
 
 Ventilatori matične ploče.

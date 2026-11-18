@@ -50,6 +50,14 @@ public static class IgreTestovi
         Proveri.Jednako(null, birac.Izaberi([takt], 20, _ => false)?.Pid, "kad igra prestane da crta, nema igre");
 
         Proveri.Jednako("Hellblade2", IgraVm.LepoIme("Hellblade2-Win64-Shipping"), "ime bez repa endžina");
+
+        // First real game (18. 11. 2026): the shortened name was compared with the raw one, so every reading looked
+        // like a new game and the frame chart held one point. Five readings of one game must leave five points.
+        var vm = new IgraVm();
+        for (int i = 0; i < 5; i++) vm.Postavi(igra with { NajviseMs = 20 + i });
+        Proveri.Jednako(5, vm.Frametime.Broj, "grafikon kadrova raste dok igra traje");
+
+        Proveri.Jednako("jezgro 6", KanalVm.ImeJezgra("Opterećenje jezgra 6"), "natpis jezgra u nominativu");
         return Task.CompletedTask;
     }
 

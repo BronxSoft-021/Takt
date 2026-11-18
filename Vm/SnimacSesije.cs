@@ -132,7 +132,7 @@ public sealed class SnimacSesije : ObservableObject
                     if (kanal.Desni?.Senzor.Broj is { } c && (_najCpu is null || c > _najCpu)) { _najCpu = c; _najCpuKada = sada; }
                     if (kanal.Jezgra.Where(j => j.Broj is not null).MaxBy(j => j.Broj) is { Broj: { } p } jezgro)
                     {
-                        if (p > _najJezgroProcenat) { _najJezgroProcenat = p; _najJezgro = jezgro.Ime.Replace("Opterećenje ", ""); }
+                        if (p > _najJezgroProcenat) { _najJezgroProcenat = p; _najJezgro = KanalVm.ImeJezgra(jezgro.Ime); }
                         if (p >= 99) _jezgroNa100++;
                     }
                     break;

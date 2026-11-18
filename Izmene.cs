@@ -24,6 +24,13 @@ public static class Izmene
         [
         ],
         [
+            "Grafikon najdužeg kadra u Sceni sada raste dok igra traje (prvi put sa pravom igrom brisao se svake sekunde, pa je imao jednu tačku), a ikonica igre se ne čita iznova svake sekunde.",
+            "Ispod CPU kanala piše „jezgro 6: 74 %“ umesto „jezgra 6“, i isto u izveštaju sesije.",
+        ]),
+        new("alfa", "18. 11. 2026.",
+        [
+        ],
+        [
             "Ventilatori i temperature matične ploče se sada vide (npr. 7 ventilatora na ASUS TUF B550): Takt je tražio spisak senzora pre prvog čitanja, a ploča ih prijavi tek posle njega.",
             "Kanal „Vent.“ uzima ventilatore koji se okreću (ne prazne priključke od 0 o/min) i pod imenom piše „Matična ploča“ umesto dugačkog imena čipa.",
             "Neimenovane temperature ploče („Temperatura 3“) se ne boje žuto ni crveno i ne pale lampicu: neprikačen ulaz često pokazuje 80-90 °C.",
