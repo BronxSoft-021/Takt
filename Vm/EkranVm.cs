@@ -1,0 +1,108 @@
+using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Windows.Data;
+using System.Windows.Media;
+using CommunityToolkit.Mvvm.ComponentModel;
+using Takt.Merenje;
+
+namespace Takt.Vm;
+
+/// <summary>One screen: the sensors of one group and the one whose chart is open.</summary>
+public sealed class EkranVm : ObservableObject
+{
+    private SenzorVm? _izabran;
+    private bool _sviSenzori;
+    private bool _prviUzorak;
+
+    public EkranVm(Grupa grupa, IEnumerable<SenzorVm> senzori)
+    {
+        Grupa = grupa;
+        Senzori = new ObservableCollection<SenzorVm>(senzori);
+        _izabran = Senzori.FirstOrDefault();
+
+        // The list is grouped under small headings (Temperature, Takt…) and, once some sensors have a value,
+        // leaves out the ones that never had one. They are one click away, never deleted.
+        var pogled = new ListCollectionView(Senzori) { Filter = Prikazati };
+        pogled.GroupDescriptions.Add(new PropertyGroupDescription(nameof(SenzorVm.Vrsta)));
+        Pogled = pogled;
+
+        Ikona = Geometry.Parse(GrupaOpis.Ikona(grupa));
+        Ikona.Freeze();
+    }
+
+    public Grupa Grupa { get; }
+    public string Naslov => GrupaOpis.Naslov(Grupa);
+    public string Opis => GrupaOpis.Opis(Grupa);
+    public Geometry Ikona { get; }
+    public ObservableCollection<SenzorVm> Senzori { get; }
+
+    /// <summary>What the list shows: <see cref="Senzori"/> grouped by kind, without the silent ones.</summary>
+    public ICollectionView Pogled { get; }
+
+    public SenzorVm? Izabran
+    {
+        get => _izabran;
+        set => SetProperty(ref _izabran, value);
+    }
+
+    public bool Prazan => Senzori.Count == 0;
+
+    public string PorukaPrazno => GrupaOpis.Prazno(Grupa);
+
+    public string BrojSenzora => Senzori.Count.ToString();
+
+    /// <summary>Sensors that have not given a single number yet (no driver, or the part has no such sensor).</summary>
+    public int BezVrednosti => Senzori.Count(s => !s.ImaloVrednost);
+
+    /// <summary>True when the switch under the list makes sense: some sensors speak and some do not.</summary>
+    public bool ImaSkrivenih => BezVrednosti > 0 && BezVrednosti < Senzori.Count;
+
+    public bool SviSenzori
+    {
+        get => _sviSenzori;
+        set
+        {
+            if (!SetProperty(ref _sviSenzori, value)) return;
+            Pogled.Refresh();
+            OnPropertyChanged(nameof(SkriveniTekst));
+        }
+    }
+
+    public string SkriveniTekst => SviSenzori
+        ? "Sakrij senzore bez vrednosti"
+        : $"Još {BezVrednosti} {(BezVrednosti % 10 == 1 && BezVrednosti % 100 != 11 ? "senzor" : "senzora")} bez vrednosti";
+
+    private bool Prikazati(object stavka) =>
+        _sviSenzori || stavka is not SenzorVm senzor || senzor.ImaloVrednost || Senzori.All(s => !s.ImaloVrednost);
+
+    public void Osvezi(Snimak snimak, double?[] najmanje, double?[] najvise)
+    {
+        int pre = BezVrednosti;
+
+        foreach (var senzor in Senzori)
+        {
+            senzor.Osvezi(
+                snimak.Ovo(senzor.Indeks),
+                senzor.Indeks < najmanje.Length ? najmanje[senzor.Indeks] : null,
+                senzor.Indeks < najvise.Length ? najvise[senzor.Indeks] : null);
+        }
+
+        // A sensor spoke for the first time (the helper started, a disk woke up): it joins the list.
+        if (BezVrednosti != pre)
+        {
+            var izabran = Izabran;
+            Pogled.Refresh();
+            Izabran = izabran;
+            OnPropertyChanged(nameof(BezVrednosti));
+            OnPropertyChanged(nameof(ImaSkrivenih));
+            OnPropertyChanged(nameof(SkriveniTekst));
+        }
+
+        // On the first reading, open the first sensor that actually has a value: "—" is a poor first impression
+        // when the screen has something to show. After that the choice is the user's.
+        if (_prviUzorak) return;
+        _prviUzorak = true;
+        if (Izabran?.Broj is null && Senzori.FirstOrDefault(s => s.Broj is not null) is { } prvi)
+            Izabran = prvi;
+    }
+}

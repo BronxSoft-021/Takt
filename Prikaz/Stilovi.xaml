@@ -1,0 +1,480 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:prikaz="clr-namespace:Takt.Prikaz">
+
+    <!-- Same family as the other BronxSoft programs: dark plate, orange accent. -->
+    <Color x:Key="BojaPozadina">#101214</Color>
+    <Color x:Key="BojaPanel">#15181B</Color>
+    <Color x:Key="BojaPovrsina">#1C2024</Color>
+    <Color x:Key="BojaPovrsinaHover">#242A2F</Color>
+    <Color x:Key="BojaLinija">#2A3035</Color>
+    <Color x:Key="BojaLinijaJaka">#3A4249</Color>
+    <Color x:Key="BojaTekst">#EDE9E1</Color>
+    <Color x:Key="BojaMutan">#A8A49C</Color>
+    <Color x:Key="BojaBled">#6E6B66</Color>
+    <Color x:Key="BojaAkcenat">#F0A23B</Color>
+    <Color x:Key="BojaAkcenatSvetao">#F7B65E</Color>
+    <Color x:Key="BojaAkcenatTaman">#D8871F</Color>
+    <Color x:Key="BojaNaAkcentu">#1B1206</Color>
+    <Color x:Key="BojaUpozorenje">#E8B33A</Color>
+    <Color x:Key="BojaVruce">#E5654C</Color>
+    <Color x:Key="BojaDobro">#6CC28A</Color>
+    <Color x:Key="BojaGrafikon">#121518</Color>
+    <Color x:Key="BojaIzabrano">#2C2416</Color>
+
+    <SolidColorBrush x:Key="Pozadina" Color="{StaticResource BojaPozadina}" />
+    <SolidColorBrush x:Key="Panel" Color="{StaticResource BojaPanel}" />
+    <SolidColorBrush x:Key="Povrsina" Color="{StaticResource BojaPovrsina}" />
+    <SolidColorBrush x:Key="PovrsinaHover" Color="{StaticResource BojaPovrsinaHover}" />
+    <SolidColorBrush x:Key="Linija" Color="{StaticResource BojaLinija}" />
+    <SolidColorBrush x:Key="LinijaJaka" Color="{StaticResource BojaLinijaJaka}" />
+    <SolidColorBrush x:Key="Tekst" Color="{StaticResource BojaTekst}" />
+    <SolidColorBrush x:Key="Mutan" Color="{StaticResource BojaMutan}" />
+    <SolidColorBrush x:Key="Bled" Color="{StaticResource BojaBled}" />
+    <SolidColorBrush x:Key="Akcenat" Color="{StaticResource BojaAkcenat}" />
+    <SolidColorBrush x:Key="NaAkcentu" Color="{StaticResource BojaNaAkcentu}" />
+    <SolidColorBrush x:Key="Upozorenje" Color="{StaticResource BojaUpozorenje}" />
+    <SolidColorBrush x:Key="Vruce" Color="{StaticResource BojaVruce}" />
+    <SolidColorBrush x:Key="Dobro" Color="{StaticResource BojaDobro}" />
+    <SolidColorBrush x:Key="GrafikonPozadina" Color="{StaticResource BojaGrafikon}" />
+    <SolidColorBrush x:Key="Izabrano" Color="{StaticResource BojaIzabrano}" />
+
+    <!-- The main button: the same raised orange as the UnderGRAND pills. -->
+    <LinearGradientBrush x:Key="AkcenatPreliv" StartPoint="0,0" EndPoint="0,1">
+        <GradientStop Color="{StaticResource BojaAkcenatSvetao}" Offset="0" />
+        <GradientStop Color="{StaticResource BojaAkcenatTaman}" Offset="1" />
+    </LinearGradientBrush>
+    <LinearGradientBrush x:Key="TamnoPreliv" StartPoint="0,0" EndPoint="0,1">
+        <GradientStop Color="#272C31" Offset="0" />
+        <GradientStop Color="#1D2125" Offset="1" />
+    </LinearGradientBrush>
+
+    <!-- A card that sits a little above the background. -->
+    <DropShadowEffect x:Key="Senka" BlurRadius="18" ShadowDepth="3" Direction="270" Opacity="0.35" Color="#000000" />
+
+    <BooleanToVisibilityConverter x:Key="BoolUVidljivost" />
+    <prikaz:ObrnutaVidljivost x:Key="BoolUNevidljivost" />
+
+    <FontFamily x:Key="Pismo">Segoe UI Variable Text, Segoe UI</FontFamily>
+    <FontFamily x:Key="PismoNaslov">Segoe UI Variable Display, Segoe UI</FontFamily>
+
+    <!-- ===== Text ===== -->
+    <Style x:Key="NaslovStrane" TargetType="TextBlock">
+        <Setter Property="FontFamily" Value="{StaticResource PismoNaslov}" />
+        <Setter Property="FontSize" Value="24" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="Foreground" Value="{StaticResource Tekst}" />
+        <Setter Property="TextTrimming" Value="CharacterEllipsis" />
+    </Style>
+
+    <Style x:Key="OpisStrane" TargetType="TextBlock">
+        <Setter Property="FontSize" Value="12.5" />
+        <Setter Property="Foreground" Value="{StaticResource Mutan}" />
+        <Setter Property="TextWrapping" Value="Wrap" />
+    </Style>
+
+    <Style x:Key="NaslovSekcije" TargetType="TextBlock">
+        <Setter Property="FontSize" Value="10.5" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="Foreground" Value="{StaticResource Bled}" />
+    </Style>
+
+    <Style x:Key="MaliNatpis" TargetType="TextBlock">
+        <Setter Property="FontSize" Value="10" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="Foreground" Value="{StaticResource Bled}" />
+    </Style>
+
+    <!-- Numbers: the display face with tabular figures, so a changing value does not wiggle. -->
+    <Style x:Key="Broj" TargetType="TextBlock">
+        <Setter Property="FontFamily" Value="{StaticResource PismoNaslov}" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="Foreground" Value="{StaticResource Tekst}" />
+        <Setter Property="Typography.NumeralAlignment" Value="Tabular" />
+    </Style>
+
+    <!-- A number that turns amber when warm and red when hot (DataContext is a SenzorVm). -->
+    <Style x:Key="BrojNivo" TargetType="TextBlock" BasedOn="{StaticResource Broj}">
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding Nivo}" Value="toplo">
+                <Setter Property="Foreground" Value="{StaticResource Upozorenje}" />
+            </DataTrigger>
+            <DataTrigger Binding="{Binding Nivo}" Value="vruce">
+                <Setter Property="Foreground" Value="{StaticResource Vruce}" />
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+
+    <!-- ===== Boxes ===== -->
+    <Style x:Key="Kartica" TargetType="Border">
+        <Setter Property="Background" Value="{StaticResource Povrsina}" />
+        <Setter Property="BorderBrush" Value="{StaticResource Linija}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="CornerRadius" Value="14" />
+    </Style>
+
+    <!-- A small box with one figure: smallest, average, now, largest. -->
+    <Style x:Key="Brojka" TargetType="Border">
+        <Setter Property="Background" Value="{StaticResource Panel}" />
+        <Setter Property="BorderBrush" Value="{StaticResource Linija}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="CornerRadius" Value="10" />
+        <Setter Property="Padding" Value="12,8" />
+    </Style>
+
+    <!-- A tile in the strip at the top: one big number, one small line, click opens the screen. -->
+    <Style x:Key="Plocica" TargetType="Button">
+        <Setter Property="Background" Value="{StaticResource Povrsina}" />
+        <Setter Property="BorderBrush" Value="{StaticResource Linija}" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+        <Setter Property="VerticalContentAlignment" Value="Stretch" />
+        <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border x:Name="Okvir" Background="{TemplateBinding Background}" CornerRadius="14"
+                            BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="1" Padding="16,13,16,10">
+                        <ContentPresenter />
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Okvir" Property="BorderBrush" Value="{StaticResource LinijaJaka}" />
+                            <Setter TargetName="Okvir" Property="Background" Value="{StaticResource PovrsinaHover}" />
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter TargetName="Okvir" Property="Opacity" Value="0.85" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- ===== Buttons: raised pills, a press moves them down two pixels ===== -->
+    <Style x:Key="Dugme" TargetType="Button">
+        <Setter Property="Background" Value="{StaticResource AkcenatPreliv}" />
+        <Setter Property="BorderBrush" Value="#B86F14" />
+        <Setter Property="Foreground" Value="{StaticResource NaAkcentu}" />
+        <Setter Property="FontSize" Value="12.5" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="Padding" Value="16,7" />
+        <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Grid x:Name="Telo" Margin="0,0,0,3">
+                        <Border x:Name="Senka" CornerRadius="999" Background="#000000" Opacity="0.45"
+                                Margin="0,3,0,-3" />
+                        <Border x:Name="Okvir" Background="{TemplateBinding Background}" CornerRadius="999"
+                                BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="1"
+                                Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Okvir" Property="Opacity" Value="0.92" />
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter TargetName="Telo" Property="RenderTransform">
+                                <Setter.Value>
+                                    <TranslateTransform Y="2" />
+                                </Setter.Value>
+                            </Setter>
+                            <Setter TargetName="Senka" Property="Margin" Value="0,1,0,-1" />
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter TargetName="Telo" Property="Opacity" Value="0.45" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="DugmeTamno" TargetType="Button" BasedOn="{StaticResource Dugme}">
+        <Setter Property="Background" Value="{StaticResource TamnoPreliv}" />
+        <Setter Property="BorderBrush" Value="{StaticResource LinijaJaka}" />
+        <Setter Property="Foreground" Value="{StaticResource Tekst}" />
+    </Style>
+
+    <!-- A quiet text button: "Još 25 senzora bez vrednosti". -->
+    <Style x:Key="Veza" TargetType="Button">
+        <Setter Property="Foreground" Value="{StaticResource Mutan}" />
+        <Setter Property="FontSize" Value="11.5" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border x:Name="Okvir" Background="Transparent" CornerRadius="8" Padding="10,7">
+                        <ContentPresenter HorizontalAlignment="Left" />
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Okvir" Property="Background" Value="{StaticResource PovrsinaHover}" />
+                            <Setter Property="Foreground" Value="{StaticResource Tekst}" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- ===== Left navigation ===== -->
+    <Style x:Key="NavStavka" TargetType="ListBoxItem">
+        <Setter Property="Foreground" Value="{StaticResource Mutan}" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ListBoxItem">
+                    <Border x:Name="Okvir" Background="Transparent" CornerRadius="10" Margin="0,2">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="3" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Border x:Name="Traka" Grid.Column="0" Background="{StaticResource Akcenat}"
+                                    CornerRadius="2" Margin="0,9" Visibility="Collapsed" />
+                            <ContentPresenter Grid.Column="1" Margin="10,9,10,9" />
+                        </Grid>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Okvir" Property="Background" Value="{StaticResource Povrsina}" />
+                            <Setter Property="Foreground" Value="{StaticResource Tekst}" />
+                        </Trigger>
+                        <Trigger Property="IsSelected" Value="True">
+                            <Setter TargetName="Okvir" Property="Background" Value="{StaticResource PovrsinaHover}" />
+                            <Setter TargetName="Traka" Property="Visibility" Value="Visible" />
+                            <Setter Property="Foreground" Value="{StaticResource Tekst}" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- The settings entry at the bottom of the left column looks like a navigation row. -->
+    <Style x:Key="NavDugme" TargetType="Button">
+        <Setter Property="Foreground" Value="{StaticResource Mutan}" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border x:Name="Okvir" Background="Transparent" CornerRadius="10">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="3" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Border x:Name="Traka" Grid.Column="0" Background="{StaticResource Akcenat}"
+                                    CornerRadius="2" Margin="0,9" Visibility="Collapsed" />
+                            <ContentPresenter Grid.Column="1" Margin="10,9,10,9" />
+                        </Grid>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Okvir" Property="Background" Value="{StaticResource Povrsina}" />
+                            <Setter Property="Foreground" Value="{StaticResource Tekst}" />
+                        </Trigger>
+                        <DataTrigger Binding="{Binding PodesavanjaOtvorena}" Value="True">
+                            <Setter TargetName="Okvir" Property="Background" Value="{StaticResource PovrsinaHover}" />
+                            <Setter TargetName="Traka" Property="Visibility" Value="Visible" />
+                            <Setter Property="Foreground" Value="{StaticResource Tekst}" />
+                        </DataTrigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- ===== Rows of sensors ===== -->
+    <Style x:Key="RedStavka" TargetType="ListBoxItem">
+        <Setter Property="Foreground" Value="{StaticResource Tekst}" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ListBoxItem">
+                    <Border x:Name="Okvir" Background="Transparent" CornerRadius="9" Margin="0,1"
+                            BorderThickness="1" BorderBrush="Transparent" Padding="11,7,11,8">
+                        <ContentPresenter />
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Okvir" Property="Background" Value="{StaticResource PovrsinaHover}" />
+                        </Trigger>
+                        <Trigger Property="IsSelected" Value="True">
+                            <Setter TargetName="Okvir" Property="Background" Value="{StaticResource Izabrano}" />
+                            <Setter TargetName="Okvir" Property="BorderBrush" Value="#5A4524" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- Small choices, one click, no drop-down: 1 / 2 / 5 seconds and the like. -->
+    <Style x:Key="Pilula" TargetType="ListBoxItem">
+        <Setter Property="Foreground" Value="{StaticResource Mutan}" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ListBoxItem">
+                    <Border x:Name="Okvir" Background="{StaticResource Panel}" CornerRadius="999" MinWidth="40"
+                            BorderBrush="{StaticResource Linija}" BorderThickness="1" Padding="14,5" Margin="0,0,6,0">
+                        <ContentPresenter HorizontalAlignment="Center" />
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Okvir" Property="Background" Value="{StaticResource PovrsinaHover}" />
+                            <Setter Property="Foreground" Value="{StaticResource Tekst}" />
+                        </Trigger>
+                        <Trigger Property="IsSelected" Value="True">
+                            <Setter TargetName="Okvir" Property="Background" Value="{StaticResource Akcenat}" />
+                            <Setter TargetName="Okvir" Property="BorderBrush" Value="{StaticResource Akcenat}" />
+                            <Setter Property="Foreground" Value="{StaticResource NaAkcentu}" />
+                            <Setter Property="FontWeight" Value="SemiBold" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="Pilule" TargetType="ListBox">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="ItemContainerStyle" Value="{StaticResource Pilula}" />
+        <Setter Property="ItemsPanel">
+            <Setter.Value>
+                <ItemsPanelTemplate>
+                    <StackPanel Orientation="Horizontal" />
+                </ItemsPanelTemplate>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ListBox">
+                    <ItemsPresenter />
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- ===== Lists ===== -->
+    <Style x:Key="Spisak" TargetType="ListBox">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled" />
+        <Setter Property="ItemContainerStyle" Value="{StaticResource RedStavka}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ListBox">
+                    <ScrollViewer Focusable="False" Padding="{TemplateBinding Padding}">
+                        <ItemsPresenter />
+                    </ScrollViewer>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- ===== Check box (the Windows one is light and breaks the dark screen) ===== -->
+    <Style TargetType="CheckBox">
+        <Setter Property="Foreground" Value="{StaticResource Tekst}" />
+        <Setter Property="FontSize" Value="12.5" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="CheckBox">
+                    <StackPanel Orientation="Horizontal" Background="Transparent">
+                        <Border x:Name="Kutija" Width="17" Height="17" CornerRadius="5"
+                                Background="{StaticResource Panel}" BorderBrush="{StaticResource LinijaJaka}"
+                                BorderThickness="1" VerticalAlignment="Center">
+                            <Path x:Name="Kvacica" Data="M 3.5,8 L 6.5,11 L 12.5,4.5"
+                                  Stroke="{StaticResource NaAkcentu}" StrokeThickness="2"
+                                  StrokeStartLineCap="Round" StrokeEndLineCap="Round"
+                                  Visibility="Collapsed" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                        <ContentPresenter Margin="9,0,0,0" VerticalAlignment="Center" />
+                    </StackPanel>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsChecked" Value="True">
+                            <Setter TargetName="Kutija" Property="Background" Value="{StaticResource Akcenat}" />
+                            <Setter TargetName="Kutija" Property="BorderBrush" Value="{StaticResource Akcenat}" />
+                            <Setter TargetName="Kvacica" Property="Visibility" Value="Visible" />
+                        </Trigger>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Kutija" Property="BorderBrush" Value="{StaticResource Akcenat}" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- ===== Tool tip ===== -->
+    <Style TargetType="ToolTip">
+        <Setter Property="Background" Value="{StaticResource PovrsinaHover}" />
+        <Setter Property="Foreground" Value="{StaticResource Tekst}" />
+        <Setter Property="BorderBrush" Value="{StaticResource LinijaJaka}" />
+        <Setter Property="FontSize" Value="11.5" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ToolTip">
+                    <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="1" CornerRadius="8" Padding="10,6" MaxWidth="340">
+                        <ContentPresenter>
+                            <ContentPresenter.Resources>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="TextWrapping" Value="Wrap" />
+                                </Style>
+                            </ContentPresenter.Resources>
+                        </ContentPresenter>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- ===== Scroll bar: thin, dark, no arrows ===== -->
+    <Style TargetType="ScrollBar">
+        <Setter Property="Width" Value="10" />
+        <Setter Property="MinWidth" Value="10" />
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ScrollBar">
+                    <Grid Background="Transparent">
+                        <Track x:Name="PART_Track" IsDirectionReversed="True">
+                            <Track.Thumb>
+                                <Thumb>
+                                    <Thumb.Template>
+                                        <ControlTemplate TargetType="Thumb">
+                                            <Border x:Name="Klizac" Background="#343B41" CornerRadius="4" Margin="3,2" />
+                                            <ControlTemplate.Triggers>
+                                                <Trigger Property="IsMouseOver" Value="True">
+                                                    <Setter TargetName="Klizac" Property="Background" Value="#4A535B" />
+                                                </Trigger>
+                                            </ControlTemplate.Triggers>
+                                        </ControlTemplate>
+                                    </Thumb.Template>
+                                </Thumb>
+                            </Track.Thumb>
+                        </Track>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+</ResourceDictionary>

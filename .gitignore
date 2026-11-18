@@ -1,0 +1,16 @@
+bin/
+obj/
+publish/
+dist/
+slike*/
+popis.txt
+.vs/
+*.user
+*.suo
+*.db
+*.db-wal
+*.db-shm
+*.log
+.env
+CLAUDE.md
+START.txt

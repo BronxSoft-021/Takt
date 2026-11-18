@@ -1,0 +1,52 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0-windows10.0.19041.0</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <LangVersion>latest</LangVersion>
+    <AssemblyName>Takt</AssemblyName>
+    <RootNamespace>Takt</RootNamespace>
+    <PlatformTarget>x64</PlatformTarget>
+    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+    <SelfContained>false</SelfContained>
+    <!-- keep in step with the top entry of Izmene.cs (a test checks they match) -->
+    <Version>0.14.12</Version>
+    <InformationalVersion>0.14.12-alfa</InformationalVersion>
+    <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
+    <Product>BronxSoft Takt</Product>
+    <AssemblyTitle>BronxSoft Takt</AssemblyTitle>
+    <Company>BronxSoft</Company>
+    <Copyright>BronxSoft 2026</Copyright>
+    <ApplicationIcon>assets\app.ico</ApplicationIcon>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <SatelliteResourceLanguages>en</SatelliteResourceLanguages>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Testovi\**" />
+    <Page Remove="Testovi\**" />
+    <None Remove="Testovi\**" />
+    <EmbeddedResource Remove="Testovi\**" />
+    <Compile Remove="publish\**" />
+    <None Remove="publish\**" />
+    <Compile Remove="dist\**" />
+    <None Remove="dist\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" />
+    <PackageReference Include="LibreHardwareMonitorLib" Version="0.9.6" />
+    <PackageReference Include="Microsoft.Data.Sqlite" Version="10.0.14" />
+    <PackageReference Include="System.Management" Version="10.0.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Using Include="System.IO" />
+    <None Update="Licence.txt" CopyToOutputDirectory="PreserveNewest" />
+    <Resource Include="assets\app.ico" />
+  </ItemGroup>
+
+</Project>

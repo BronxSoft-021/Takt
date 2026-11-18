@@ -1,0 +1,137 @@
+using System.Diagnostics;
+using CommunityToolkit.Mvvm.ComponentModel;
+using Takt.Sistem;
+
+namespace Takt.Vm;
+
+/// <summary>
+/// The settings screen. The refresh rate and the number of days apply at once; the rest (history on or off,
+/// probe data) waits for the next start - opening the sensors twice in one run would mean two drivers.
+/// "Sačuvaj" writes everything to podesavanja.json.
+/// </summary>
+public sealed class PodesavanjaVm : ObservableObject
+{
+    private readonly Sistem.Podesavanja _podesavanja;
+    private readonly Func<bool> _obrisiIstoriju;
+    private readonly Action<int> _promeniOsvezavanje;
+    private string _poruka = "";
+    private bool _potvrdaBrisanja;
+
+    public PodesavanjaVm(Sistem.Podesavanja podesavanja, Func<bool> obrisiIstoriju, Action<int> promeniOsvezavanje)
+    {
+        _podesavanja = podesavanja;
+        _obrisiIstoriju = obrisiIstoriju;
+        _promeniOsvezavanje = promeniOsvezavanje;
+    }
+
+    public int[] OpcijeOsvezavanja { get; } = [1, 2, 5];
+    public int[] OpcijeDana { get; } = [1, 7, 30, 90];
+
+    public int Osvezavanje
+    {
+        get => _podesavanja.Osvezavanje;
+        set
+        {
+            if (_podesavanja.Osvezavanje == value) return;
+            _podesavanja.Osvezavanje = value;
+            _promeniOsvezavanje(value);
+            OnPropertyChanged();
+        }
+    }
+
+    public bool Istorija
+    {
+        get => _podesavanja.Istorija;
+        set
+        {
+            if (_podesavanja.Istorija == value) return;
+            _podesavanja.Istorija = value;
+            OnPropertyChanged();
+        }
+    }
+
+    public int IstorijaDana
+    {
+        get => _podesavanja.IstorijaDana;
+        set
+        {
+            if (_podesavanja.IstorijaDana == value) return;
+            _podesavanja.IstorijaDana = value;
+            OnPropertyChanged();
+        }
+    }
+
+    /// <summary>Made-up readings - for a look at the program, never a real measurement.</summary>
+    public bool ProbniPodaci
+    {
+        get => _podesavanja.ProbniPodaci;
+        set
+        {
+            if (_podesavanja.ProbniPodaci == value) return;
+            _podesavanja.ProbniPodaci = value;
+            OnPropertyChanged();
+        }
+    }
+
+    public string Poruka
+    {
+        get => _poruka;
+        private set => SetProperty(ref _poruka, value);
+    }
+
+    /// <summary>The first click on "Obriši istoriju" only asks; the second one deletes.</summary>
+    public bool PotvrdaBrisanja
+    {
+        get => _potvrdaBrisanja;
+        private set
+        {
+            if (!SetProperty(ref _potvrdaBrisanja, value)) return;
+            OnPropertyChanged(nameof(TekstBrisanja));
+        }
+    }
+
+    public string TekstBrisanja => PotvrdaBrisanja ? "Da, obriši sve" : "Obriši istoriju";
+
+    public string Folder => Putanje.Podaci;
+
+    public string Verzija => Izmene.Trenutna.Oznaka;
+
+    public string Prava => Admin.Stanje;
+
+    public IReadOnlyList<Unos> Istorijat => Izmene.Spisak;
+
+    public void Sacuvaj()
+    {
+        _podesavanja.Sacuvaj();
+        PotvrdaBrisanja = false;
+        Poruka = "Sačuvano. Osvežavanje i broj dana važe odmah, ostalo posle ponovnog pokretanja.";
+    }
+
+    public void OtvoriFolder()
+    {
+        PotvrdaBrisanja = false;
+        try
+        {
+            Directory.CreateDirectory(Putanje.Podaci);
+            Process.Start(new ProcessStartInfo("explorer.exe", $"\"{Putanje.Podaci}\"") { UseShellExecute = true });
+        }
+        catch (Exception ex)
+        {
+            Dnevnik.Greska("Otvaranje foldera podataka", ex);
+            Poruka = "Folder nije otvoren.";
+        }
+    }
+
+    public void ObrisiIstoriju()
+    {
+        if (!PotvrdaBrisanja)
+        {
+            PotvrdaBrisanja = true;
+            Poruka = "Brišu se sva sačuvana merenja iz baze, i to ne može da se vrati. Klikni još jednom za potvrdu.";
+            return;
+        }
+
+        PotvrdaBrisanja = false;
+        Poruka = _obrisiIstoriju() ? "Istorija je obrisana." : "Brisanje nije uspelo, razlog je u greske.log.";
+    }
+}
