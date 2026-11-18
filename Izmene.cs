@@ -22,6 +22,12 @@ public static class Izmene
     [
         new("alfa", "18. 11. 2026.",
         [
+        ],
+        [
+            "Svako pokretanje u `greske.log` ostavlja jednu liniju istine: „Izvor: Pravi senzori (pomoćnik), 129 senzora, stanje: Potpuni nadzor · pomoćnik, drajver: instaliran.“ — dovoljno da se prijava „nema temperature“ proveri bez nagađanja.",
+        ]),
+        new("alfa", "18. 11. 2026.",
+        [
             "Program zna da li je PawnIO drajver instaliran i to kaže: zaglavlje piše „…bez drajvera“ (žuto), a statusna traka objašnjava da temperatura procesora, potrošnja, napon i ventilatori traže drajver sa pawnio.eu — administrator sam tu ne pomaže.",
             "Podešavanja dobijaju odeljak „DRAJVER (PAWNIO)“ sa stanjem (instaliran / nije instaliran), objašnjenjem i dugmetom koje otvara pawnio.eu (samo na tvoj klik — program ništa ne otvara i ne šalje sam).",
         ],

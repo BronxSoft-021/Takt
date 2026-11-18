@@ -1,4 +1,12 @@
-﻿BronxSoft Takt 0.28.28 alfa
+﻿BronxSoft Takt 0.28.29 alfa
+18. 11. 2026.
+
+DORADE
+- Svako pokretanje u "greske.log" ostavlja jednu liniju istine: "Izvor: Pravi senzori (pomoćnik), 129
+  senzora, stanje: Potpuni nadzor · pomoćnik, drajver: instaliran." Dovoljno da se prijava "nema
+  temperature" proveri bez nagađanja.
+
+BronxSoft Takt 0.28.28 alfa
 18. 11. 2026.
 
 NOVO

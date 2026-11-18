@@ -370,6 +370,9 @@ public sealed class ProzorVm : ObservableObject, IDisposable
         OnPropertyChanged(nameof(DrajverStanje));
         OnPropertyChanged(nameof(DrajverFali));
 
+        // One line per run, so a report ("nema temperature") can be checked without guessing.
+        Dnevnik.Upisi($"Izvor: {izvor.Naziv}, {izvor.Senzori.Count} senzora, stanje: {Stanje}, drajver: {DrajverStanje}.");
+
         if (!izvor.Pravi)
         {
             Upozorenje = "Prikazani su probni podaci, ne stvarna merenja. U podešavanjima isključi „Probni podaci“.";
