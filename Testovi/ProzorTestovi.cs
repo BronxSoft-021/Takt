@@ -1,5 +1,6 @@
 using System.Windows;
 using Takt.Sistem;
+using Takt.Vm;
 
 namespace Takt.Testovi;
 
@@ -30,6 +31,27 @@ public static class ProzorTestovi
         Proveri.Jednako("\"C:\\Program Files\\BronxSoft Takt\\Takt.exe\" --u-traci",
             Pokretanje.Linija("C:\\Program Files\\BronxSoft Takt\\Takt.exe"),
             "putanja pod navodnicima i --u-traci");
+        return Task.CompletedTask;
+    }
+
+    /// <summary>
+    /// The tray menu opens the settings; opening them twice (or opening them and then clicking the menu again)
+    /// must not close them - that is what made the menu look like it opens the console.
+    /// </summary>
+    public static Task Podesavanja()
+    {
+        using var vm = new ProzorVm(System.Windows.Threading.Dispatcher.CurrentDispatcher, probno: true);
+
+        Proveri.Da(!vm.PodesavanjaOtvorena, "na startu su zatvorena");
+        vm.PrikaziPodesavanja();
+        Proveri.Da(vm.PodesavanjaOtvorena, "meni trake ih otvara");
+        vm.PrikaziPodesavanja();
+        Proveri.Da(vm.PodesavanjaOtvorena, "ponovni poziv iz menija ih ne zatvara");
+
+        vm.PreklopiPodesavanja();
+        Proveri.Da(!vm.PodesavanjaOtvorena, "dugme u zaglavlju ih zatvara");
+        vm.PreklopiPodesavanja();
+        Proveri.Da(vm.PodesavanjaOtvorena, "i ponovo otvara");
         return Task.CompletedTask;
     }
 }

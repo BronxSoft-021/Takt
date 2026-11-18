@@ -36,6 +36,7 @@ public static class Spisak
         ("pult: segmenti i skala temperature", PultTestovi.Segmenti),
         ("cev: pravi se i pušta klijenta", CevTestovi.PraviIPusta),
         ("prozor: sačuvano mesto se koristi samo ako je na ekranu", ProzorTestovi.Sredi),
+        ("prozor: podešavanja iz trake se ne zatvaraju drugim klikom", ProzorTestovi.Podesavanja),
         ("pokretanje: linija za Windows Run", ProzorTestovi.PokretanjeSaWindowsom),
         ("pokretanje: upis u Run, čitanje i brisanje", PokretanjeTest.UpisiProcitajObrisi),
         ("drajver: fajl ili upis u registru znače instaliran", PawnIoTest.Provera),

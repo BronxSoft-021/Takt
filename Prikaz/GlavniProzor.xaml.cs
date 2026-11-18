@@ -11,7 +11,7 @@ public partial class GlavniProzor : Window
 
     private ProzorVm? Vm => DataContext as ProzorVm;
 
-    private void NaPodesavanja(object sender, RoutedEventArgs e) => Vm?.PrikaziPodesavanja();
+    private void NaPodesavanja(object sender, RoutedEventArgs e) => Vm?.PreklopiPodesavanja();
 
     private void NaPomocnika(object sender, RoutedEventArgs e) => _ = Vm?.UkljuciPomocnikaAsync();
 

@@ -1,4 +1,14 @@
-﻿BronxSoft Takt 0.28.29 alfa
+﻿BronxSoft Takt 0.28.31 alfa
+18. 11. 2026.
+
+DORADE
+- "Podešavanja" iz menija ikonice više ne otvaraju program umesto podešavanja: prvi klik ih otvara, a svaki
+  sledeći ih ostavlja otvorena. (Ranije su se zatvarala i vraćala pult, jer je meni zvao isto dugme koje
+  radi kao preklopnik - dugme u zaglavlju i dalje otvara/zatvara.)
+- Pult koji se napravi posle otvaranja podešavanja ih više ne pretekne; posle pokretanja pomoćnika ostaješ
+  gde si bio - u podešavanjima ili u istom kanalu.
+
+BronxSoft Takt 0.28.29 alfa
 18. 11. 2026.
 
 DORADE

@@ -303,6 +303,7 @@ public sealed class ProzorVm : ObservableObject, IDisposable
     {
         var stari = _nadzor;
         string? soloKljuc = _kanal?.Kljuc;
+        bool jePodesavanja = Prikaz is PodesavanjaVm;
         _nadzor = null;
         _pomocnik = null;
         Prikaz = null;
@@ -314,9 +315,16 @@ public sealed class ProzorVm : ObservableObject, IDisposable
 
         await PokreniAsync(klijent);
 
-        // The same channel stays in solo after the helper brought more sensors.
-        if (soloKljuc is not null && Kanali.FirstOrDefault(k => k.Kljuc == soloKljuc) is { } isti)
+        // The user stays where he was: in the settings, or in the same channel after the helper brought more sensors.
+        if (jePodesavanja)
+        {
+            Kanal = null;
+            PrikaziPodesavanja();
+        }
+        else if (soloKljuc is not null && Kanali.FirstOrDefault(k => k.Kljuc == soloKljuc) is { } isti)
+        {
             Kanal = isti;
+        }
     }
 
     private void NapraviPult()
@@ -334,7 +342,10 @@ public sealed class ProzorVm : ObservableObject, IDisposable
             Kanali.Add(kanal);
         }
 
-        Kanal = Kanali.FirstOrDefault(k => !k.Prazan && !k.Utisan) ?? Kanali.FirstOrDefault();
+        // Building the console must not pull the user out of the settings: the tray can open them before the
+        // first reading, and then the pult would arrive a second later and replace them.
+        if (Prikaz is not Takt.Vm.PodesavanjaVm)
+            Kanal = Kanali.FirstOrDefault(k => !k.Prazan && !k.Utisan) ?? Kanali.FirstOrDefault();
     }
 
     /// <summary>M on a strip: the channel folds into a narrow band, and the choice is remembered.</summary>
@@ -429,18 +440,32 @@ public sealed class ProzorVm : ObservableObject, IDisposable
 
     private KanalVm? _prePodesavanja;
 
-    /// <summary>Opens the settings in place of the solo panel; the same button closes them and the channel returns.</summary>
+    /// <summary>
+    /// Opens the settings in place of the solo panel. A second call changes nothing: the tray menu calls this, and
+    /// clicking "Podešavanja" twice must not close them and show the console instead (it looked like the menu
+    /// opening the program).
+    /// </summary>
     public void PrikaziPodesavanja()
     {
-        if (Prikaz is PodesavanjaVm)
-        {
-            Kanal = _prePodesavanja ?? Kanali.FirstOrDefault(k => !k.Prazan) ?? Kanali.FirstOrDefault();
-            return;
-        }
+        if (Prikaz is PodesavanjaVm) return;
 
         _prePodesavanja = _kanal;
         Kanal = null;
         Prikaz = PodesavanjaVm;
+    }
+
+    /// <summary>The gear in the header: opens the settings, or closes them and brings the channel back.</summary>
+    public void PreklopiPodesavanja()
+    {
+        if (Prikaz is not Takt.Vm.PodesavanjaVm)
+        {
+            PrikaziPodesavanja();
+            return;
+        }
+
+        var nazad = _prePodesavanja ?? Kanali.FirstOrDefault(k => !k.Prazan) ?? Kanali.FirstOrDefault();
+        if (nazad is not null) Kanal = nazad;
+        else Prikaz = null;
     }
 
     private void PromeniOsvezavanje(int sekundi)

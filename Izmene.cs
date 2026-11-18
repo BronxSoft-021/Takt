@@ -24,6 +24,13 @@ public static class Izmene
         [
         ],
         [
+            "„Podešavanja“ iz menija ikonice više ne mogu da otvore program umesto podešavanja: prvi klik ih otvara, a svaki sledeći ih ostavlja otvorena (ranije su se zatvarala i vraćala pult, jer je meni zvao isto dugme koje radi kao preklopnik).",
+            "Pult koji se napravi posle otvaranja podešavanja ih više ne pretekne, a posle pokretanja pomoćnika ostaješ gde si bio — u podešavanjima ili u istom kanalu.",
+        ]),
+        new("alfa", "18. 11. 2026.",
+        [
+        ],
+        [
             "Svako pokretanje u `greske.log` ostavlja jednu liniju istine: „Izvor: Pravi senzori (pomoćnik), 129 senzora, stanje: Potpuni nadzor · pomoćnik, drajver: instaliran.“ — dovoljno da se prijava „nema temperature“ proveri bez nagađanja.",
         ]),
         new("alfa", "18. 11. 2026.",
