@@ -1,0 +1,2 @@
+# cmd.exe misreads labels (goto) in .bat files with Unix line endings: keep them CRLF everywhere.
+*.bat text eol=crlf
