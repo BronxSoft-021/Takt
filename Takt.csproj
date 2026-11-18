@@ -4,6 +4,9 @@
     <OutputType>WinExe</OutputType>
     <TargetFramework>net10.0-windows10.0.19041.0</TargetFramework>
     <UseWPF>true</UseWPF>
+    <!-- Only for the notify icon by the clock (NotifyIcon); the window itself is WPF. Its implicit usings are
+         removed below, or System.Windows.Forms and System.Drawing would clash with WPF's own types. -->
+    <UseWindowsForms>true</UseWindowsForms>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <LangVersion>latest</LangVersion>
@@ -13,8 +16,8 @@
     <RuntimeIdentifier>win-x64</RuntimeIdentifier>
     <SelfContained>false</SelfContained>
     <!-- keep in step with the top entry of Izmene.cs (a test checks they match) -->
-    <Version>0.24.25</Version>
-    <InformationalVersion>0.24.25-alfa</InformationalVersion>
+    <Version>0.26.26</Version>
+    <InformationalVersion>0.26.26-alfa</InformationalVersion>
     <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
     <Product>BronxSoft Takt</Product>
     <AssemblyTitle>BronxSoft Takt</AssemblyTitle>
@@ -47,6 +50,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <!-- WinForms je samo zbog ikonice u traci; njegovi implicitni usings bi se sudarili sa WPF tipovima. -->
+    <Using Remove="System.Windows.Forms" />
+    <Using Remove="System.Drawing" />
     <Using Include="System.IO" />
     <None Update="Licence.txt" CopyToOutputDirectory="PreserveNewest" />
     <Resource Include="assets\app.ico" />

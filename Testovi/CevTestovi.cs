@@ -16,9 +16,9 @@ public static class CevTestovi
         Proveri.Da(klijent.IsConnected, "klijent se povezao");
 
         // The server has to see the client too, or nobody could ever send anything.
-        var cekanje = cev.WaitForConnectionAsync();
+        var cekanje = cev!.WaitForConnectionAsync();
         Proveri.Da(cekanje is not null, "server čeka klijenta");
-        Proveri.Da(cekanje.Wait(TimeSpan.FromSeconds(2)), "server vidi klijenta");
+        Proveri.Da(cekanje!.Wait(TimeSpan.FromSeconds(2)), "server vidi klijenta");
         return Task.CompletedTask;
     }
 }

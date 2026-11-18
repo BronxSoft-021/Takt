@@ -22,6 +22,14 @@ public static class Izmene
     [
         new("alfa", "18. 11. 2026.",
         [
+            "Ikonica pored sata sa menijem (Otvori, Podešavanja, Izlaz); X skriva program u traku umesto da ga ugasi, a prvi put to i kaže balonom.",
+            "Pokretanje sa Windowsom (`Takt.exe --u-traci`, upis u HKCU Run bez administratora) i pamćenje položaja, veličine i maksimizovanog stanja prozora.",
+        ],
+        [
+            "Probni rad i slike ekrana (`--probno`, `--snimak`) ne diraju sačuvani položaj prozora ni korisnikova podešavanja.",
+        ]),
+        new("alfa", "18. 11. 2026.",
+        [
             "Usluga `TaktSluzba`: Windows servis koji čita senzore kao administrator, puni istoriju i kad je prozor zatvoren, i služi prozor preko iste cevi — jedna instalacija, jedan UAC, bez pitanja pred svaku igru.",
             "Instalacija i uklanjanje jednom komandom (`TaktSluzba.exe --instaliraj` / `--ukloni`), bez dodatnog instalatera; `--konzola` radi isto što i usluga, u konzoli.",
         ],

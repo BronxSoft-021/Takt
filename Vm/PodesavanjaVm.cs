@@ -73,6 +73,41 @@ public sealed class PodesavanjaVm : ObservableObject
         }
     }
 
+    /// <summary>X hides the program to the tray instead of closing it. Takes effect at once.</summary>
+    public bool ZatvoriUTraku
+    {
+        get => _podesavanja.ZatvoriUTraku;
+        set
+        {
+            if (_podesavanja.ZatvoriUTraku == value) return;
+            _podesavanja.ZatvoriUTraku = value;
+            OnPropertyChanged();
+        }
+    }
+
+    /// <summary>Start with Windows, in the tray. Written into the registry at once (HKCU, no administrator).</summary>
+    public bool PokreniSaWindowsom
+    {
+        get => _podesavanja.PokreniSaWindowsom;
+        set
+        {
+            if (_podesavanja.PokreniSaWindowsom == value) return;
+
+            bool uspelo = value ? Pokretanje.Ukljuci() : Pokretanje.Iskljuci();
+            if (!uspelo)
+            {
+                Poruka = "Windows nije prihvatio upis; pokušaj ponovo ili proveri zaštitu.";
+                OnPropertyChanged();
+                return;
+            }
+
+            _podesavanja.PokreniSaWindowsom = value;
+            _podesavanja.Sacuvaj();
+            Poruka = value ? "Takt će se pokretati sa Windowsom, u traci." : "Takt se više ne pokreće sa Windowsom.";
+            OnPropertyChanged();
+        }
+    }
+
     public string Poruka
     {
         get => _poruka;

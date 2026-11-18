@@ -57,6 +57,16 @@
                     <TextBlock Text="Istorija i probni podaci važe posle ponovnog pokretanja programa."
                                Foreground="{StaticResource Bled}" FontSize="11" Margin="0,7,0,0" />
 
+                    <Border Height="1" Background="{StaticResource Linija}" Margin="0,18,0,16" />
+
+                    <TextBlock Style="{StaticResource NaslovSekcije}" Text="PROZOR I TRAKA" />
+                    <CheckBox Content="Zatvori u traku umesto gašenja (X)" IsChecked="{Binding ZatvoriUTraku}"
+                              Margin="0,9,0,0" />
+                    <CheckBox Content="Pokreni sa Windowsom, u traci (bez prozora)" IsChecked="{Binding PokreniSaWindowsom}"
+                              Margin="0,8,0,0" />
+                    <TextBlock Text="Ikonica pored sata vraća prozor; bez nje se sakriveni prozor ne može vratiti. Ako traka ne uspe, X gasi program."
+                               Foreground="{StaticResource Bled}" FontSize="11" TextWrapping="Wrap" Margin="0,7,0,0" />
+
                     <WrapPanel Margin="0,18,0,0">
                         <Button Style="{StaticResource Dugme}" Content="Sačuvaj" Click="NaSacuvaj" Margin="0,0,8,0" />
                         <Button Style="{StaticResource DugmeTamno}" Content="Otvori folder" Click="NaFolder"

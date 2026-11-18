@@ -23,6 +23,24 @@ public sealed class Podesavanja
     /// <summary>Channels the user muted (M) on the console, by <c>KanalVm.Kljuc</c>.</summary>
     public List<string> Utisani { get; set; } = [];
 
+    // Where the window was: in DIPs, as WPF measures it. Zeroes mean "first run, use the built-in size".
+    public double ProzorLevo { get; set; }
+    public double ProzorGore { get; set; }
+    public double ProzorSirina { get; set; }
+    public double ProzorVisina { get; set; }
+
+    /// <summary>"Normal" or "Maximized"; a window is never restored minimized.</summary>
+    public string ProzorStanje { get; set; } = "Normal";
+
+    /// <summary>X hides the program to the tray instead of closing it. Off = X really closes it.</summary>
+    public bool ZatvoriUTraku { get; set; } = true;
+
+    /// <summary>Start with Windows, in the tray, with no window.</summary>
+    public bool PokreniSaWindowsom { get; set; }
+
+    /// <summary>True once the "still running in the tray" balloon has been shown.</summary>
+    public bool ObjasnjenoUTraci { get; set; }
+
     public static Podesavanja Ucitaj()
     {
         try

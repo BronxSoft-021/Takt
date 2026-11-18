@@ -1,3 +1,39 @@
+﻿BronxSoft Takt 0.26.26 alfa
+18. 11. 2026.
+
+NOVO
+- Ikonica pored sata: dvoklik otvara prozor, desni klik daje meni (Otvori Takt,
+  Podešavanja, Izlaz). X više ne gasi program nego ga sklanja u traku; prvi put
+  to i kaže balonom.
+- Pokretanje sa Windowsom (Podešavanja -> "Pokreni sa Windowsom, u traci"): upis
+  ide u tvoj deo registra, bez administratora. Tada se Takt diže samo kao ikonica
+  pored sata - prozor, senzori i pomoćnik se bude na prvi klik, pa pri podizanju
+  Windowsa nema pitanja za dozvolu.
+- Prozor pamti gde je bio: položaj, veličinu, maksimizovano stanje i ekran. Ako je
+  taj ekran u međuvremenu otkačen, prozor se otvara na glavnom, nikad van slike.
+
+DORADE
+- Mirno u traci: 16 MB i 0,00 % procesora (mereno 18. 11.); sa otvorenim prozorom
+  oko 4,5 % jednog jezgra.
+- Probni rad i slike ekrana ne diraju sačuvani položaj prozora ni podešavanja.
+
+KAKO SE PONAŠA
+  X            sklanja u traku (program i dalje meri)
+  meni -> Izlaz  stvarno gasi program
+  --u-traci    pokretanje bez prozora (tako ga diže Windows)
+
+Mereno na razvojnom računaru (Ryzen 5 5600, RX 6600, 63 senzora):
+- čitanje senzora: 14,3 ms (najviše AMD grafika), tj. 1,4 % jednog jezgra na 1 s;
+- pult (view modeli): 0,05 ms po otkucaju - nije problem;
+- upis 63 reda u bazu: 1,9 ms, jednom u minuti;
+- program sa otvorenim prozorom: 4,5 % jednog jezgra (oko 0,4 % mašine sa 12 niti).
+
+ZNAJ
+- Bez usluge ili pomoćnika se ne vide temperatura procesora, potrošnja, napon i ventilatori
+  — to traži drajver. Program tada prikazuje "—", nikad izmišljen broj, i piše šta nedostaje.
+- Pomoćnik živi dok je prozor otvoren (i kad je sklonjen u traku); usluga ostaje i puni
+  istoriju bez prozora.
+
 BronxSoft Takt 0.24.25 alfa
 18. 11. 2026.
 
@@ -17,18 +53,6 @@ DORADE
 KAKO SE USLUGA INSTALIRA (jednom, kao administrator)
   TaktSluzba.exe --instaliraj
   TaktSluzba.exe --ukloni
-
-Mereno na razvojnom računaru (Ryzen 5 5600, RX 6600, 63 senzora):
-- čitanje senzora: 14,3 ms (najviše AMD grafika), tj. 1,4 % jednog jezgra na 1 s;
-- pult (view modeli): 0,05 ms po otkucaju - nije problem;
-- upis 63 reda u bazu: 1,9 ms, jednom u minuti;
-- program u mirnom radu: 4,5 % jednog jezgra (oko 0,4 % mašine sa 12 niti).
-  Ostatak je WPF, ne naš kod; isti broj i kada je prozor minimizovan.
-
-ZNAJ
-- Bez usluge ili pomoćnika se ne vide temperatura procesora, potrošnja, napon i ventilatori
-  — to traži drajver. Program tada prikazuje "—", nikad izmišljen broj, i piše šta nedostaje.
-- Pomoćnik živi samo dok je prozor otvoren; usluga ostaje i puni istoriju bez prozora.
 
 BronxSoft Takt 0.22.23 alfa
 18. 11. 2026.
