@@ -19,18 +19,23 @@ public static class Protokol
     /// <summary>A sensor without its value: the helper sends this once, when the window connects.</summary>
     public sealed record Opis(string Grupa, string Uredjaj, string Ime, string Jedinica);
 
-    /// <summary>vrsta: "spisak", "uzorak" or "greska".</summary>
-    public sealed record Poruka(string Vrsta, Opis[]? Senzori, double?[]? Vrednosti, long Vreme, string? Greska);
+    /// <summary>vrsta: "spisak", "uzorak" or "greska". <paramref name="Izvor"/> says who serves: "usluga" or "pomocnik".</summary>
+    public sealed record Poruka(string Vrsta, Opis[]? Senzori, double?[]? Vrednosti, long Vreme, string? Greska,
+        string? Izvor = null);
 
     public const string SpisakVrsta = "spisak";
     public const string UzorakVrsta = "uzorak";
     public const string GreskaVrsta = "greska";
 
-    public static string Spisak(IReadOnlyList<Senzor> senzori) =>
+    /// <summary>Who serves: the service writes history itself, the helper leaves it to the window.</summary>
+    public const string Usluga = "usluga";
+    public const string Pomocnik = "pomocnik";
+
+    public static string Spisak(IReadOnlyList<Senzor> senzori, string izvor = Pomocnik) =>
         JsonSerializer.Serialize(
             new Poruka(SpisakVrsta,
                 senzori.Select(s => new Opis(s.Grupa.ToString(), s.Uredjaj, s.Ime, s.Jedinica.ToString())).ToArray(),
-                null, 0, null),
+                null, 0, null, izvor),
             Opcije);
 
     public static string Uzorak(Snimak snimak) =>

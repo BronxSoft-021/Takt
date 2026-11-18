@@ -22,6 +22,25 @@ public static class Izmene
     [
         new("alfa", "18. 11. 2026.",
         [
+            "Usluga `TaktSluzba`: Windows servis koji čita senzore kao administrator, puni istoriju i kad je prozor zatvoren, i služi prozor preko iste cevi — jedna instalacija, jedan UAC, bez pitanja pred svaku igru.",
+            "Instalacija i uklanjanje jednom komandom (`TaktSluzba.exe --instaliraj` / `--ukloni`), bez dodatnog instalatera; `--konzola` radi isto što i usluga, u konzoli.",
+        ],
+        [
+            "Prozor zna ko ga služi: „Potpuni nadzor · usluga“ u zaglavlju, i tada ne piše istoriju drugi put (to radi usluga).",
+            "Cev je zajednička za uslugu i pomoćnika, sa pravima koja puštaju običnog korisnika da čita (samo čitanje — Windows odbija upis na jednosmernu cev).",
+        ]),
+        new("alfa", "18. 11. 2026.",
+        [
+            "Dijagnostika `Testovi --meri`: koliko traje jedno čitanje senzora, jedan otkucaj pulta i jedan upis u bazu — broj za poređenje posle svake izmene.",
+        ],
+        [
+            "Tabela u solo panelu dobija obaveštenja na dve sekunde, a merači i grafikon na svaki otkucaj: promena teksta je najskuplja stvar u prozoru.",
+            "Grafikon i merači crtaju iz keša (zamrznute četke i olovke, pozadina segmenata jednom) umesto da prave nove svake sekunde.",
+            "Prazan kanal sada kaže „traži nadzor“ i u tooltipu objašnjava šta mu treba (ranije je stajalo samo „nadzor“).",
+            "LibreHardwareMonitorovi kontroleri su isključeni dok kontrola ventilatora ne bude urađena — njihove HID/serial niti vrte u prazno.",
+        ]),
+        new("alfa", "18. 11. 2026.",
+        [
             "Svi diskovi su jedan kanal na pultu, „Diskovi“, sa po jednim uskim meračem temperature za svaki disk i najtoplijim diskom ispod; u solo panelu se disk bira dugmićima Disk 1, Disk 2…",
         ],
         [

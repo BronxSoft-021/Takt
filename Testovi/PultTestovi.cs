@@ -127,4 +127,55 @@ public static class PultTestovi
         Proveri.Blizu(0.875, merac.Vruce ?? 0, 1e-9, "granica 90 °C na skali");
         return Task.CompletedTask;
     }
+
+    /// <summary>
+    /// The split that keeps the window cheap: a reading is taken silently, and the window is told separately.
+    /// Without it every sensor raised a dozen notifications per second, whether or not anyone was looking.
+    /// </summary>
+    public static Task TihoIPaObavesti()
+    {
+        var senzor = new SenzorVm(
+            new Senzor(new SenzorKljuc(Grupa.Procesor, "CPU", "Test"), Jedinica.Procenat), 0, new Prsten(4));
+
+        int promena = 0;
+        senzor.PropertyChanged += (_, _) => promena++;
+
+        senzor.Postavi(42, 0, 100);
+        Proveri.Jednako(0, promena, "Postavi ne diže obaveštenja");
+        Proveri.Jednako<double?>(42, senzor.Broj, "vrednost je ipak primljena");
+
+        senzor.Obavesti();
+        Proveri.Da(promena >= 10, $"Obavesti diže sve kolone (bilo {promena})");
+        Proveri.Jednako("42 %", senzor.Vrednost, "tekst je izračunat");
+        return Task.CompletedTask;
+    }
+
+    /// <summary>
+    /// The strip's number and the small line under it are on screen all the time; they must be fresh even when
+    /// the long table waits for its two seconds. Otherwise a channel would freeze the moment it is not selected.
+    /// </summary>
+    public static Task BezTabele()
+    {
+        using var izvor = new LazniIzvor();
+        var kanali = KanalVm.Napravi(Senzori(izvor));
+        var cpu = kanali[0];
+
+        int n = izvor.Senzori.Count;
+        var snimak = new Snimak(DateTime.Now, Enumerable.Repeat<double?>(50, n).ToArray());
+        var najmanje = Enumerable.Repeat<double?>(0, n).ToArray();
+        var najvise = Enumerable.Repeat<double?>(100, n).ToArray();
+
+        cpu.Osvezi(snimak, najmanje, najvise, DateTime.Now, obavestiTabelu: false);
+
+        Proveri.Jednako<double?>(50, cpu.Levi?.Senzor.Broj, "merač dobija vrednost i bez tabele");
+        Proveri.Jednako("50 %", cpu.Levi?.Senzor.Vrednost, "levi broj na traci je osvežen");
+        Proveri.Jednako("50,0 °C", cpu.DrugiTekst, "desni broj na traci je osvežen");
+
+        // The fan channel has two meters and one big number: the second fan must still be readable under it.
+        var vent = kanali[4];
+        vent.Osvezi(snimak, najmanje, najvise, DateTime.Now, obavestiTabelu: false);
+        Proveri.Da(!string.IsNullOrWhiteSpace(vent.DrugiTekst),
+            $"ventilatori: drugi broj ispod velikog (bilo: „{vent.DrugiTekst}“)");
+        return Task.CompletedTask;
+    }
 }

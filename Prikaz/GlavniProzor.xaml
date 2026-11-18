@@ -25,7 +25,7 @@
                 <!-- Open strip -->
                 <Border x:Name="Traka" MinWidth="78" CornerRadius="6" Background="{StaticResource Panel}"
                         BorderBrush="Transparent" BorderThickness="1" Padding="6,10,6,8" Cursor="Hand"
-                        MouseLeftButtonUp="NaKanal" ToolTip="{Binding Uredjaj}">
+                        MouseLeftButtonUp="NaKanal" ToolTip="{Binding OpisKanala}">
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
@@ -97,7 +97,7 @@
 
                 <!-- Muted strip: a narrow band with the name on its side -->
                 <Border x:Name="Uska" Width="30" CornerRadius="6" Background="{StaticResource Panel}" Padding="0,10,0,8"
-                        Visibility="Collapsed" ToolTip="{Binding Uredjaj}">
+                        Visibility="Collapsed" ToolTip="{Binding OpisKanala}">
                     <DockPanel>
                         <Button DockPanel.Dock="Bottom" Style="{StaticResource Taster}" Content="M" Tag="{Binding Utisan}"
                                 Click="NaUtisaj" ToolTip="Vrati kanal" HorizontalAlignment="Center" />

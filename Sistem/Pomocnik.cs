@@ -15,8 +15,6 @@ namespace Takt.Sistem;
 /// </summary>
 public static class Pomocnik
 {
-    public const string Cev = "BronxSoftTakt-pomocnik";
-
     /// <summary>Asks Windows for administrator rights and starts <c>Takt.exe --pomocnik &lt;our pid&gt;</c>.</summary>
     public static (bool Uspeh, string Poruka) Pokreni()
     {
@@ -56,7 +54,7 @@ public static class Pomocnik
     {
         try
         {
-            using var cev = NapraviCev();
+            using var cev = Cev.Napravi();
 
             // Nobody connected within half a minute: the program that asked for us is gone.
             if (!cev.WaitForConnectionAsync().Wait(TimeSpan.FromSeconds(30)))
@@ -100,28 +98,6 @@ public static class Pomocnik
             Dnevnik.Greska("Pomoćnik", ex);
             return 1;
         }
-    }
-
-    /// <summary>
-    /// The pipe with its rights written out instead of left to Windows' defaults: the user who started the
-    /// window may read it (the elevated helper runs as the same user, but its objects belong to the
-    /// Administrators group), administrators and the system may do anything, nobody else gets in.
-    /// </summary>
-    private static NamedPipeServerStream NapraviCev()
-    {
-        var prava = new PipeSecurity();
-        using (var ja = WindowsIdentity.GetCurrent())
-        {
-            if (ja.User is { } korisnik)
-                prava.AddAccessRule(new PipeAccessRule(korisnik, PipeAccessRights.ReadWrite, AccessControlType.Allow));
-        }
-        prava.AddAccessRule(new PipeAccessRule(new SecurityIdentifier(WellKnownSidType.BuiltinAdministratorsSid, null),
-            PipeAccessRights.FullControl, AccessControlType.Allow));
-        prava.AddAccessRule(new PipeAccessRule(new SecurityIdentifier(WellKnownSidType.LocalSystemSid, null),
-            PipeAccessRights.FullControl, AccessControlType.Allow));
-
-        return NamedPipeServerStreamAcl.Create(Cev, PipeDirection.Out, 1, PipeTransmissionMode.Byte,
-            PipeOptions.None, 0, 0, prava);
     }
 
     private static bool Ziv(int pid)

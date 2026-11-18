@@ -18,6 +18,40 @@ public sealed class Grafikon : FrameworkElement
     private static readonly CultureInfo Kultura = CultureInfo.GetCultureInfo("sr-Latn-RS");
     private static readonly Typeface Pismo = new("Segoe UI");
 
+    // Brushes and pens are frozen and shared: OnRender runs every second, and a new gradient each time is
+    // garbage for the collector and work for nothing.
+    private static readonly Color BojaAkcenta = Color.FromRgb(0xF0, 0xA2, 0x3B);
+    private static readonly Brush AkcenatCetka = Zamrzni(new SolidColorBrush(BojaAkcenta));
+    private static readonly Brush MrezaCetka = Zamrzni(new SolidColorBrush(Color.FromRgb(0x2E, 0x34, 0x39)));
+
+    private static readonly Pen Olovka = Zamrzni(new Pen(AkcenatCetka, 2.0)
+    {
+        LineJoin = PenLineJoin.Round,
+        StartLineCap = PenLineCap.Round,
+        EndLineCap = PenLineCap.Round,
+    });
+
+    private static readonly Pen OlovkaMreze = Zamrzni(new Pen(MrezaCetka, 1)
+    {
+        DashStyle = new DashStyle([3, 4], 0),
+    });
+
+    private static readonly LinearGradientBrush Ispuna = Zamrzni(new LinearGradientBrush(
+        Color.FromArgb(70, BojaAkcenta.R, BojaAkcenta.G, BojaAkcenta.B),
+        Color.FromArgb(0, BojaAkcenta.R, BojaAkcenta.G, BojaAkcenta.B),
+        new Point(0, 0), new Point(0, 1)));
+
+    private static readonly Pen OlovkaMisa = Zamrzni(new Pen(
+        new SolidColorBrush(Color.FromArgb(110, 0xED, 0xE9, 0xE1)), 1));
+
+    private static readonly Pen OlovkaTacke = Zamrzni(new Pen(AkcenatCetka, 2));
+
+    private static T Zamrzni<T>(T cetka) where T : Freezable
+    {
+        cetka.Freeze();
+        return cetka;
+    }
+
     public static readonly DependencyProperty PrstenProperty = DependencyProperty.Register(
         nameof(Prsten), typeof(Prsten), typeof(Grafikon),
         new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.AffectsRender));
@@ -100,7 +134,7 @@ public sealed class Grafikon : FrameworkElement
 
         var pozadina = Cetka("GrafikonPozadina", Color.FromRgb(0x14, 0x18, 0x1B));
         var linija = Cetka("Linija", Color.FromRgb(0x2E, 0x34, 0x39));
-        var akcenat = Cetka("Akcenat", Color.FromRgb(0xF0, 0xA2, 0x3B));
+        var akcenat = AkcenatCetka;
         var mutan = Cetka("Mutan", Color.FromRgb(0xA8, 0xA4, 0x9C));
 
         dc.DrawRoundedRectangle(pozadina, new Pen(linija, 1), new Rect(0.5, 0.5, sirina - 1, visina - 1), 12, 12);
@@ -167,7 +201,7 @@ public sealed class Grafikon : FrameworkElement
             : Math.Abs(najvise) >= 1024 ? 1024 : 1;
         bool uGb = delilac > 1;
 
-        var olovkaMreze = new Pen(linija, 1) { DashStyle = new DashStyle([3, 4], 0) };
+        var olovkaMreze = OlovkaMreze;
         for (int i = 0; i <= 4; i++)
         {
             double deo = i / 4.0;
@@ -182,10 +216,7 @@ public sealed class Grafikon : FrameworkElement
         }
 
         // The line, broken where readings are missing, with a soft fill under it.
-        var punjenje = new LinearGradientBrush(
-            Color.FromArgb(70, akcenat.Color.R, akcenat.Color.G, akcenat.Color.B),
-            Color.FromArgb(0, akcenat.Color.R, akcenat.Color.G, akcenat.Color.B),
-            new Point(0, 0), new Point(0, 1));
+        var punjenje = Ispuna;
 
         int red = 0;
         while (red < uzorci.Length)
@@ -234,12 +265,7 @@ public sealed class Grafikon : FrameworkElement
         }
         geometrija.Freeze();
 
-        var olovka = new Pen(akcenat, 2.0)
-        {
-            LineJoin = PenLineJoin.Round,
-            StartLineCap = PenLineCap.Round,
-            EndLineCap = PenLineCap.Round,
-        };
+        var olovka = Olovka;
         dc.DrawGeometry(null, olovka, geometrija);
 
         // The newest reading as a dot.
@@ -262,7 +288,7 @@ public sealed class Grafikon : FrameworkElement
             int indeks = (int)Math.Round(Math.Clamp((mis.X - levo) / korakX, 0, uzorci.Length - 1));
             double x = X(indeks);
 
-            var olovkaMisa = new Pen(new SolidColorBrush(Color.FromArgb(110, 0xED, 0xE9, 0xE1)), 1);
+            var olovkaMisa = OlovkaMisa;
             dc.DrawLine(olovkaMisa, new Point(Math.Round(x) + 0.5, gore), new Point(Math.Round(x) + 0.5, gore + visinaCrteza));
 
             string zaTo = uzorci[indeks] is { } v ? Format.Vrednost(v, Mera) : Format.Nema;
@@ -272,7 +298,7 @@ public sealed class Grafikon : FrameworkElement
             if (uzorci[indeks] is { } tackaVrednost)
             {
                 var tacka = new Point(x, Y(tackaVrednost));
-                dc.DrawEllipse(pozadina, new Pen(akcenat, 2), tacka, 4, 4);
+                dc.DrawEllipse(pozadina, OlovkaTacke, tacka, 4, 4);
             }
 
             var tekstVrednosti = Tekst(zaTo, 12, Cetka("Tekst", Color.FromRgb(0xED, 0xE9, 0xE1)), dpi);
@@ -293,6 +319,20 @@ public sealed class Grafikon : FrameworkElement
         }
     }
 
+    private readonly Dictionary<(string Tekst, double Velicina, double Dpi), FormattedText> _kesTeksta = [];
+
+    private FormattedText Tekst(string tekst, double velicina, Brush boja, double dpi)
+    {
+        var kljuc = (tekst, velicina, dpi);
+        if (_kesTeksta.TryGetValue(kljuc, out var gotov)) return gotov;
+
+        // The scale rarely moves, so the same seven labels come back every second: shaping them once is enough.
+        if (_kesTeksta.Count > 64) _kesTeksta.Clear();
+        var novi = new FormattedText(tekst, Kultura, FlowDirection.LeftToRight, Pismo, velicina, boja, dpi);
+        _kesTeksta[kljuc] = novi;
+        return novi;
+    }
+
     private SolidColorBrush Cetka(string kljuc, Color rezerva) =>
         TryFindResource(kljuc) as SolidColorBrush ?? new SolidColorBrush(rezerva);
 
@@ -306,7 +346,4 @@ public sealed class Grafikon : FrameworkElement
         double lep = odnos <= 1 ? 1 : odnos <= 2 ? 2 : odnos <= 5 ? 5 : 10;
         return lep * red;
     }
-
-    private static FormattedText Tekst(string tekst, double velicina, Brush boja, double dpi) =>
-        new(tekst, Kultura, FlowDirection.LeftToRight, Pismo, velicina, boja, dpi);
 }

@@ -1,3 +1,61 @@
+BronxSoft Takt 0.24.25 alfa
+18. 11. 2026.
+
+NOVO
+- Usluga "TaktSluzba": Windows servis koji čita senzore kao administrator, puni istoriju i
+  kada je prozor zatvoren, i služi prozor preko iste cevi. Jedna instalacija, jedan UAC,
+  bez pitanja pred svaku igru.
+- Instalacija i uklanjanje jednom komandom: "TaktSluzba.exe --instaliraj" i "--ukloni";
+  "--konzola" radi isto što i usluga, u konzoli (za proveru).
+
+DORADE
+- Prozor zna ko ga služi: "Potpuni nadzor · usluga" u zaglavlju, i tada ne piše istoriju
+  drugi put - to radi usluga.
+- Cev je zajednička za uslugu i pomoćnika, sa pravima koja puštaju običnog korisnika da
+  čita (samo čitanje - Windows odbija upis na jednosmernu cev).
+
+KAKO SE USLUGA INSTALIRA (jednom, kao administrator)
+  TaktSluzba.exe --instaliraj
+  TaktSluzba.exe --ukloni
+
+Mereno na razvojnom računaru (Ryzen 5 5600, RX 6600, 63 senzora):
+- čitanje senzora: 14,3 ms (najviše AMD grafika), tj. 1,4 % jednog jezgra na 1 s;
+- pult (view modeli): 0,05 ms po otkucaju - nije problem;
+- upis 63 reda u bazu: 1,9 ms, jednom u minuti;
+- program u mirnom radu: 4,5 % jednog jezgra (oko 0,4 % mašine sa 12 niti).
+  Ostatak je WPF, ne naš kod; isti broj i kada je prozor minimizovan.
+
+ZNAJ
+- Bez usluge ili pomoćnika se ne vide temperatura procesora, potrošnja, napon i ventilatori
+  — to traži drajver. Program tada prikazuje "—", nikad izmišljen broj, i piše šta nedostaje.
+- Pomoćnik živi samo dok je prozor otvoren; usluga ostaje i puni istoriju bez prozora.
+
+BronxSoft Takt 0.22.23 alfa
+18. 11. 2026.
+
+NOVO
+- Dijagnostika "Testovi --meri": koliko traje jedno čitanje senzora, jedan otkucaj pulta i
+  jedan upis u bazu. Broj za poređenje posle svake izmene.
+
+DORADE
+- Tabela u solo panelu dobija obaveštenja na dve sekunde, a merači i grafikon na svaki
+  otkucaj: promena teksta je najskuplja stvar u prozoru.
+- Grafikon i merači crtaju iz keša (zamrznute četke i olovke, pozadina segmenata jednom).
+- Prazan kanal kaže "traži nadzor" i u tooltipu objašnjava šta mu treba.
+- Kontroleri LibreHardwareMonitora su isključeni dok kontrola ventilatora ne bude urađena.
+
+Mereno na razvojnom računaru (Ryzen 5 5600, RX 6600, 63 senzora):
+- čitanje senzora: 14,3 ms (najviše AMD grafika), tj. 1,4 % jednog jezgra na 1 s;
+- pult (view modeli): 0,05 ms po otkucaju - nije problem;
+- upis 63 reda u bazu: 1,9 ms, jednom u minuti;
+- program u mirnom radu: 4,5 % jednog jezgra (oko 0,4 % mašine sa 12 niti).
+  Ostatak je WPF, ne naš kod; isti broj i kada je prozor minimizovan.
+
+ZNAJ
+- Bez pomoćnika se ne vide temperatura procesora, potrošnja, napon i ventilatori — to traži
+  drajver. Program tada prikazuje "—", nikad izmišljen broj, i piše šta nedostaje.
+- Pomoćnik živi samo dok je prozor otvoren; kada se prozor zatvori, on se sam ugasi.
+
 BronxSoft Takt 0.21.19 alfa
 18. 11. 2026.
 

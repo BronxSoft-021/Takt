@@ -149,26 +149,57 @@ public sealed class SenzorVm : ObservableObject
         return (80, 90);
     }
 
-    public void Osvezi(double? vrednost, double? najmanje, double? najvise)
+    /// <summary>
+    /// Takes the reading and works out the texts, but tells the window nothing. Called on every tick: the meters
+    /// and the chart read the numbers directly, so only the table needs a notification, and it can wait.
+    /// Returns true when the sensor spoke for the first time.
+    /// </summary>
+    public bool Postavi(double? vrednost, double? najmanje, double? najvise)
     {
-        Broj = vrednost;
+        bool novo = vrednost is not null && !_imaloVrednost;
+
+        _broj = vrednost;
         if (vrednost is { } v)
         {
-            ImaloVrednost = true;
+            _imaloVrednost = true;
             _zbir += v;
             _brojVrednosti++;
         }
 
-        Vrednost = Format.Vrednost(vrednost, Senzor.Jedinica);
-        Najmanje = Format.Vrednost(najmanje, Senzor.Jedinica);
-        Najvise = Format.Vrednost(najvise, Senzor.Jedinica);
-        Prosek = Format.Vrednost(_brojVrednosti > 0 ? _zbir / _brojVrednosti : null, Senzor.Jedinica);
+        _vrednost = Format.Vrednost(vrednost, Senzor.Jedinica);
+        _najmanje = Format.Vrednost(najmanje, Senzor.Jedinica);
+        _najvise = Format.Vrednost(najvise, Senzor.Jedinica);
+        _prosek = Format.Vrednost(_brojVrednosti > 0 ? _zbir / _brojVrednosti : null, Senzor.Jedinica);
 
+        return novo;
+    }
+
+    /// <summary>
+    /// Tells the window that this row changed. A changed text costs a text layout, so this is done when the
+    /// table is on screen (every two seconds), not on every reading. The strip's own numbers call it every tick.
+    /// </summary>
+    public void Obavesti()
+    {
+        OnPropertyChanged(nameof(Broj));
+        OnPropertyChanged(nameof(ImaloVrednost));
+        OnPropertyChanged(nameof(Vrednost));
+        OnPropertyChanged(nameof(Najmanje));
+        OnPropertyChanged(nameof(Najvise));
+        OnPropertyChanged(nameof(Prosek));
         OnPropertyChanged(nameof(BrojPrikaz));
         OnPropertyChanged(nameof(JedinicaPrikaz));
         OnPropertyChanged(nameof(Udeo));
         OnPropertyChanged(nameof(ImaUdeo));
         OnPropertyChanged(nameof(Nivo));
         Tik++;
+    }
+
+    /// <summary>Tells the chart to redraw without touching the table: one int, not eleven strings.</summary>
+    public void Tikni() => Tik++;
+
+    public void Osvezi(double? vrednost, double? najmanje, double? najvise)
+    {
+        Postavi(vrednost, najmanje, najvise);
+        Obavesti();
     }
 }

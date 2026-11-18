@@ -83,20 +83,23 @@ public sealed class EkranVm : ObservableObject
     private bool Prikazati(object stavka) =>
         _sviSenzori || stavka is not SenzorVm senzor || senzor.ImaloVrednost || Senzori.All(s => !s.ImaloVrednost);
 
-    public void Osvezi(Snimak snimak, double?[] najmanje, double?[] najvise)
+    public void Osvezi(Snimak snimak, double?[] najmanje, double?[] najvise, bool obavesti = true)
     {
         int pre = BezVrednosti;
+        bool novo = false;
 
         foreach (var senzor in Senzori)
         {
-            senzor.Osvezi(
+            novo |= senzor.Postavi(
                 snimak.Ovo(senzor.Indeks),
                 senzor.Indeks < najmanje.Length ? najmanje[senzor.Indeks] : null,
                 senzor.Indeks < najvise.Length ? najvise[senzor.Indeks] : null);
+
+            if (obavesti) senzor.Obavesti();
         }
 
         // A sensor spoke for the first time (the helper started, a disk woke up): it joins the list.
-        if (BezVrednosti != pre)
+        if (novo && BezVrednosti != pre)
         {
             var izabran = Izabran;
             Pogled.Refresh();
@@ -105,6 +108,9 @@ public sealed class EkranVm : ObservableObject
             OnPropertyChanged(nameof(ImaSkrivenih));
             OnPropertyChanged(nameof(SkriveniTekst));
         }
+
+        // The chart is on screen all the time: one int notification keeps it live while the table waits.
+        if (!obavesti && Izabran is { } tekuci) tekuci.Tikni();
 
         // On the first reading, open the first sensor that actually has a value: "—" is a poor first impression
         // when the screen has something to show. After that the choice is the user's.

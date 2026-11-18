@@ -1,4 +1,4 @@
-using Takt.Testovi;
+﻿using Takt.Testovi;
 
 Console.OutputEncoding = System.Text.Encoding.UTF8;
 
@@ -12,6 +12,10 @@ Spisak.Radni = radni;
 // What the real hardware says right now: Testovi --popis [fajl]. Run as administrator for the full list.
 if (args.Length >= 1 && args[0] == "--popis")
     return Popis.Senzora(args.Length >= 2 ? args[1] : Path.Combine(radni, "popis.txt"));
+
+// How long one reading takes: Testovi --meri [n]. The number to compare after a change.
+if (args.Length >= 1 && args[0] == "--meri")
+    return MerenjeSenzora.Pokreni(args.Length >= 2 && int.TryParse(args[1], out int merenja) ? merenja : 20);
 
 var filter = args.FirstOrDefault();
 int pali = 0, ukupno = 0;
@@ -34,3 +38,4 @@ foreach (var (ime, test) in Spisak.Svi)
 
 Console.WriteLine($"\n{ukupno - pali}/{ukupno} prošlo");
 return pali == 0 ? 0 : 1;
+

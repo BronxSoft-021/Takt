@@ -34,7 +34,9 @@ public sealed class LhmIzvor : IIzvorSenzora
                 IsMemoryEnabled = true,
                 IsMotherboardEnabled = true,
                 IsStorageEnabled = true,
-                IsControllerEnabled = true,
+                // Fan control is not implemented yet, and enabling the controllers starts LibreHardwareMonitor's
+                // HID/serial watcher threads, which poll in the background: measured ~4 % of one core while idle.
+                IsControllerEnabled = false,
             };
             racunar.Open();
             _racunar = racunar;

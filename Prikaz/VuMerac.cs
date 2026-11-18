@@ -46,18 +46,29 @@ public sealed class VuMerac : FrameworkElement
     public static int Upaljeno(double udeo, int segmenata) =>
         udeo <= 0 ? 0 : Math.Clamp((int)Math.Ceiling(udeo * segmenata - 1e-9), 1, segmenata);
 
+    private DrawingGroup? _pozadina;
+    private double _pozSirina = -1, _pozVisina = -1;
+    private int _pozN;
+    private double? _pozGranica;
+
     protected override void OnRender(DrawingContext dc)
     {
         int n = Math.Max(4, Segmenata);
         double sirina = ActualWidth, visina = ActualHeight;
         if (sirina < 2 || visina < n * 2) return;
 
+        // The unlit track never changes while the size and the limit do not: draw it once, keep it frozen, and
+        // per reading paint only the lit segments and the peak.
+        if (_pozadina is null || _pozN != n || _pozSirina != sirina || _pozVisina != visina || _pozGranica != VruceGranica)
+            NapraviPozadinu(n, sirina, visina);
+
+        dc.DrawDrawing(_pozadina!);
+
         const double razmak = 2;
         double visinaSegmenta = (visina - razmak * (n - 1)) / n;
 
         int upaljeno = Upaljeno(Udeo, n);
         int vrh = Upaljeno(Vrh, n);
-        int? granica = VruceGranica is { } g ? Math.Clamp((int)Math.Ceiling(g * n - 1e-9), 1, n) : null;
 
         for (int i = 0; i < n; i++)
         {
@@ -67,14 +78,39 @@ public sealed class VuMerac : FrameworkElement
             bool vruc = VruceGranica is { } v && donjiUdeo >= v - 1e-9;
             bool topao = !vruc && ToploGranica is { } t && donjiUdeo >= t - 1e-9;
 
-            Brush boja;
-            if (redni <= upaljeno) boja = vruc ? Vruce : topao ? Toplo : Akcenat;
-            else if (redni == vrh) boja = vruc ? VrhVruc : VrhObican;
-            else if (redni == granica) boja = GranicaUgaseno;
-            else boja = Ugaseno;
+            Brush? boja = redni <= upaljeno
+                ? vruc ? Vruce : topao ? Toplo : Akcenat
+                : redni == vrh ? vruc ? VrhVruc : VrhObican : null;
+            if (boja is null) continue;
 
             double y = visina - redni * visinaSegmenta - i * razmak;
             dc.DrawRoundedRectangle(boja, null, new Rect(0, Math.Round(y), sirina, Math.Max(1, Math.Round(visinaSegmenta))), 1, 1);
         }
+    }
+
+    private void NapraviPozadinu(int n, double sirina, double visina)
+    {
+        const double razmak = 2;
+        double visinaSegmenta = (visina - razmak * (n - 1)) / n;
+        int granica = VruceGranica is { } g ? Math.Clamp((int)Math.Ceiling(g * n - 1e-9), 1, n) : 0;
+
+        var grupa = new DrawingGroup();
+        using (var dc = grupa.Open())
+        {
+            for (int i = 0; i < n; i++)
+            {
+                int redni = i + 1;
+                var boja = redni == granica ? GranicaUgaseno : Ugaseno;
+                double y = visina - redni * visinaSegmenta - i * razmak;
+                dc.DrawRoundedRectangle(boja, null, new Rect(0, Math.Round(y), sirina, Math.Max(1, Math.Round(visinaSegmenta))), 1, 1);
+            }
+        }
+
+        grupa.Freeze();
+        _pozadina = grupa;
+        _pozN = n;
+        _pozSirina = sirina;
+        _pozVisina = visina;
+        _pozGranica = VruceGranica;
     }
 }

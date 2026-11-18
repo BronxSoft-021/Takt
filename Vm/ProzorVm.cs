@@ -84,6 +84,10 @@ public sealed class ProzorVm : ObservableObject, IDisposable
             {
                 value.Solo = true;
                 Prikaz = value;
+
+                // The new channel's table may be two seconds old: show it now, not on the next turn.
+                _poslednjaTabela = DateTime.MinValue;
+                Osvezi();
             }
             OnPropertyChanged();
         }
@@ -160,7 +164,13 @@ public sealed class ProzorVm : ObservableObject, IDisposable
             var (izvor, nadzor) = await Task.Run(() =>
             {
                 IIzvorSenzora i = _rad.ProbniPodaci ? new LazniIzvor() : PraviIzvor(gotovPomocnik);
-                return (i, new Nadzor(i, _rad));
+
+                // The service keeps the history itself (it reads even while the window is closed): the window
+                // must not write the same rows a second time.
+                var podesavanja = i is PomocnikKlijent { JeUsluga: true } ? _rad.Kopija() : _rad;
+                if (!ReferenceEquals(podesavanja, _rad)) podesavanja.Istorija = false;
+
+                return (i, new Nadzor(i, podesavanja));
             });
 
             if (_disposed)
@@ -325,7 +335,8 @@ public sealed class ProzorVm : ObservableObject, IDisposable
         (Stanje, VrstaStanja) = izvor switch
         {
             { Pravi: false } => ("Probni podaci", "probno"),
-            PomocnikKlijent => ("Potpuni nadzor", "pomocnik"),
+            PomocnikKlijent { JeUsluga: true } => ("Potpuni nadzor · usluga", "pomocnik"),
+            PomocnikKlijent => ("Potpuni nadzor · pomoćnik", "pomocnik"),
             { Senzori.Count: > 0 } when Admin.JeAdmin => ("Potpuni nadzor · administrator", "pomocnik"),
             { Senzori.Count: > 0 } => ("Ograničen nadzor", "pravo"),
             _ => ("Nema podataka", "nema"),
@@ -348,6 +359,11 @@ public sealed class ProzorVm : ObservableObject, IDisposable
             Upozorenje = "Temperatura procesora, potrošnja, ventilatori i diskovi traže potpuni nadzor (administrator).";
     }
 
+    private DateTime _poslednjaTabela = DateTime.MinValue;
+
+    /// <summary>A changed text costs a layout, so the long table hears about it every two seconds, not every second.</summary>
+    private static readonly TimeSpan TabelaNa = TimeSpan.FromSeconds(2);
+
     private void Osvezi()
     {
         if (_disposed || _nadzor is null) return;
@@ -360,8 +376,12 @@ public sealed class ProzorVm : ObservableObject, IDisposable
 
         Vreme = snimak.Vreme.ToString("HH:mm:ss");
         var sada = DateTime.Now;
+
+        bool tabela = sada - _poslednjaTabela >= TabelaNa;
+        if (tabela) _poslednjaTabela = sada;
+
         foreach (var kanal in Kanali)
-            kanal.Osvezi(snimak, najmanje, najvise, sada);
+            kanal.Osvezi(snimak, najmanje, najvise, sada, tabela && ReferenceEquals(kanal, Kanal));
     }
 
     private KanalVm? _prePodesavanja;

@@ -191,10 +191,15 @@ public sealed class KanalVm : ObservableObject
         ? Meraci.Select(m => m.Senzor).Where(s => s.Broj is not null).MaxBy(s => s.Broj) ?? Levi?.Senzor
         : Levi?.Senzor;
 
-    /// <summary>The small line under it: the right meter's value, "najtopliji" for the group, "nadzor" when empty.</summary>
-    public string DrugiTekst => Prazan ? "nadzor"
+    /// <summary>The small line under it: the right meter's value, "najtopliji" for the group, and what an empty place waits for.</summary>
+    public string DrugiTekst => Prazan ? "traži nadzor"
         : JeGrupa ? (Meraci.Count > 1 ? "najtopliji" : "")
         : Desni?.Senzor.Vrednost ?? "";
+
+    /// <summary>Tool tip of the strip: the device, or what is missing on an empty place.</summary>
+    public string OpisKanala => Prazan
+        ? $"{Naslov}: ovaj deo traži potpuni nadzor (administrator i drajver). Klikni za objašnjenje."
+        : Uredjaj;
 
     /// <summary>Load of every thread, for the row of small bars in the processor's solo panel.</summary>
     public IReadOnlyList<SenzorVm> Jezgra { get; }
@@ -215,19 +220,40 @@ public sealed class KanalVm : ObservableObject
         set => SetProperty(ref _utisan, value);
     }
 
-    /// <summary>One reading: the sensors (of every disk in a group), then the meters, then the readout.</summary>
-    public void Osvezi(Snimak snimak, double?[] najmanje, double?[] najvise, DateTime sada)
+    /// <summary>
+    /// One reading: the sensors, the meters, then the readout. <paramref name="obavestiTabelu"/> false skips the
+    /// notifications for the long table (a text layout per cell), but the strip's own numbers are always told:
+    /// they are on screen all the time and they are what the eye follows.
+    /// </summary>
+    public void Osvezi(Snimak snimak, double?[] najmanje, double?[] najvise, DateTime sada, bool obavestiTabelu = true)
     {
         if (JeGrupa)
-            foreach (var pod in Podkanali) pod.Osvezi(snimak, najmanje, najvise, sada);
+            foreach (var pod in Podkanali)
+                pod.Osvezi(snimak, najmanje, najvise, sada,
+                    obavestiTabelu && ReferenceEquals(pod, _izabraniPodkanal));
         else
-            Detalj.Osvezi(snimak, najmanje, najvise);
+            Detalj.Osvezi(snimak, najmanje, najvise, obavestiTabelu);
 
-        foreach (var merac in Meraci) merac.Osvezi(sada);
+        foreach (var merac in Meraci)
+        {
+            merac.Osvezi(sada);
+            merac.Senzor.Obavesti();
+        }
 
-        OnPropertyChanged(nameof(Glavni));
+        // The big number's DataContext is a sensor, not a text: telling the window it changed every second makes
+        // WPF tear down and rebuild those bindings each time. Say it only when another sensor takes the number
+        // (the hottest disk can change); the texts themselves are refreshed through Obavesti above.
+        var glavni = Glavni;
+        if (!ReferenceEquals(glavni, _glavniPre))
+        {
+            _glavniPre = glavni;
+            OnPropertyChanged(nameof(Glavni));
+        }
+
         OnPropertyChanged(nameof(DrugiTekst));
     }
+
+    private SenzorVm? _glavniPre;
 
     /// <summary>"AMD Radeon RX 6600" → "RX 6600": the brand is in the tool tip, the strip is narrow.</summary>
     public static string Skrati(string uredjaj)

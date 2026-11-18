@@ -31,11 +31,15 @@ public static class Spisak
         ("pult: prazna mesta za diskove i ventilatore", PultTestovi.PraznaMesta),
         ("pult: šest diskova je jedan kanal", PultTestovi.GrupaDiskova),
         ("pult: VU vrh drži pa pada", PultTestovi.Vrh),
+        ("pult: tiho čitanje pa obaveštenje", PultTestovi.TihoIPaObavesti),
+        ("pult: traka se osvežava i kad tabela čeka", PultTestovi.BezTabele),
         ("pult: segmenti i skala temperature", PultTestovi.Segmenti),
+        ("cev: pravi se i pušta klijenta", CevTestovi.PraviIPusta),
         ("protokol: spisak i uzorak kroz tekst", ProtokolTestovi.SpisakIUzorak),
         ("prevod: imena senzora na srpski", PrevodTestovi.Imena),
         ("prevod: zauzeće VRAM u procentima", PrevodTestovi.Vram),
         ("pomoćnik: spisak i uzorak stižu kroz cev", PomocnikTest.Cev),
+        ("usluga: služi prozor, puni istoriju i prima sledeći", UslugaTest.Posluzuje),
         ("izmene: broj verzije se poklapa sa Takt.csproj", IzmeneTestovi.Verzija),
     ];
 }

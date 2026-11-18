@@ -19,14 +19,21 @@ public sealed class PomocnikKlijent : IIzvorSenzora
     private string? _poruka;
     private volatile bool _radi = true;
 
-    private PomocnikKlijent(NamedPipeClientStream cev, StreamReader citalac, List<Senzor> senzori)
+    private PomocnikKlijent(NamedPipeClientStream cev, StreamReader citalac, List<Senzor> senzori, string? izvor)
     {
         _cev = cev;
         _citalac = citalac;
         _senzori = senzori;
+        Izvor = izvor;
     }
 
-    public string Naziv => "Pravi senzori (pomoćnik)";
+    /// <summary>"usluga" when a service serves, "pomocnik" for the temporary helper, null for an old build.</summary>
+    public string? Izvor { get; }
+
+    /// <summary>The service writes the history itself; when it serves, the window must not write it a second time.</summary>
+    public bool JeUsluga => Izvor == Protokol.Usluga;
+
+    public string Naziv => JeUsluga ? "Pravi senzori (usluga)" : "Pravi senzori (pomoćnik)";
     public bool Pravi => true;
     public IReadOnlyList<Senzor> Senzori => _senzori;
 
@@ -42,7 +49,7 @@ public sealed class PomocnikKlijent : IIzvorSenzora
 
         try
         {
-            cev = new NamedPipeClientStream(".", Pomocnik.Cev, PipeDirection.In);
+            cev = new NamedPipeClientStream(".", Cev.Ime, PipeDirection.In);
             cev.Connect(cekanjeMs);
 
             var citalac = new StreamReader(cev, new UTF8Encoding(false));
@@ -68,7 +75,7 @@ public sealed class PomocnikKlijent : IIzvorSenzora
                 senzori.Add(new Senzor(new SenzorKljuc(grupa, opis.Uredjaj, opis.Ime), jedinica));
             }
 
-            var klijent = new PomocnikKlijent(cev, citalac, senzori);
+            var klijent = new PomocnikKlijent(cev, citalac, senzori, poruka.Izvor);
             klijent.PokreniCitanje();
             return klijent;
         }
