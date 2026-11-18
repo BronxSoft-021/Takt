@@ -82,6 +82,11 @@ public static class PultTestovi
         Proveri.Da(kanali.Skip(1).All(k => k.Prazan), "ostali su prazna mesta");
         Proveri.Jednako("Ryzen 5 5600", kanali[0].Kratko, "kratko ime uređaja");
         Proveri.Jednako("RX 6600", KanalVm.Skrati("AMD Radeon RX 6600"), "kratko ime grafičke");
+
+        // An empty strip names the key that is actually missing, not always administrator rights.
+        Proveri.Jednako(PawnIo.JeTu ? "traži nadzor" : "traži drajver", kanali[1].DrugiTekst,
+            "prazno mesto kaže šta mu treba");
+        Proveri.Da(kanali[1].OpisKanala.Contains("Klikni za objašnjenje"), "tooltip upućuje na objašnjenje");
         return Task.CompletedTask;
     }
 

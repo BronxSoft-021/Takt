@@ -1,5 +1,6 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using Takt.Merenje;
+using Takt.Sistem;
 
 namespace Takt.Vm;
 
@@ -192,13 +193,16 @@ public sealed class KanalVm : ObservableObject
         : Levi?.Senzor;
 
     /// <summary>The small line under it: the right meter's value, "najtopliji" for the group, and what an empty place waits for.</summary>
-    public string DrugiTekst => Prazan ? "traži nadzor"
+    public string DrugiTekst => Prazan ? (PawnIo.JeTu ? "traži nadzor" : "traži drajver")
         : JeGrupa ? (Meraci.Count > 1 ? "najtopliji" : "")
         : Desni?.Senzor.Vrednost ?? "";
 
     /// <summary>Tool tip of the strip: the device, or what is missing on an empty place.</summary>
     public string OpisKanala => Prazan
-        ? $"{Naslov}: ovaj deo traži potpuni nadzor (administrator i drajver). Klikni za objašnjenje."
+        ? PawnIo.JeTu
+            ? $"{Naslov}: ovaj deo traži potpuni nadzor (administrator i drajver). Klikni za objašnjenje."
+            : $"{Naslov}: nedostaje PawnIO drajver ({PawnIo.Adresa}). Bez njega ni administrator ne vidi " +
+              "temperaturu, potrošnju ni napon. Klikni za objašnjenje."
         : Uredjaj;
 
     /// <summary>Load of every thread, for the row of small bars in the processor's solo panel.</summary>

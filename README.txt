@@ -1,4 +1,29 @@
-﻿BronxSoft Takt 0.26.26 alfa
+﻿BronxSoft Takt 0.28.28 alfa
+18. 11. 2026.
+
+NOVO
+- Program zna da li je PawnIO drajver instaliran i to kaže, umesto da traži administratora koji tu
+  ne pomaže: zaglavlje piše "Ograničen nadzor · bez drajvera" (žuto), a statusna traka objašnjava
+  da temperatura procesora, potrošnja, napon i ventilatori traže drajver sa pawnio.eu.
+- Podešavanja imaju odeljak "DRAJVER (PAWNIO)": stanje (instaliran / nije instaliran), objašnjenje i
+  dugme "Otvori pawnio.eu". Program ništa ne otvara i ne šalje sam - samo na tvoj klik.
+
+DORADE
+- Prazan kanal kaže "traži drajver" kad drajver fali, a "traži nadzor" kad je stvar u pravima;
+  objašnjenje u kanalu imenuje ono što stvarno nedostaje, a dugme nudi ono što pomaže
+  (bez drajvera: "Otvori pawnio.eu"; sa drajverom: "Uključi potpuni nadzor").
+- Pomoćnik u greske.log upisuje i stanje drajvera, npr.
+  "poslato 129 senzora, administrator: True, PawnIO drajver: nije instaliran".
+
+ZAŠTO DRAJVER
+- LibreHardwareMonitor od 0.9.5 čita temperaturu procesora, potrošnju, napon, ventilatore i SMART
+  diskova samo preko PawnIO drajvera (zamenio je WinRing0, koji blokiraju Defender i anti-cheat).
+  Drajver se preuzima sa pawnio.eu i nije naš da se deli uz program, pa ga Takt ne donosi sa sobom.
+- Treba PawnIO 2.1.0 ili noviji: stariji drajveri ne rade sa ovom verzijom biblioteke (0.9.6).
+  Instalacija traži administratora, jednom; posle nje samo pokreni Takt ponovo.
+- Bez njega se, i kao administrator, vide samo opterećenje, grafička karta i ono što Windows sam daje.
+
+BronxSoft Takt 0.26.26 alfa
 18. 11. 2026.
 
 NOVO

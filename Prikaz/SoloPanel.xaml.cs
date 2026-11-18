@@ -12,6 +12,9 @@ public partial class SoloPanel : UserControl
     private void NaPomocnika(object sender, RoutedEventArgs e) =>
         _ = (Window.GetWindow(this)?.DataContext as ProzorVm)?.UkljuciPomocnikaAsync();
 
+    private void NaDrajver(object sender, RoutedEventArgs e) =>
+        (Window.GetWindow(this)?.DataContext as ProzorVm)?.OtvoriDrajver();
+
     private void NaSkrivene(object sender, RoutedEventArgs e)
     {
         if (DataContext is KanalVm kanal) kanal.Detalj.SviSenzori = !kanal.Detalj.SviSenzori;

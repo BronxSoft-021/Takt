@@ -38,6 +38,8 @@ public static class Spisak
         ("prozor: sačuvano mesto se koristi samo ako je na ekranu", ProzorTestovi.Sredi),
         ("pokretanje: linija za Windows Run", ProzorTestovi.PokretanjeSaWindowsom),
         ("pokretanje: upis u Run, čitanje i brisanje", PokretanjeTest.UpisiProcitajObrisi),
+        ("drajver: fajl ili upis u registru znače instaliran", PawnIoTest.Provera),
+        ("drajver: prazan kanal kaže šta mu treba", PawnIoTest.Prazno),
         ("protokol: spisak i uzorak kroz tekst", ProtokolTestovi.SpisakIUzorak),
         ("prevod: imena senzora na srpski", PrevodTestovi.Imena),
         ("prevod: zauzeće VRAM u procentima", PrevodTestovi.Vram),

@@ -129,6 +129,25 @@ public sealed class PodesavanjaVm : ObservableObject
 
     public string Folder => Putanje.Podaci;
 
+    /// <summary>
+    /// The second key to full monitoring, and the one the program cannot turn by itself: pawnio.eu is a
+    /// separate, free download, and nothing is opened unless the user clicks the button.
+    /// </summary>
+    public string DrajverStanje => PawnIo.JeTu ? "Instaliran" : "Nije instaliran";
+
+    public bool DrajverFali => !PawnIo.JeTu;
+
+    public string DrajverOpis => PawnIo.JeTu
+        ? "Preko njega se čitaju temperatura procesora, potrošnja, napon, ventilatori i SMART diskova."
+        : "Bez njega se, i kao administrator, vide samo opterećenje, grafička karta i ono što Windows sam daje. " +
+          "Preuzmi ga sa pawnio.eu i pokreni Takt ponovo; program ga ne donosi sa sobom jer nije naš da se deli.";
+
+    public void OtvoriDrajver()
+    {
+        PotvrdaBrisanja = false;
+        if (!PawnIo.Otvori()) Poruka = "Adresa nije otvorena. Ukucaj je u pregledač: " + PawnIo.Adresa;
+    }
+
     public string Verzija => Izmene.Trenutna.Oznaka;
 
     public string Prava => Admin.Stanje;

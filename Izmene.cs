@@ -22,6 +22,15 @@ public static class Izmene
     [
         new("alfa", "18. 11. 2026.",
         [
+            "Program zna da li je PawnIO drajver instaliran i to kaže: zaglavlje piše „…bez drajvera“ (žuto), a statusna traka objašnjava da temperatura procesora, potrošnja, napon i ventilatori traže drajver sa pawnio.eu — administrator sam tu ne pomaže.",
+            "Podešavanja dobijaju odeljak „DRAJVER (PAWNIO)“ sa stanjem (instaliran / nije instaliran), objašnjenjem i dugmetom koje otvara pawnio.eu (samo na tvoj klik — program ništa ne otvara i ne šalje sam).",
+        ],
+        [
+            "Prazan kanal sada kaže „traži drajver“ kad drajver fali, a „traži nadzor“ kad je stvar u pravima; objašnjenje u kanalu imenuje ono što stvarno nedostaje.",
+            "Pomoćnik u `greske.log` upisuje i stanje drajvera („poslato 129 senzora, administrator: True, PawnIO drajver: nije instaliran“) — da se posle ne pita zašto nema temperature.",
+        ]),
+        new("alfa", "18. 11. 2026.",
+        [
             "Ikonica pored sata sa menijem (Otvori, Podešavanja, Izlaz); X skriva program u traku umesto da ga ugasi, a prvi put to i kaže balonom.",
             "Pokretanje sa Windowsom (`Takt.exe --u-traci`, upis u HKCU Run bez administratora) i pamćenje položaja, veličine i maksimizovanog stanja prozora.",
         ],

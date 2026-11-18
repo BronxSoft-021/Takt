@@ -134,6 +134,24 @@ public sealed class ProzorVm : ObservableObject, IDisposable
 
     public string Prava => Admin.Stanje;
 
+    /// <summary>
+    /// True when the PawnIO driver is installed. Without it the processor's temperature, clocks, power and
+    /// voltage, the board's fans and the drives' SMART cannot be read at all - asking for administrator again
+    /// would change nothing, so the window says "bez drajvera" instead of pretending.
+    /// </summary>
+    public bool Drajver => PawnIo.JeTu;
+
+    public string DrajverStanje => PawnIo.JeTu ? "instaliran" : "nije instaliran";
+
+    public bool DrajverFali => !PawnIo.JeTu;
+
+    /// <summary>Opens pawnio.eu; the button in the empty channel and in the settings both come here.</summary>
+    public void OtvoriDrajver()
+    {
+        if (PawnIo.Otvori()) return;
+        Upozorenje = $"Adresa nije otvorena. Ukucaj je u pregledač: {PawnIo.Adresa}";
+    }
+
     public int BrojSenzora => _nadzor?.Senzori.Count ?? 0;
 
     public string BrojSenzoraTekst => BrojSenzora switch
@@ -332,15 +350,25 @@ public sealed class ProzorVm : ObservableObject, IDisposable
 
     private void PostaviStanje(IIzvorSenzora izvor)
     {
+        // Full monitoring has two keys, not one: administrator rights and the PawnIO driver. Only both together
+        // give everything, so each state names the one that is missing instead of offering "potpuni nadzor".
         (Stanje, VrstaStanja) = izvor switch
         {
             { Pravi: false } => ("Probni podaci", "probno"),
+            PomocnikKlijent { JeUsluga: true } when !Drajver => ("Potpuni nadzor · usluga, bez drajvera", "pravo"),
             PomocnikKlijent { JeUsluga: true } => ("Potpuni nadzor · usluga", "pomocnik"),
+            PomocnikKlijent when !Drajver => ("Potpuni nadzor · pomoćnik, bez drajvera", "pravo"),
             PomocnikKlijent => ("Potpuni nadzor · pomoćnik", "pomocnik"),
+            { Senzori.Count: > 0 } when Admin.JeAdmin && !Drajver => ("Ograničen nadzor · bez drajvera", "pravo"),
             { Senzori.Count: > 0 } when Admin.JeAdmin => ("Potpuni nadzor · administrator", "pomocnik"),
+            { Senzori.Count: > 0 } when !Drajver => ("Ograničen nadzor · bez drajvera", "pravo"),
             { Senzori.Count: > 0 } => ("Ograničen nadzor", "pravo"),
             _ => ("Nema podataka", "nema"),
         };
+
+        OnPropertyChanged(nameof(Drajver));
+        OnPropertyChanged(nameof(DrajverStanje));
+        OnPropertyChanged(nameof(DrajverFali));
 
         if (!izvor.Pravi)
         {
@@ -351,7 +379,19 @@ public sealed class ProzorVm : ObservableObject, IDisposable
         if (izvor.Senzori.Count == 0)
         {
             Upozorenje = (izvor.Poruka ?? "Nijedan senzor nije dostupan.") +
-                         " Uključi potpuni nadzor ili probne podatke u podešavanjima.";
+                         (Drajver
+                             ? " Uključi potpuni nadzor ili probne podatke u podešavanjima."
+                             : $" Nedostaje i PawnIO drajver ({PawnIo.Adresa}).");
+            return;
+        }
+
+        if (!Drajver)
+        {
+            // The driver is the first thing missing; without it administrator rights add only the drives.
+            bool vecPovisen = Admin.JeAdmin || izvor is PomocnikKlijent;
+            Upozorenje = "Nedostaje PawnIO drajver, pa nema temperature procesora, potrošnje, napona ni ventilatora. " +
+                         $"Preuzmi ga sa {PawnIo.Adresa}" +
+                         (vecPovisen ? " i pokreni Takt ponovo." : " i uključi potpuni nadzor.");
             return;
         }
 

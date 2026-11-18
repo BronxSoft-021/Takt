@@ -32,13 +32,25 @@ public static class GrupaOpis
         _ => "",
     };
 
-    /// <summary>What the empty screen says: why this part has no sensors and what would bring them.</summary>
-    public static string Prazno(Grupa grupa) => grupa switch
+    /// <summary>
+    /// What the empty screen says: why this part has no sensors and what would bring them. With
+    /// <paramref name="drajver"/> false the answer is the PawnIO driver, not administrator rights - asking for
+    /// administrator again would change nothing, and saying "turn on full monitoring" would be a lie.
+    /// </summary>
+    public static string Prazno(Grupa grupa, bool drajver = true) => (grupa, drajver) switch
     {
-        Grupa.Diskovi => "Temperatura, zdravlje i SMART diskova se čitaju preko drajvera, a on traži administratora. " +
-                         "Uključi potpuni nadzor i diskovi će se pojaviti ovde.",
-        Grupa.Hladjenje => "Ventilatore kućišta i procesora i temperature matične ploče čita Super I/O čip, a do njega " +
-                           "se stiže samo preko drajvera. Uključi potpuni nadzor.",
+        (Grupa.Procesor, false) => "Temperatura, takt, potrošnja i napon procesora idu preko PawnIO drajvera, a on se " +
+                                   "instalira posebno (pawnio.eu). Bez njega se vidi samo opterećenje - i kao administrator.",
+        (Grupa.Diskovi, false) => "Temperatura, zdravlje i SMART diskova traže PawnIO drajver (pawnio.eu); " +
+                                   "administratorska prava sama nisu dovoljna.",
+        (Grupa.Hladjenje, false) => "Ventilatori kućišta i procesora i temperature matične ploče traže PawnIO drajver " +
+                                     "(pawnio.eu). Bez njega ni administrator ne dobija te senzore.",
+        (_, false) => "Ovaj deo traži PawnIO drajver (pawnio.eu); bez njega ni administrator ne dobija te senzore.",
+
+        (Grupa.Diskovi, true) => "Temperatura, zdravlje i SMART diskova se čitaju preko drajvera, a on traži administratora. " +
+                                 "Uključi potpuni nadzor i diskovi će se pojaviti ovde.",
+        (Grupa.Hladjenje, true) => "Ventilatore kućišta i procesora i temperature matične ploče čita Super I/O čip, a do njega " +
+                                   "se stiže samo preko drajvera. Uključi potpuni nadzor.",
         _ => "Ovaj deo računara ne daje nijedan senzor bez drajvera. Uključi potpuni nadzor.",
     };
 

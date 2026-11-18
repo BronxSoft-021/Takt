@@ -67,6 +67,29 @@
                     <TextBlock Text="Ikonica pored sata vraća prozor; bez nje se sakriveni prozor ne može vratiti. Ako traka ne uspe, X gasi program."
                                Foreground="{StaticResource Bled}" FontSize="11" TextWrapping="Wrap" Margin="0,7,0,0" />
 
+                    <Border Height="1" Background="{StaticResource Linija}" Margin="0,18,0,16" />
+
+                    <TextBlock Style="{StaticResource NaslovSekcije}" Text="DRAJVER (PAWNIO)" />
+                    <DockPanel Margin="0,9,0,0">
+                        <Button DockPanel.Dock="Right" Style="{StaticResource DugmeTamno}" Content="Otvori pawnio.eu"
+                                Click="NaDrajver" Padding="10,3" VerticalAlignment="Center"
+                                Visibility="{Binding DrajverFali, Converter={StaticResource BoolUVidljivost}}" />
+                        <TextBlock Text="{Binding DrajverStanje}" FontSize="12.5" VerticalAlignment="Center">
+                            <TextBlock.Style>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="Foreground" Value="{StaticResource Dobro}" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding DrajverFali}" Value="True">
+                                            <Setter Property="Foreground" Value="{StaticResource Upozorenje}" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
+                    </DockPanel>
+                    <TextBlock Text="{Binding DrajverOpis}" Foreground="{StaticResource Bled}" FontSize="11"
+                               TextWrapping="Wrap" LineHeight="17" Margin="0,6,0,0" />
+
                     <WrapPanel Margin="0,18,0,0">
                         <Button Style="{StaticResource Dugme}" Content="Sačuvaj" Click="NaSacuvaj" Margin="0,0,8,0" />
                         <Button Style="{StaticResource DugmeTamno}" Content="Otvori folder" Click="NaFolder"

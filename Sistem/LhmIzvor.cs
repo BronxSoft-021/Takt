@@ -66,7 +66,9 @@ public sealed class LhmIzvor : IIzvorSenzora
             }
 
             if (_senzori.Count == 0)
-                _poruka = "Nijedan senzor nije dostupan. Probaj da pokreneš program kao administrator.";
+                _poruka = PawnIo.JeTu
+                    ? "Nijedan senzor nije dostupan. Probaj da pokreneš program kao administrator."
+                    : $"Nijedan senzor nije dostupan. Nedostaje PawnIO drajver ({PawnIo.Adresa}).";
         }
         catch (Exception ex)
         {

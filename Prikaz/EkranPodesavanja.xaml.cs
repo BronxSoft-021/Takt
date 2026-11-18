@@ -16,4 +16,6 @@ public partial class EkranPodesavanja : UserControl
     private void NaFolder(object sender, RoutedEventArgs e) => Vm?.OtvoriFolder();
 
     private void NaObrisi(object sender, RoutedEventArgs e) => Vm?.ObrisiIstoriju();
+
+    private void NaDrajver(object sender, RoutedEventArgs e) => Vm?.OtvoriDrajver();
 }

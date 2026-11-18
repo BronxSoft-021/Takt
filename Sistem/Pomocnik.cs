@@ -67,7 +67,8 @@ public static class Pomocnik
             using var izvor = new SlozeniIzvor(new LhmIzvor(), new RamIzvor());
 
             pisac.WriteLine(Protokol.Spisak(izvor.Senzori));
-            Dnevnik.Upisi($"Pomoćnik: poslato {izvor.Senzori.Count} senzora, administrator: {Admin.JeAdmin}.");
+            Dnevnik.Upisi($"Pomoćnik: poslato {izvor.Senzori.Count} senzora, administrator: {Admin.JeAdmin}, " +
+                          $"PawnIO drajver: {(PawnIo.JeTu ? "instaliran" : "nije instaliran")}.");
 
             string? poslednjaGreska = null;
 

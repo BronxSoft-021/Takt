@@ -107,7 +107,7 @@
 
                     <Button DockPanel.Dock="Bottom" Style="{StaticResource Veza}" Margin="0,4,0,0"
                             Content="{Binding Detalj.SkriveniTekst}" Click="NaSkrivene"
-                            ToolTip="Senzori koje biblioteka navodi, ali na ovom računaru još nisu dali broj - obično traže potpuni nadzor."
+                            ToolTip="Senzori koje biblioteka navodi, ali na ovom računaru još nisu dali broj - obično traže drajver ili potpuni nadzor."
                             Visibility="{Binding Detalj.ImaSkrivenih, Converter={StaticResource BoolUVidljivost}}" />
 
                     <Border BorderBrush="{StaticResource Linija}" BorderThickness="0,1,0,0">
@@ -158,9 +158,16 @@
                 <TextBlock Text="{Binding Naslov}" Style="{StaticResource NaslovStrane}" HorizontalAlignment="Center" />
                 <TextBlock Text="{Binding Detalj.PorukaPrazno}" Foreground="{StaticResource Mutan}" FontSize="12.5"
                            TextWrapping="Wrap" TextAlignment="Center" Margin="0,8,0,0" LineHeight="19" />
-                <Button Style="{StaticResource Dugme}" Content="Uključi potpuni nadzor"
-                        HorizontalAlignment="Center" Margin="0,16,0,0" Click="NaPomocnika"
-                        Visibility="{Binding DataContext.PomocnikMoguc, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource BoolUVidljivost}}" />
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,16,0,0">
+                    <!-- Without the driver this is the one thing that would bring the sensors: administrator alone
+                         does not (the text above says so, so the button must not offer it instead). -->
+                    <Button Style="{StaticResource Dugme}" Content="Otvori pawnio.eu" Margin="0,0,8,0"
+                            Click="NaDrajver"
+                            Visibility="{Binding DataContext.DrajverFali, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource BoolUVidljivost}}" />
+                    <Button Style="{StaticResource DugmeTamno}" Content="Uključi potpuni nadzor"
+                            Click="NaPomocnika"
+                            Visibility="{Binding DataContext.PomocnikMoguc, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource BoolUVidljivost}}" />
+                </StackPanel>
             </StackPanel>
         </Grid>
     </Border>
