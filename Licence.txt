@@ -22,6 +22,11 @@ System.Management
   Copyright (c) .NET Foundation and Contributors. Licenca: MIT.
   Koristi se samo za čitanje brzine memorije iz SMBIOS-a.
 
+Microsoft.Diagnostics.Tracing.TraceEvent
+  Copyright (c) Microsoft Corporation. Licenca: MIT.
+  Koristi se za brojanje kadrova igara (FPS) iz Windows-ovih događaja (ETW);
+  ništa se ne ubacuje u igru. https://github.com/microsoft/perfview
+
 LibreHardwareMonitorLib 0.9.6
   Copyright (c) LibreHardwareMonitor contributors. Licenca: MPL 2.0.
   Biblioteka je zaseban fajl uz program (LibreHardwareMonitorLib.dll) i može se
@@ -49,8 +54,8 @@ PUNI TEKSTOVI
 ========================================================================
 
 MIT licenca (važi za .NET, WPF, CommunityToolkit.Mvvm, Microsoft.Data.Sqlite,
-System.Management i za ovaj program; svaki nosilac prava zadržava svoje
-copyright pravo navedeno u spisku iznad):
+System.Management, TraceEvent i za ovaj program; svaki nosilac prava zadržava
+svoje copyright pravo navedeno u spisku iznad):
 
 MIT License
 

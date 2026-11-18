@@ -50,6 +50,10 @@ public static class Spisak
         ("usluga: podmetnuta veza umesto foldera se uklanja", BezbednostTestovi.FolderBezVeze),
         ("usluga: sluša čuvanje i brisanje istorije", BezbednostTestovi.UslugaSlusaPodesavanja),
         ("prozor: samo jedan Takt, drugi otvara prvog", BezbednostTestovi.JedanTakt),
+        ("igre: FPS, najduži kadar, 1% low i štucanja", IgreTestovi.Kadrovi),
+        ("igre: koja je igra (prvi plan, Takt, pregledač)", IgreTestovi.Birac),
+        ("igre: sesija se snima sama i pravi izveštaj", IgreTestovi.Sesija),
+        ("pult: clip lampica se pali i ostaje do klika", IgreTestovi.Clip),
         ("izmene: broj verzije se poklapa sa Takt.csproj", IzmeneTestovi.Verzija),
     ];
 }

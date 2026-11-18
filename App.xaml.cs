@@ -98,6 +98,11 @@ public partial class App : Application
         if (_prozor is not null || _vm is not null) return;
 
         _vm = new ProzorVm(Dispatcher, _probno);
+
+        // A finished game session says so from the tray: one line, the full report is under "Sesije".
+        if (!_testniRad)
+            _vm.Sesija.Zavrsena += izvestaj =>
+                _traka?.Reci($"Sesija: {izvestaj.Igra}", izvestaj.Kratko + ". Ceo izveštaj je pod „Sesije“.");
         _prozor = new GlavniProzor { DataContext = _vm };
 
         if (!_testniRad) ProzorPamet.Primeni(_prozor, _vm.Podesavanja);

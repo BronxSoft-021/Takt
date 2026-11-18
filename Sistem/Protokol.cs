@@ -19,13 +19,25 @@ public static class Protokol
     /// <summary>A sensor without its value: the helper sends this once, when the window connects.</summary>
     public sealed record Opis(string Grupa, string Uredjaj, string Ime, string Jedinica);
 
-    /// <summary>vrsta: "spisak", "uzorak" or "greska". <paramref name="Izvor"/> says who serves: "usluga" or "pomocnik".</summary>
+    /// <summary>
+    /// One program that drew frames in the last second, as the service saw it through Windows' own events:
+    /// frames per second, the average and the longest frame, the 1 % low (fps of the slowest 1 % of the last ten
+    /// seconds) and how many frames were stutters (far longer than the frames around them).
+    /// </summary>
+    public sealed record Igra(int Pid, string Ime, string? Putanja, double Fps, double ProsekMs, double NajviseMs,
+        double Low1, int Stucanja);
+
+    /// <summary>vrsta: "spisak", "uzorak", "greska" or "igre". <paramref name="Izvor"/> says who serves: "usluga" or "pomocnik".</summary>
     public sealed record Poruka(string Vrsta, Opis[]? Senzori, double?[]? Vrednosti, long Vreme, string? Greska,
-        string? Izvor = null);
+        string? Izvor = null, Igra[]? Igre = null);
 
     public const string SpisakVrsta = "spisak";
     public const string UzorakVrsta = "uzorak";
     public const string GreskaVrsta = "greska";
+    public const string IgreVrsta = "igre";
+
+    public static string Igre(IEnumerable<Igra> igre) =>
+        JsonSerializer.Serialize(new Poruka(IgreVrsta, null, null, 0, null, null, igre.ToArray()), Opcije);
 
     /// <summary>Who serves: the service writes history itself, the helper leaves it to the window.</summary>
     public const string Usluga = "usluga";

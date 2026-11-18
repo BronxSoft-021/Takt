@@ -55,7 +55,7 @@ public sealed class EkranVm : ObservableObject
 
     public bool Prazan => Senzori.Count == 0;
 
-    public string PorukaPrazno => GrupaOpis.Prazno(Grupa, Sistem.PawnIo.JeTu);
+    public string PorukaPrazno => GrupaOpis.Prazno(Grupa, Sistem.PawnIo.JeTu, KanalVm.PotpunNadzor);
 
     public string BrojSenzora => Senzori.Count.ToString();
 

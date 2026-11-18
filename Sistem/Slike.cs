@@ -28,9 +28,19 @@ public static class Slike
                 Sacuvaj(prozor, Path.Combine(folder, $"{kanal.Naslov.Replace(' ', '-').Replace(".", "")}.png"));
             }
 
+            vm.PrikaziSesije();
+            await Task.Delay(400);
+            Sacuvaj(prozor, Path.Combine(folder, "Sesije.png"));
+
             vm.PrikaziPodesavanja();
             await Task.Delay(400);
             Sacuvaj(prozor, Path.Combine(folder, "Podesavanja.png"));
+
+            // The Scene, as on the second screen (the window is maximized on the screen it is on).
+            vm.Scena = true;
+            await Task.Delay(1200);
+            Sacuvaj(prozor, Path.Combine(folder, "Scena.png"));
+            vm.Scena = false;
         }
         catch (Exception ex)
         {

@@ -35,6 +35,7 @@ public sealed class UsluzniMotor : IDisposable
     private volatile int _perioda;
 
     private IIzvorSenzora? _izvor;
+    private MeracKadrova? _kadrovi;
     private IReadOnlyList<Senzor> _senzori = [];
     private Snimak? _poslednji;
     private Baza? _baza;
@@ -89,6 +90,10 @@ public sealed class UsluzniMotor : IDisposable
         Primeni(_podesavanja);
         _procitano = DateTime.UtcNow;
 
+        // Frames per second of games: Windows' frame events, which only an administrator may read.
+        _kadrovi = new MeracKadrova();
+        _kadrovi.Pokreni();
+
         _radi = true;
         _uzimanje = new Thread(Uzimaj) { IsBackground = true, Name = "Takt uzimanje" };
         _sluzenje = new Thread(Sluzi) { IsBackground = true, Name = "Takt služenje" };
@@ -115,6 +120,9 @@ public sealed class UsluzniMotor : IDisposable
 
         // A reading still running (a disk waking up can take seconds) must not lose its source under it; the
         // process is ending anyway, and the library is closed with it.
+        _kadrovi?.Dispose();
+        _kadrovi = null;
+
         if (uzimanjeStalo)
         {
             _izvor?.Dispose();
@@ -252,6 +260,7 @@ public sealed class UsluzniMotor : IDisposable
             Snimak? snimak;
             lock (_bravaSnimka) snimak = _poslednji;
             if (snimak is not null) pisac.WriteLine(Protokol.Uzorak(snimak));
+            if (_kadrovi is { Greska: null } kadrovi) pisac.WriteLine(Protokol.Igre(kadrovi.Stanje()));
 
             // Once, not every second: the window shows the last message it got anyway.
             if (Poruka is { } poruka && poruka != poslednjaGreska)

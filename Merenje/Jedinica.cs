@@ -13,4 +13,10 @@ public enum Jedinica
     Amper,
     Megabajt,
     MegabajtUSekundi,
+
+    /// <summary>Frames per second of a game.</summary>
+    Kadrovi,
+
+    /// <summary>Time of one frame, in milliseconds (frametime).</summary>
+    Milisekunda,
 }

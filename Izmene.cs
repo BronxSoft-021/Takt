@@ -22,6 +22,18 @@ public static class Izmene
     [
         new("alfa", "18. 11. 2026.",
         [
+            "Scena (dugme ili F11, Esc izlazi): veliki pult preko celog drugog ekrana, za gledanje krajičkom oka dok igraš; gore igra, dole pet velikih kanala sa po jednim dodatnim redom (najopterećenije jezgro, VRAM, najtopliji disk).",
+            "FPS igre: usluga meri kadrove preko Windows-ovih događaja (bez ubacivanja u igru), a Scena pokazuje FPS, 1% low, vreme kadra i grafikon najdužeg kadra svake sekunde, gde se štucanje vidi kao šiljak.",
+            "Sesije igara: svaka igra duža od minuta se snima sama i posle nje Takt pravi izveštaj (trajanje, FPS, 1% low, štucanja, najviše temperature, koliko je VRAM bio pun, najopterećenije jezgro) - dugme „Sesije“.",
+            "Clip lampice: crvena lampica iznad kanala se pali kad temperatura pređe granicu, naglo skoči, VRAM se napuni, jezgro dugo stoji na 100 % ili stane ventilator, i ostaje upaljena dok je ne klikneš.",
+        ],
+        [
+            "Procesor: „CCD1 (Tdie)“ je sada „Temperatura CCD1“, a „Bus Speed“ „Takt magistrale“.",
+            "Prazan kanal uz potpuni nadzor kaže „nema senzora“ (npr. ploča bez ventilatora), umesto da opet traži nadzor.",
+            "Ime diska bez razmaka na kraju.",
+        ]),
+        new("alfa", "18. 11. 2026.",
+        [
             "Takt se instalira kao pravi program u C:\\Program Files\\BronxSoft Takt (prozor i usluga zajedno, uvek ista verzija), a prečice na desktopu i u Start meniju otvaraju instalirani Takt, ne razvojnu kopiju; „Instaliraj Takt.bat“ sve napravi i instalira jednim klikom.",
         ],
         [

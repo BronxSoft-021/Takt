@@ -1,4 +1,23 @@
-﻿BronxSoft Takt 0.29.36 alfa
+﻿BronxSoft Takt 0.33.39 alfa
+18. 11. 2026.
+
+Za igre: Scena, FPS, sesije i clip lampice.
+
+NOVO
+- Scena (dugme ili F11, Esc izlazi): veliki pult preko celog drugog ekrana, za gledanje krajickom oka
+  dok igras; gore igra, dole pet velikih kanala sa po jednim dodatnim redom.
+- FPS igre: usluga meri kadrove preko Windows-ovih dogadjaja (bez ubacivanja u igru); Scena pokazuje
+  FPS, 1% low, vreme kadra i grafikon najduzeg kadra, gde se stucanje vidi kao siljak.
+- Sesije igara: svaka igra duza od minuta se snima sama; posle nje izvestaj (trajanje, FPS, 1% low,
+  stucanja, temperature, VRAM, najopterecenije jezgro) - dugme "Sesije".
+- Clip lampice: crvena lampica iznad kanala se pali kad nesto predje granicu i ostaje do klika.
+
+DORADE
+- Prevedeno "CCD1 (Tdie)" i "Bus Speed"; prazan kanal uz potpuni nadzor kaze "nema senzora";
+  ime diska bez razmaka na kraju.
+
+
+BronxSoft Takt 0.29.36 alfa
 18. 11. 2026.
 
 Takt kao instaliran program.

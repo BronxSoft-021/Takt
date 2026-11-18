@@ -66,6 +66,10 @@ public static class Pomocnik
             using var pisac = new StreamWriter(cev, new UTF8Encoding(false)) { AutoFlush = true };
             using var izvor = new SlozeniIzvor(new LhmIzvor(), new RamIzvor());
 
+            // Frames per second too: the helper is elevated, like the service.
+            using var kadrovi = new MeracKadrova();
+            kadrovi.Pokreni();
+
             pisac.WriteLine(Protokol.Spisak(izvor.Senzori));
             Dnevnik.Upisi($"Pomoćnik: poslato {izvor.Senzori.Count} senzora, administrator: {Admin.JeAdmin}, " +
                           $"PawnIO drajver: {(PawnIo.JeTu ? "instaliran" : "nije instaliran")}.");
@@ -78,6 +82,7 @@ public static class Pomocnik
 
                 var snimak = izvor.Uzmi();
                 pisac.WriteLine(Protokol.Uzorak(snimak));
+                if (kadrovi.Greska is null) pisac.WriteLine(Protokol.Igre(kadrovi.Stanje()));
 
                 // Once, not every second: the window shows the last message it got anyway.
                 if (izvor.Poruka is { } poruka && poruka != poslednjaGreska)

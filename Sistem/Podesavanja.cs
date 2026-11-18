@@ -38,6 +38,9 @@ public sealed class Podesavanja
     /// <summary>Start with Windows, in the tray, with no window.</summary>
     public bool PokreniSaWindowsom { get; set; }
 
+    /// <summary>The Scene (large console over the whole second screen) was on: it comes back on at the next start.</summary>
+    public bool Scena { get; set; }
+
     /// <summary>True once the "still running in the tray" balloon has been shown.</summary>
     public bool ObjasnjenoUTraci { get; set; }
 

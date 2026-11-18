@@ -172,7 +172,8 @@ public sealed class Grafikon : FrameworkElement
         // Percentages, temperatures, clocks, fans, watts and bytes never go below zero, so a scale that dips
         // under it (and shows 0 % as a line in the middle) would be misleading.
         if (brojevi.Min() >= 0 && Mera is Jedinica.Procenat or Jedinica.Celzijus or Jedinica.Obrtaj
-                or Jedinica.Vat or Jedinica.Megaherc or Jedinica.Megabajt or Jedinica.MegabajtUSekundi)
+                or Jedinica.Vat or Jedinica.Megaherc or Jedinica.Megabajt or Jedinica.MegabajtUSekundi
+                or Jedinica.Kadrovi or Jedinica.Milisekunda)
             najmanje = Math.Max(0, najmanje);
 
         if (najvise - najmanje < 0.001) najvise = najmanje + 1;

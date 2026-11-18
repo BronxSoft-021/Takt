@@ -166,6 +166,10 @@ public sealed class KanalVm : ObservableObject
     public double SirinaKolone => Meraci.Count switch { <= 1 => 30, 2 => 24, _ => 16 };
     public double SirinaMeraca => Meraci.Count switch { <= 1 => 22, 2 => 14, _ => 10 };
 
+    /// <summary>The same in the Scene, where a strip is a fifth of a Full HD screen.</summary>
+    public double SirinaKoloneScene => Meraci.Count switch { <= 1 => 70, 2 => 56, <= 4 => 34, _ => 24 };
+    public double SirinaMeracaScene => Meraci.Count switch { <= 1 => 48, 2 => 36, <= 4 => 22, _ => 16 };
+
     public IReadOnlyList<KanalVm> Podkanali { get; }
 
     public bool JeGrupa => Podkanali.Count > 0;
@@ -192,18 +196,134 @@ public sealed class KanalVm : ObservableObject
         ? Meraci.Select(m => m.Senzor).Where(s => s.Broj is not null).MaxBy(s => s.Broj) ?? Levi?.Senzor
         : Levi?.Senzor;
 
+    /// <summary>
+    /// True when the window gets everything there is to get (driver, and administrator through the service, the
+    /// helper or the window itself). An empty strip then has nothing to wait for: it says so, instead of
+    /// "traži nadzor". Set by <see cref="ProzorVm"/> once it knows its source.
+    /// </summary>
+    public static bool PotpunNadzor { get; set; }
+
     /// <summary>The small line under it: the right meter's value, "najtopliji" for the group, and what an empty place waits for.</summary>
-    public string DrugiTekst => Prazan ? (PawnIo.JeTu ? "traži nadzor" : "traži drajver")
+    public string DrugiTekst => Prazan ? (!PawnIo.JeTu ? "traži drajver" : PotpunNadzor ? "nema senzora" : "traži nadzor")
         : JeGrupa ? (Meraci.Count > 1 ? "najtopliji" : "")
         : Desni?.Senzor.Vrednost ?? "";
 
     /// <summary>Tool tip of the strip: the device, or what is missing on an empty place.</summary>
     public string OpisKanala => Prazan
-        ? PawnIo.JeTu
-            ? $"{Naslov}: ovaj deo traži potpuni nadzor (administrator i drajver). Klikni za objašnjenje."
-            : $"{Naslov}: nedostaje PawnIO drajver ({PawnIo.Adresa}). Bez njega ni administrator ne vidi " +
+        ? !PawnIo.JeTu
+            ? $"{Naslov}: nedostaje PawnIO drajver ({PawnIo.Adresa}). Bez njega ni administrator ne vidi " +
               "temperaturu, potrošnju ni napon. Klikni za objašnjenje."
+            : PotpunNadzor
+                ? $"{Naslov}: ovaj deo ne daje senzore ni uz potpuni nadzor. Klikni za objašnjenje."
+                : $"{Naslov}: ovaj deo traži potpuni nadzor (administrator i drajver). Klikni za objašnjenje."
         : Uredjaj;
+
+    /// <summary>
+    /// One more line for the Scene on the second screen - the thing worth a glance besides the big number:
+    /// the busiest thread (strategy games and emulators load one core, the total hides it), the graphics card's
+    /// memory (a full VRAM is what makes heavy games stutter), memory in use, the hottest disk's name.
+    /// </summary>
+    public string Dodatak
+    {
+        get
+        {
+            if (Prazan) return DrugiTekst;
+
+            if (Jezgra.Where(j => j.Broj is not null).MaxBy(j => j.Broj) is { } jezgro)
+                return $"{jezgro.Ime.Replace("Opterećenje ", "")}: {jezgro.Vrednost}";
+
+            if (Detalj.Grupa == Grupa.Grafika && Detalj.Senzori.FirstOrDefault(s => s.Ime == "VRAM zauzeto") is { Broj: not null } vram)
+                return $"{Desni?.Senzor.Vrednost ?? ""} · VRAM {vram.Vrednost}".TrimStart(' ', '·');
+
+            if (Detalj.Grupa == Grupa.Memorija && Detalj.Senzori.FirstOrDefault(s => s.Ime == "Zauzeto") is { Broj: not null } ram)
+                return ram.Vrednost;
+
+            if (JeGrupa && Glavni is { } najtopliji)
+                return Skrati(najtopliji.Uredjaj);
+
+            return DrugiTekst;
+        }
+    }
+
+    private string? _clip;
+    private DateTime _clipKada;
+    private readonly Dictionary<SenzorVm, int> _uzastopno = [];
+
+    /// <summary>
+    /// The clip light above the strip, like on a mixing desk: it comes on when something crosses a line and
+    /// stays on until clicked, so a 92 °C during a fight is still there to see after the game.
+    /// </summary>
+    public bool Clip => _clip is not null;
+
+    /// <summary>What lit it and when, for the tool tip.</summary>
+    public string ClipOpis => _clip is null
+        ? "Lampica se pali kad nešto pređe granicu i ostaje upaljena dok je ne klikneš."
+        : $"{_clip} u {_clipKada:HH:mm:ss}. Klikni da ugasiš.";
+
+    public void UgasiClip()
+    {
+        _clip = null;
+        OnPropertyChanged(nameof(Clip));
+        OnPropertyChanged(nameof(ClipOpis));
+    }
+
+    private void Upali(string razlog, DateTime kada)
+    {
+        if (_clip is not null) return; // the first reason stays: it is what happened first
+        _clip = razlog;
+        _clipKada = kada;
+        OnPropertyChanged(nameof(Clip));
+        OnPropertyChanged(nameof(ClipOpis));
+    }
+
+    /// <summary>
+    /// The lines that light the clip: a temperature over its hot limit, a temperature that jumped 15 °C in ten
+    /// seconds, graphics memory 95 % full, a thread at 100 % for ten readings in a row, a case fan that stopped.
+    /// A graphics card's fan is left out on purpose: they stop by design when the card is cool.
+    /// </summary>
+    private void ProveriClip(DateTime sada)
+    {
+        if (_clip is not null) return;
+
+        IEnumerable<SenzorVm> senzori = JeGrupa ? Podkanali.SelectMany(p => p.Detalj.Senzori) : Detalj.Senzori;
+        foreach (var s in senzori)
+        {
+            if (s.Broj is not { } broj) { _uzastopno.Remove(s); continue; }
+            string ko = JeGrupa ? $"{Skrati(s.Uredjaj)}: {s.Ime}" : s.Ime;
+
+            if (s.Senzor.Jedinica == Jedinica.Celzijus && !s.JeGranica)
+            {
+                if (s.Nivo == "vruce") { Upali($"{ko} {s.Vrednost}, preko granice", sada); return; }
+
+                var nedavno = s.Prsten.Poslednjih(10).Where(v => v is not null).Select(v => v!.Value).ToArray();
+                if (nedavno.Length >= 5 && broj - nedavno.Min() >= 15)
+                {
+                    Upali($"{ko} skočila za {broj - nedavno.Min():0} °C za 10 s", sada);
+                    return;
+                }
+            }
+
+            if (s.Ime == "Zauzeće VRAM" && broj >= 95) { Upali($"VRAM pun ({s.Vrednost})", sada); return; }
+
+            bool dugo(bool uslov)
+            {
+                _uzastopno[s] = uslov ? _uzastopno.GetValueOrDefault(s) + 1 : 0;
+                return _uzastopno[s] >= 10;
+            }
+
+            if (s.Ime.StartsWith("Opterećenje jezgra ", StringComparison.Ordinal) && dugo(broj >= 99))
+            {
+                Upali($"{s.Ime.Replace("Opterećenje ", "Jezgro ").Replace("jezgra ", "")} na 100 % duže od 10 s (usko grlo)", sada);
+                return;
+            }
+
+            if (s.Senzor.Grupa == Grupa.Hladjenje && s.Senzor.Jedinica == Jedinica.Obrtaj)
+            {
+                var pre = s.Prsten.Poslednjih(15).Where(v => v is not null).Select(v => v!.Value).ToArray();
+                if (broj < 1 && pre.Length >= 10 && pre.Take(5).All(v => v > 200)) { Upali($"{ko} je stao", sada); return; }
+            }
+        }
+    }
 
     /// <summary>Load of every thread, for the row of small bars in the processor's solo panel.</summary>
     public IReadOnlyList<SenzorVm> Jezgra { get; }
@@ -255,6 +375,8 @@ public sealed class KanalVm : ObservableObject
         }
 
         OnPropertyChanged(nameof(DrugiTekst));
+        OnPropertyChanged(nameof(Dodatak));
+        ProveriClip(sada);
     }
 
     private SenzorVm? _glavniPre;

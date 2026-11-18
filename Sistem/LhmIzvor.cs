@@ -167,7 +167,9 @@ public sealed class LhmIzvor : IIzvorSenzora
     private static void Popisi(IHardware hardver, string? roditelj, List<Stavka> stavke)
     {
         var grupa = GrupaZa(hardver.HardwareType);
-        var uredjaj = roditelj is null ? hardver.Name : $"{roditelj} › {hardver.Name}";
+        // Some drives report their model with a trailing space ("Samsung SSD 870 EVO 1TB ").
+        var imeHardvera = hardver.Name.Trim();
+        var uredjaj = roditelj is null ? imeHardvera : $"{roditelj} › {imeHardvera}";
 
         if (grupa is { } g)
         {
@@ -232,6 +234,7 @@ public sealed class LhmIzvor : IIzvorSenzora
     {
         if (ime is "Temperatura" or "Temperatura procesora" or "Temperatura paketa") return 0;
         if (ime.StartsWith("Temperatura jezgra", StringComparison.Ordinal)) return 1;
+        if (ime.StartsWith("Temperatura CCD", StringComparison.Ordinal)) return 1;
         if (ime.StartsWith("Temperatura senzora", StringComparison.Ordinal)) return 1;
         if (ime == "Hotspot") return 2;
         if (Merenje.Granice.JeGranica(ime)) return 5; // limits after every reading of the same unit
@@ -369,6 +372,10 @@ public sealed class LhmIzvor : IIzvorSenzora
             "SoC (SVI2 TFN)" => "Napon SoC-a",
             "Cores (Average)" => "Prosečan takt",
             "Cores (Average Effective)" => "Prosečan efektivni takt",
+            "Bus Speed" => "Takt magistrale",
+            // Ryzen: one die temperature per chiplet, "CCD1 (Tdie)".
+            _ when ime.StartsWith("CCD", StringComparison.Ordinal) && jedinica == Jedinica.Celzijus
+                => "Temperatura " + ime.Split(' ')[0],
             "Package" when jedinica == Jedinica.Vat => "Potrošnja paketa",
             "Package" when jedinica == Jedinica.Celzijus => "Temperatura paketa",
             _ => ime,

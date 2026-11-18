@@ -37,7 +37,8 @@ public static class GrupaOpis
     /// <paramref name="drajver"/> false the answer is the PawnIO driver, not administrator rights - asking for
     /// administrator again would change nothing, and saying "turn on full monitoring" would be a lie.
     /// </summary>
-    public static string Prazno(Grupa grupa, bool drajver = true) => (grupa, drajver) switch
+    public static string Prazno(Grupa grupa, bool drajver = true, bool potpunNadzor = false) =>
+        drajver && potpunNadzor ? PraznoUzPotpunNadzor(grupa) : (grupa, drajver) switch
     {
         (Grupa.Procesor, false) => "Temperatura, takt, potrošnja i napon procesora idu preko PawnIO drajvera, a on se " +
                                    "instalira posebno (pawnio.eu). Bez njega se vidi samo opterećenje - i kao administrator.",
@@ -52,6 +53,19 @@ public static class GrupaOpis
         (Grupa.Hladjenje, true) => "Ventilatore kućišta i procesora i temperature matične ploče čita Super I/O čip, a do njega " +
                                    "se stiže samo preko drajvera. Uključi potpuni nadzor.",
         _ => "Ovaj deo računara ne daje nijedan senzor bez drajvera. Uključi potpuni nadzor.",
+    };
+
+    /// <summary>
+    /// Empty although the driver and administrator are both there: then nothing more can be asked of the user, and
+    /// saying "turn on full monitoring" would send them in circles. On the developer's PC (18. 11. 2026) the board
+    /// gives no fans at all: LibreHardwareMonitor does not recognise its Super I/O chip.
+    /// </summary>
+    private static string PraznoUzPotpunNadzor(Grupa grupa) => grupa switch
+    {
+        Grupa.Hladjenje => "Matična ploča ovog računara ne daje ventilatore ni svoje temperature: LibreHardwareMonitor " +
+                           "ne prepoznaje njen Super I/O čip. Ventilator grafičke karte je na kanalu GPU.",
+        Grupa.Diskovi => "Nijedan disk ne daje temperaturu ni SMART (npr. diskovi preko nekih USB kućišta ili RAID-a).",
+        _ => "Ovaj deo računara ne daje senzore ni uz potpuni nadzor.",
     };
 
     /// <summary>

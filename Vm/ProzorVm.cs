@@ -51,6 +51,76 @@ public sealed class ProzorVm : ObservableObject, IDisposable
 
     public PodesavanjaVm PodesavanjaVm { get; }
 
+    /// <summary>The game on screen (frames per second from the service), for the Scene's top third.</summary>
+    public IgraVm Igra { get; } = new();
+
+    private readonly BiracIgre _birac = new();
+
+    /// <summary>Records game sessions on its own and saves a report when a game ends.</summary>
+    public SnimacSesije Sesija { get; } = new();
+
+    private int _probniKadar;
+
+    /// <summary>A made-up game for probe data: about 60 FPS with a slow wave and a stutter now and then.</summary>
+    private Protokol.Igra ProbnaIgra(DateTime vreme)
+    {
+        int t = _probniKadar++;
+        double fps = 58 + 8 * Math.Sin(t / 20.0);
+        bool stuca = t % 37 == 0;
+        double najduzi = stuca ? 74 : 1000 / fps + 3 * Math.Abs(Math.Sin(t / 3.0));
+        return new Protokol.Igra(0, "Probna igra", null, Math.Round(fps), 1000 / fps, najduzi,
+            Math.Round(fps * 0.72), stuca ? 1 : 0);
+    }
+
+    /// <summary>The list of past sessions, opened from the header in place of the solo panel.</summary>
+    public void PrikaziSesije()
+    {
+        if (Prikaz is SesijeVm)
+        {
+            // The same button closes the list: back to the channel that was in solo.
+            var nazad = _prePodesavanja ?? Kanali.FirstOrDefault(k => !k.Prazan) ?? Kanali.FirstOrDefault();
+            if (nazad is not null) Kanal = nazad;
+            else Prikaz = null;
+            return;
+        }
+
+        _prePodesavanja = _kanal ?? _prePodesavanja;
+        Kanal = null;
+        Prikaz = new SesijeVm(Sesija.Ucitaj());
+    }
+
+    /// <summary>
+    /// The Scene: the console large over the whole second screen, read from a distance while playing. Remembered
+    /// (only that one value is written to the settings file, nothing else unsaved goes with it).
+    /// </summary>
+    public bool Scena
+    {
+        get => Podesavanja.Scena;
+        set
+        {
+            if (Podesavanja.Scena == value) return;
+            Podesavanja.Scena = value;
+            OnPropertyChanged();
+
+            if (ReferenceEquals(_rad, Podesavanja))
+            {
+                try
+                {
+                    var naDisku = Sistem.Podesavanja.Ucitaj();
+                    naDisku.Scena = value;
+                    naDisku.Sacuvaj();
+                }
+                catch (Exception ex)
+                {
+                    Dnevnik.Greska("Čuvanje Scene", ex);
+                }
+            }
+        }
+    }
+
+    /// <summary>The Scene's strips: the console without the muted channels.</summary>
+    public IEnumerable<KanalVm> KanaliScene => Kanali.Where(k => !k.Utisan);
+
     /// <summary>The console, left to right: CPU, GPU, RAM, disks, fans.</summary>
     public ObservableCollection<KanalVm> Kanali { get; } = [];
 
@@ -198,6 +268,10 @@ public sealed class ProzorVm : ObservableObject, IDisposable
             }
 
             _nadzor = nadzor;
+
+            // Everything there is to get: the driver, and administrator through the service, the helper or the
+            // window itself. Empty strips then say "nema senzora" instead of asking for monitoring again.
+            KanalVm.PotpunNadzor = PawnIo.JeTu && izvor.Pravi && (izvor is PomocnikKlijent || Admin.JeAdmin);
             _nadzor.NoviUzorak += _ => ZakaziOsvezavanje();
             _nadzor.Poruka += poruka => _dispatcher.BeginInvoke(new Action(() => Upozorenje = poruka));
 
@@ -346,6 +420,7 @@ public sealed class ProzorVm : ObservableObject, IDisposable
         // first reading, and then the pult would arrive a second later and replace them.
         if (Prikaz is not Takt.Vm.PodesavanjaVm)
             Kanal = Kanali.FirstOrDefault(k => !k.Prazan && !k.Utisan) ?? Kanali.FirstOrDefault();
+        OnPropertyChanged(nameof(KanaliScene));
     }
 
     /// <summary>M on a strip: the channel folds into a narrow band, and the choice is remembered.</summary>
@@ -357,6 +432,7 @@ public sealed class ProzorVm : ObservableObject, IDisposable
         if (kanal.Utisan) Podesavanja.Utisani.Add(kanal.Kljuc);
         if (!ReferenceEquals(_rad, Podesavanja)) _rad.Utisani = [.. Podesavanja.Utisani];
         if (!_rad.ProbniPodaci || ReferenceEquals(_rad, Podesavanja)) Podesavanja.Sacuvaj();
+        OnPropertyChanged(nameof(KanaliScene));
     }
 
     private void PostaviStanje(IIzvorSenzora izvor)
@@ -436,6 +512,12 @@ public sealed class ProzorVm : ObservableObject, IDisposable
 
         foreach (var kanal in Kanali)
             kanal.Osvezi(snimak, najmanje, najvise, sada, tabela && ReferenceEquals(kanal, Kanal));
+
+        // The game: only the service and the helper measure frames (Windows gives frame events to administrators).
+        // Probe data play a made-up game too, so the Scene can be seen (and pictured) without one.
+        Igra.Postavi(_pomocnik is { } izvor ? _birac.Izaberi(izvor.Igre)
+            : _rad.ProbniPodaci ? ProbnaIgra(snimak.Vreme) : null);
+        Sesija?.Uzmi(Igra, Kanali, sada);
     }
 
     private KanalVm? _prePodesavanja;
@@ -449,7 +531,7 @@ public sealed class ProzorVm : ObservableObject, IDisposable
     {
         if (Prikaz is PodesavanjaVm) return;
 
-        _prePodesavanja = _kanal;
+        _prePodesavanja = _kanal ?? _prePodesavanja;
         Kanal = null;
         Prikaz = PodesavanjaVm;
     }

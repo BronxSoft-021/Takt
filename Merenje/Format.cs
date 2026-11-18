@@ -21,6 +21,8 @@ public static class Format
         Jedinica.Amper => "A",
         Jedinica.Megabajt => "MB",
         Jedinica.MegabajtUSekundi => "MB/s",
+        Jedinica.Kadrovi => "FPS",
+        Jedinica.Milisekunda => "ms",
         _ => "",
     };
 
@@ -71,6 +73,8 @@ public static class Format
         Jedinica.Megaherc => 0,
         Jedinica.Megabajt => 0,
         Jedinica.MegabajtUSekundi => 1,
+        Jedinica.Kadrovi => 0,
+        Jedinica.Milisekunda => 1,
         Jedinica.Volt => 3,
         Jedinica.Amper => 2,
         _ => 1,

@@ -18,6 +18,9 @@
         <DataTemplate DataType="{x:Type vm:PodesavanjaVm}">
             <prikaz:EkranPodesavanja />
         </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:SesijeVm}">
+            <prikaz:EkranSesija />
+        </DataTemplate>
 
         <!-- One channel strip of the console -->
         <DataTemplate x:Key="KanalSablon" DataType="{x:Type vm:KanalVm}">
@@ -37,8 +40,11 @@
                             <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
 
-                        <TextBlock Text="{Binding Naslov}" FontSize="12" FontWeight="SemiBold" HorizontalAlignment="Center"
-                                   Foreground="{StaticResource Tekst}" />
+                        <StackPanel HorizontalAlignment="Center">
+                            <Button Style="{StaticResource ClipLampica}" Click="NaClip" Margin="0,0,0,6" />
+                            <TextBlock Text="{Binding Naslov}" FontSize="12" FontWeight="SemiBold" HorizontalAlignment="Center"
+                                       Foreground="{StaticResource Tekst}" />
+                        </StackPanel>
                         <TextBlock Grid.Row="1" Text="{Binding Kratko}" Style="{StaticResource Natpis}" FontSize="10"
                                    HorizontalAlignment="Center" TextTrimming="CharacterEllipsis" Margin="4,1,4,8" />
 
@@ -178,6 +184,10 @@
                             ToolTip="Pokreće pomoćnika kao administratora (Windows pita za dozvolu). Prozor ostaje običan korisnik."
                             Visibility="{Binding PomocnikMoguc, Converter={StaticResource BoolUVidljivost}}"
                             Click="NaPomocnika" />
+                    <Button Style="{StaticResource DugmeTiho}" Margin="12,0,0,0" Content="Sesije" Click="NaSesije"
+                            ToolTip="Izveštaji o odigranim sesijama: trajanje, FPS, štucanja, temperature" />
+                    <Button Style="{StaticResource DugmeTamno}" Margin="6,0,0,0" Content="Scena  F11" Click="NaScenu"
+                            ToolTip="Veliki pult preko celog ekrana, za drugi monitor dok igraš (Esc izlazi)" />
                     <Button x:Name="DugmePodesavanja" Margin="8,0,0,0" Width="32"
                             Padding="0" ToolTip="Podešavanja" Click="NaPodesavanja">
                         <Button.Style>
@@ -253,5 +263,8 @@
                 </StackPanel>
             </Grid>
         </Border>
+
+        <!-- The Scene over everything, for the second screen (F11 / Esc) -->
+        <prikaz:Scena Grid.RowSpan="3" Visibility="{Binding Scena, Converter={StaticResource BoolUVidljivost}}" />
     </Grid>
 </Window>

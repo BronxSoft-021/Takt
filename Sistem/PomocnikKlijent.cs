@@ -93,6 +93,23 @@ public sealed class PomocnikKlijent : IIzvorSenzora
             return _poslednji ?? new Snimak(DateTime.Now, new double?[_senzori.Count]);
     }
 
+    private Protokol.Igra[] _igre = [];
+    private DateTime _igreVreme = DateTime.MinValue;
+
+    /// <summary>
+    /// The programs that drew frames in the last second, as the service measured them; empty when the list is
+    /// older than three seconds (the service stopped measuring, or nothing draws). Only the service and the helper
+    /// send it: frame events need administrator.
+    /// </summary>
+    public Protokol.Igra[] Igre
+    {
+        get
+        {
+            lock (_brava)
+                return DateTime.UtcNow - _igreVreme < TimeSpan.FromSeconds(3) ? _igre : [];
+        }
+    }
+
     private void PokreniCitanje()
     {
         var nit = new Thread(Citaj)
@@ -124,6 +141,14 @@ public sealed class PomocnikKlijent : IIzvorSenzora
 
                     case Protokol.GreskaVrsta:
                         lock (_brava) _poruka = poruka.Greska;
+                        break;
+
+                    case Protokol.IgreVrsta:
+                        lock (_brava)
+                        {
+                            _igre = poruka.Igre ?? [];
+                            _igreVreme = DateTime.UtcNow;
+                        }
                         break;
                 }
             }
