@@ -1,3 +1,16 @@
+BronxSoft Takt 0.21.19 alfa
+18. 11. 2026.
+
+Diskovi kao jedna grupa na pultu.
+
+NOVO
+- Svi diskovi su jedan kanal, "Diskovi", sa po jednim uskim meračem temperature za svaki disk i
+  najtoplijim diskom ispod; u solo panelu se disk bira dugmićima Disk 1, Disk 2...
+
+DORADE
+- Pult se pomera točkićem miša kad ne stane u prozor.
+
+
 BronxSoft Takt 0.20.18 alfa
 18. 11. 2026.
 

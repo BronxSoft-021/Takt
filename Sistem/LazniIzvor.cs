@@ -48,6 +48,9 @@ public sealed class LazniIzvor : IIzvorSenzora
 
             (Grupa.Diskovi, "NVMe SSD", "Temperatura", Jedinica.Celzijus, 41, 4, 150),
             (Grupa.Diskovi, "NVMe SSD", "Aktivnost", Jedinica.Procenat, 12, 11, 25),
+            (Grupa.Diskovi, "SATA SSD", "Temperatura", Jedinica.Celzijus, 34, 2, 170),
+            (Grupa.Diskovi, "SATA SSD", "Aktivnost", Jedinica.Procenat, 4, 4, 40),
+            (Grupa.Diskovi, "HDD 2 TB", "Temperatura", Jedinica.Celzijus, 37, 1, 200),
             (Grupa.Diskovi, "NVMe SSD", "Zdravlje", Jedinica.Procenat, 98, 0, 1),
             (Grupa.Diskovi, "NVMe SSD", "Životni vek (preostalo)", Jedinica.Procenat, 96, 0, 1),
 

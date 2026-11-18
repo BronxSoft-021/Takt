@@ -22,6 +22,13 @@ public static class Izmene
     [
         new("alfa", "18. 11. 2026.",
         [
+            "Svi diskovi su jedan kanal na pultu, „Diskovi“, sa po jednim uskim meračem temperature za svaki disk i najtoplijim diskom ispod; u solo panelu se disk bira dugmićima Disk 1, Disk 2…",
+        ],
+        [
+            "Pult se pomera točkićem miša kad ne stane u prozor.",
+        ]),
+        new("alfa", "18. 11. 2026.",
+        [
             "Pult: računar je miksета, a procesor, grafička karta, memorija, svaki disk i ventilatori su kanali, svaki sa dva VU merača (npr. opterećenje i temperatura) i vrhom koji stoji pa polako pada.",
             "Solo panel: izabrani kanal desno, sa grafikonom, stubićima svih niti procesora i tabelom senzora (Sada, Najmanje, Prosek, Najviše).",
             "Tasteri S i M na svakom kanalu: S ga stavlja desno, M ga skuplja u usku traku, a program to pamti.",

@@ -29,6 +29,7 @@ public static class Spisak
         ("ekran: granice diska nisu merenja", PrikazTestovi.GraniceDiska),
         ("pult: kanali i njihovi merači", PultTestovi.Kanali),
         ("pult: prazna mesta za diskove i ventilatore", PultTestovi.PraznaMesta),
+        ("pult: šest diskova je jedan kanal", PultTestovi.GrupaDiskova),
         ("pult: VU vrh drži pa pada", PultTestovi.Vrh),
         ("pult: segmenti i skala temperature", PultTestovi.Segmenti),
         ("protokol: spisak i uzorak kroz tekst", ProtokolTestovi.SpisakIUzorak),

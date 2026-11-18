@@ -361,10 +361,7 @@ public sealed class ProzorVm : ObservableObject, IDisposable
         Vreme = snimak.Vreme.ToString("HH:mm:ss");
         var sada = DateTime.Now;
         foreach (var kanal in Kanali)
-        {
-            kanal.Detalj.Osvezi(snimak, najmanje, najvise);
-            kanal.Osvezi(sada);
-        }
+            kanal.Osvezi(snimak, najmanje, najvise, sada);
     }
 
     private KanalVm? _prePodesavanja;

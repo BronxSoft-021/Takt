@@ -26,6 +26,14 @@ public partial class GlavniProzor : Window
         e.Handled = true;
     }
 
+    /// <summary>The console scrolls sideways; the mouse wheel moves it, as nobody looks for a thin bar at the bottom.</summary>
+    private void NaTockicPulta(object sender, MouseWheelEventArgs e)
+    {
+        if (sender is not System.Windows.Controls.ScrollViewer pult || pult.ScrollableWidth <= 0) return;
+        pult.ScrollToHorizontalOffset(pult.HorizontalOffset - e.Delta / 2.0);
+        e.Handled = true;
+    }
+
     private void NaUtisaj(object sender, RoutedEventArgs e)
     {
         if (sender is FrameworkElement { DataContext: KanalVm kanal } && Vm is { } vm) vm.Utisaj(kanal);

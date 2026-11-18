@@ -16,15 +16,55 @@ public static class PultTestovi
         using var izvor = new LazniIzvor();
         var kanali = KanalVm.Napravi(Senzori(izvor));
 
-        Proveri.Jednako("CPU, GPU, RAM, Disk 1, Vent.", string.Join(", ", kanali.Select(k => k.Naslov)), "redosled kanala");
+        Proveri.Jednako("CPU, GPU, RAM, Diskovi, Vent.", string.Join(", ", kanali.Select(k => k.Naslov)), "redosled kanala");
         Proveri.Da(kanali.All(k => !k.Prazan), "probni podaci daju svakom kanalu bar jedan merač");
 
         var cpu = kanali[0];
         Proveri.Jednako("Opterećenje procesora", cpu.Levi?.Senzor.Ime, "CPU levo: opterećenje");
         Proveri.Jednako("Temperatura jezgra 1", cpu.Desni?.Senzor.Ime, "CPU desno: temperatura");
         Proveri.Jednako("Zauzeće commit-a", kanali[2].Desni?.Senzor.Ime, "RAM desno: commit");
-        Proveri.Jednako("Aktivnost", kanali[3].Levi?.Senzor.Ime, "disk levo: aktivnost");
         Proveri.Jednako("1", kanali[4].Levi?.Oznaka, "ventilatori: prvi i drugi");
+        return Task.CompletedTask;
+    }
+
+    /// <summary>
+    /// Six disks used to be six strips and pushed the rest off the console. Now they are one group: one meter
+    /// per disk, the hottest one in the readout, and the solo panel switches between them.
+    /// </summary>
+    public static Task GrupaDiskova()
+    {
+        var senzori = new List<SenzorVm>();
+        double[] temperature = [41, 35, 52, 38, 44, 36];
+        for (int i = 0; i < temperature.Length; i++)
+        {
+            senzori.Add(new(new Senzor(new SenzorKljuc(Grupa.Diskovi, $"Disk model {i}", "Temperatura"), Jedinica.Celzijus), senzori.Count, new Prsten(4)));
+            senzori.Add(new(new Senzor(new SenzorKljuc(Grupa.Diskovi, $"Disk model {i}", "Aktivnost"), Jedinica.Procenat), senzori.Count, new Prsten(4)));
+        }
+
+        var kanali = KanalVm.Napravi(senzori);
+        Proveri.Jednako(1, kanali.Count(k => k.Naslov.StartsWith("Disk")), "šest diskova je jedan kanal");
+
+        var diskovi = kanali.Single(k => k.Naslov == "Diskovi");
+        Proveri.Jednako(6, diskovi.Meraci.Count, "po jedan merač za svaki disk");
+        Proveri.Jednako("1 2 3 4 5 6", string.Join(" ", diskovi.Meraci.Select(m => m.Oznaka)), "merači su numerisani");
+        Proveri.Da(diskovi.Meraci.All(m => m.Senzor.Ime == "Temperatura"), "merač diska je njegova temperatura");
+        Proveri.Jednako("6 diskova", diskovi.Kratko, "ispod imena koliko ih je");
+        Proveri.Da(diskovi.ImaIzbor, "solo panel nudi izbor diska");
+
+        var vrednosti = new double?[senzori.Count];
+        for (int i = 0; i < temperature.Length; i++) { vrednosti[2 * i] = temperature[i]; vrednosti[2 * i + 1] = 5; }
+        diskovi.Osvezi(new Snimak(DateTime.Now, vrednosti), vrednosti, vrednosti, DateTime.Now);
+
+        Proveri.Jednako(52.0, diskovi.Glavni?.Broj, "veliki broj je najtopliji disk");
+        Proveri.Jednako("Disk model 0", diskovi.Uredjaj, "solo kreće od prvog diska");
+
+        diskovi.IzabraniPodkanal = diskovi.Podkanali[2];
+        Proveri.Jednako("Disk model 2", diskovi.Uredjaj, "izbor menja uređaj u zaglavlju");
+        Proveri.Da(diskovi.Detalj.Senzori.All(s => s.Uredjaj == "Disk model 2"), "i tabelu");
+
+        Proveri.Jednako("2 diska", KanalVm.BrojDiskova(2), "dva diska");
+        Proveri.Jednako("1 disk", KanalVm.BrojDiskova(1), "jedan disk");
+        Proveri.Jednako("12 diskova", KanalVm.BrojDiskova(12), "dvanaest");
         return Task.CompletedTask;
     }
 
@@ -37,7 +77,7 @@ public static class PultTestovi
         };
         var kanali = KanalVm.Napravi(senzori);
 
-        Proveri.Jednako("CPU, GPU, RAM, Disk 1, Vent.", string.Join(", ", kanali.Select(k => k.Naslov)), "mesta za sve delove");
+        Proveri.Jednako("CPU, GPU, RAM, Diskovi, Vent.", string.Join(", ", kanali.Select(k => k.Naslov)), "mesta za sve delove");
         Proveri.Da(!kanali[0].Prazan && !kanali[0].DvaMeraca, "CPU sa jednim meračem");
         Proveri.Da(kanali.Skip(1).All(k => k.Prazan), "ostali su prazna mesta");
         Proveri.Jednako("Ryzen 5 5600", kanali[0].Kratko, "kratko ime uređaja");

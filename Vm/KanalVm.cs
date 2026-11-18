@@ -36,6 +36,9 @@ public sealed class MeracVm : ObservableObject
     /// <summary>The small print under the meter: "%", "°C", "akt", "com", "1"…</summary>
     public string Oznaka { get; }
 
+    /// <summary>Tool tip of the meter: which device and which sensor it shows.</summary>
+    public string Opis => $"{Senzor.Uredjaj} · {Senzor.Ime}";
+
     public double SkalaOd { get; }
     public double SkalaDo => _skalaDo;
 
@@ -98,23 +101,31 @@ public sealed class MeracVm : ObservableObject
 }
 
 /// <summary>
-/// One strip on the console: a part of the computer (processor, a graphics card, memory, a disk, the fans) with
-/// one or two meters, a readout, S (solo) and M (mute). Its sensors are an <see cref="EkranVm"/> that the solo
-/// panel shows as a chart and a table.
+/// One strip on the console: a part of the computer with its meters, a readout, S (solo) and M (mute). Its
+/// sensors are an <see cref="EkranVm"/> that the solo panel shows as a chart and a table.
+/// The disks are one strip too - a group, like a bus on a mixing desk: one narrow meter per disk, and the solo
+/// panel picks the disk (<see cref="Podkanali"/>). Six disks as six strips pushed everything else off the console.
 /// </summary>
 public sealed class KanalVm : ObservableObject
 {
+    private readonly string _uredjaj;
     private bool _solo;
     private bool _utisan;
+    private KanalVm? _izabraniPodkanal;
+    private EkranVm _detalj;
 
-    public KanalVm(string kljuc, string naslov, string uredjaj, EkranVm detalj, MeracVm? levi, MeracVm? desni)
+    public KanalVm(string kljuc, string naslov, string uredjaj, EkranVm detalj, IEnumerable<MeracVm?> meraci,
+        IReadOnlyList<KanalVm>? podkanali = null)
     {
         Kljuc = kljuc;
         Naslov = naslov;
-        Uredjaj = uredjaj;
-        Detalj = detalj;
-        Levi = levi ?? desni;
-        Desni = levi is null ? null : desni;
+        _uredjaj = uredjaj;
+        _detalj = detalj;
+        Meraci = meraci.OfType<MeracVm>().ToList();
+        Podkanali = podkanali ?? [];
+
+        _izabraniPodkanal = Podkanali.FirstOrDefault(p => !p.Prazan) ?? Podkanali.FirstOrDefault();
+        if (_izabraniPodkanal is not null) _detalj = _izabraniPodkanal.Detalj;
 
         Jezgra = detalj.Senzori
             .Where(s => s.Senzor.Jedinica == Jedinica.Procenat && s.Ime.StartsWith("Opterećenje jezgra ", StringComparison.Ordinal))
@@ -124,23 +135,66 @@ public sealed class KanalVm : ObservableObject
     /// <summary>Stable name for remembering a muted channel: group and device.</summary>
     public string Kljuc { get; }
 
-    /// <summary>"CPU", "GPU", "RAM", "Disk 1", "Ventilatori".</summary>
+    /// <summary>"CPU", "GPU", "RAM", "Diskovi", "Vent."; a disk inside the group is "Disk 1", "Disk 2"…</summary>
     public string Naslov { get; }
 
-    /// <summary>The full device name, "AMD Ryzen 5 5600"; the strip shows <see cref="Kratko"/>.</summary>
-    public string Uredjaj { get; }
+    /// <summary>The full device name; for the disk group, the disk now in the solo panel.</summary>
+    public string Uredjaj => _izabraniPodkanal?.Uredjaj ?? _uredjaj;
 
-    public string Kratko => Skrati(Uredjaj);
+    /// <summary>The small line under the name: "Ryzen 5 5600", or "6 diskova" for the group.</summary>
+    public string Kratko => JeGrupa ? BrojDiskova(Podkanali.Count) : Skrati(_uredjaj);
 
-    public EkranVm Detalj { get; }
+    /// <summary>The sensors in the solo panel; for the disk group, those of the chosen disk.</summary>
+    public EkranVm Detalj
+    {
+        get => _detalj;
+        private set => SetProperty(ref _detalj, value);
+    }
 
-    public MeracVm? Levi { get; }
-    public MeracVm? Desni { get; }
+    public IReadOnlyList<MeracVm> Meraci { get; }
 
-    public bool DvaMeraca => Desni is not null;
+    public MeracVm? Levi => Meraci.Count > 0 ? Meraci[0] : null;
+    public MeracVm? Desni => Meraci.Count > 1 ? Meraci[1] : null;
+
+    public bool DvaMeraca => Meraci.Count == 2;
 
     /// <summary>A place holder: the part exists but gives no sensor without the driver.</summary>
-    public bool Prazan => Levi is null;
+    public bool Prazan => Meraci.Count == 0;
+
+    /// <summary>Width of one meter's column and of the meter in it: wide alone, narrow in a group of many.</summary>
+    public double SirinaKolone => Meraci.Count switch { <= 1 => 30, 2 => 24, _ => 16 };
+    public double SirinaMeraca => Meraci.Count switch { <= 1 => 22, 2 => 14, _ => 10 };
+
+    public IReadOnlyList<KanalVm> Podkanali { get; }
+
+    public bool JeGrupa => Podkanali.Count > 0;
+
+    /// <summary>The selector above the chart only makes sense with more than one disk.</summary>
+    public bool ImaIzbor => Podkanali.Count > 1;
+
+    public KanalVm? IzabraniPodkanal
+    {
+        get => _izabraniPodkanal;
+        set
+        {
+            if (value is null || !SetProperty(ref _izabraniPodkanal, value)) return;
+            Detalj = value.Detalj;
+            OnPropertyChanged(nameof(Uredjaj));
+        }
+    }
+
+    /// <summary>
+    /// The big number under the meters: the left meter's sensor, or in the disk group the hottest disk (the one
+    /// worth watching). Null on an empty strip.
+    /// </summary>
+    public SenzorVm? Glavni => JeGrupa
+        ? Meraci.Select(m => m.Senzor).Where(s => s.Broj is not null).MaxBy(s => s.Broj) ?? Levi?.Senzor
+        : Levi?.Senzor;
+
+    /// <summary>The small line under it: the right meter's value, "najtopliji" for the group, "nadzor" when empty.</summary>
+    public string DrugiTekst => Prazan ? "nadzor"
+        : JeGrupa ? (Meraci.Count > 1 ? "najtopliji" : "")
+        : Desni?.Senzor.Vrednost ?? "";
 
     /// <summary>Load of every thread, for the row of small bars in the processor's solo panel.</summary>
     public IReadOnlyList<SenzorVm> Jezgra { get; }
@@ -161,10 +215,18 @@ public sealed class KanalVm : ObservableObject
         set => SetProperty(ref _utisan, value);
     }
 
-    public void Osvezi(DateTime sada)
+    /// <summary>One reading: the sensors (of every disk in a group), then the meters, then the readout.</summary>
+    public void Osvezi(Snimak snimak, double?[] najmanje, double?[] najvise, DateTime sada)
     {
-        Levi?.Osvezi(sada);
-        Desni?.Osvezi(sada);
+        if (JeGrupa)
+            foreach (var pod in Podkanali) pod.Osvezi(snimak, najmanje, najvise, sada);
+        else
+            Detalj.Osvezi(snimak, najmanje, najvise);
+
+        foreach (var merac in Meraci) merac.Osvezi(sada);
+
+        OnPropertyChanged(nameof(Glavni));
+        OnPropertyChanged(nameof(DrugiTekst));
     }
 
     /// <summary>"AMD Radeon RX 6600" → "RX 6600": the brand is in the tool tip, the strip is narrow.</summary>
@@ -176,37 +238,59 @@ public sealed class KanalVm : ObservableObject
         return ime.Trim();
     }
 
+    public static string BrojDiskova(int n) => n switch
+    {
+        0 => "nema diskova",
+        _ when n % 10 == 1 && n % 100 != 11 => $"{n} disk",
+        _ when n % 10 is >= 2 and <= 4 && n % 100 is < 12 or > 14 => $"{n} diska",
+        _ => $"{n} diskova",
+    };
+
     /// <summary>
-    /// Builds the console from the sensor screens: one channel per processor, graphics card and disk, one for
-    /// memory and one for the fans. A part with no sensors still gets its strip (pale), so the console always
-    /// shows where disks and fans would be once full monitoring is on.
+    /// Builds the console from the sensors: one channel per processor and graphics card, one for memory, one group
+    /// for all the disks and one for the fans. A part with no sensors still gets its strip (pale), so the console
+    /// always shows where disks and fans would be once full monitoring is on.
     /// </summary>
     public static List<KanalVm> Napravi(IReadOnlyList<SenzorVm> sviSenzori)
     {
         var kanali = new List<KanalVm>();
 
-        void PoUredjaju(Grupa grupa, Func<int, int, string> naslov, string[] levo, string[] desno, string oznakaL, string oznakaD)
+        List<KanalVm> PoUredjaju(Grupa grupa, Func<int, int, string> naslov, string[] levo, string[] desno, string oznakaL, string oznakaD)
         {
+            var rezultat = new List<KanalVm>();
             var uredjaji = sviSenzori.Where(s => s.Senzor.Grupa == grupa).Select(s => s.Uredjaj).Distinct().ToList();
             for (int i = 0; i < uredjaji.Count; i++)
             {
                 var senzori = sviSenzori.Where(s => s.Senzor.Grupa == grupa && s.Uredjaj == uredjaji[i]).ToList();
-                kanali.Add(new KanalVm($"{grupa}|{uredjaji[i]}", naslov(i, uredjaji.Count), uredjaji[i],
-                    new EkranVm(grupa, senzori), Merac(senzori, levo, oznakaL), Merac(senzori, desno, oznakaD)));
+                rezultat.Add(new KanalVm($"{grupa}|{uredjaji[i]}", naslov(i, uredjaji.Count), uredjaji[i],
+                    new EkranVm(grupa, senzori), [Merac(senzori, levo, oznakaL), Merac(senzori, desno, oznakaD)]));
             }
-
-            if (uredjaji.Count == 0)
-                kanali.Add(new KanalVm($"{grupa}|", naslov(0, 1), GrupaOpis.Naslov(grupa), new EkranVm(grupa, []), null, null));
+            return rezultat;
         }
 
-        PoUredjaju(Grupa.Procesor, (i, n) => n == 1 ? "CPU" : $"CPU {i + 1}",
-            ["Opterećenje procesora"], ["Temperatura procesora", "Temperatura paketa", "Temperatura jezgra 1"], "%", "°C");
-        PoUredjaju(Grupa.Grafika, (i, n) => n == 1 ? "GPU" : $"GPU {i + 1}",
-            ["Opterećenje"], ["Temperatura"], "%", "°C");
-        PoUredjaju(Grupa.Memorija, (_, _) => "RAM",
-            ["Zauzeće"], ["Zauzeće commit-a"], "RAM", "com");
-        PoUredjaju(Grupa.Diskovi, (i, _) => $"Disk {i + 1}",
-            ["Aktivnost", "Zauzeće"], ["Temperatura"], "akt", "°C");
+        void Dodaj(Grupa grupa, List<KanalVm> nadjeni, string naslov)
+        {
+            if (nadjeni.Count > 0) kanali.AddRange(nadjeni);
+            else kanali.Add(new KanalVm($"{grupa}|", naslov, GrupaOpis.Naslov(grupa), new EkranVm(grupa, []), []));
+        }
+
+        Dodaj(Grupa.Procesor, PoUredjaju(Grupa.Procesor, (i, n) => n == 1 ? "CPU" : $"CPU {i + 1}",
+            ["Opterećenje procesora"], ["Temperatura procesora", "Temperatura paketa", "Temperatura jezgra 1"], "%", "°C"), "CPU");
+        Dodaj(Grupa.Grafika, PoUredjaju(Grupa.Grafika, (i, n) => n == 1 ? "GPU" : $"GPU {i + 1}",
+            ["Opterećenje"], ["Temperatura"], "%", "°C"), "GPU");
+        Dodaj(Grupa.Memorija, PoUredjaju(Grupa.Memorija, (_, _) => "RAM",
+            ["Zauzeće"], ["Zauzeće commit-a"], "RAM", "com"), "RAM");
+
+        // All disks in one group: each disk keeps its own channel inside (for the solo panel), and the group shows
+        // one meter per disk - its temperature, or its activity when it has no thermometer.
+        var diskovi = PoUredjaju(Grupa.Diskovi, (i, _) => $"Disk {i + 1}", ["Aktivnost", "Zauzeće"], ["Temperatura"], "akt", "°C");
+        var meraciDiskova = diskovi.Select((d, i) =>
+        {
+            var senzor = d.Detalj.Senzori.FirstOrDefault(s => s.Ime == "Temperatura") ?? d.Levi?.Senzor;
+            return senzor is null ? null : new MeracVm(senzor, (i + 1).ToString());
+        }).ToList();
+        kanali.Add(new KanalVm($"{Grupa.Diskovi}|", "Diskovi", GrupaOpis.Naslov(Grupa.Diskovi),
+            diskovi.FirstOrDefault()?.Detalj ?? new EkranVm(Grupa.Diskovi, []), meraciDiskova, diskovi));
 
         // Fans live on the board and on the cards; the strip shows the first two the board gives.
         var ventilatori = sviSenzori.Where(s => s.Senzor.Grupa == Grupa.Hladjenje).ToList();
@@ -214,13 +298,12 @@ public sealed class KanalVm : ObservableObject
         kanali.Add(new KanalVm($"{Grupa.Hladjenje}|", "Vent.",
             ventilatori.Select(s => s.Uredjaj).FirstOrDefault() ?? "Hlađenje",
             new EkranVm(Grupa.Hladjenje, ventilatori),
-            obrtaji.Count > 0 ? new MeracVm(obrtaji[0], "1") : null,
-            obrtaji.Count > 1 ? new MeracVm(obrtaji[1], "2") : null));
+            [obrtaji.Count > 0 ? new MeracVm(obrtaji[0], "1") : null, obrtaji.Count > 1 ? new MeracVm(obrtaji[1], "2") : null]));
 
         return kanali;
     }
 
-    /// <summary>The first of the wanted names that this device has, or any sensor with a matching name start.</summary>
+    /// <summary>The first of the wanted names that this device has.</summary>
     private static MeracVm? Merac(List<SenzorVm> senzori, string[] imena, string oznaka)
     {
         foreach (var ime in imena)
