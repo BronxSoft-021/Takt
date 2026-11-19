@@ -40,20 +40,33 @@ public sealed class SenzorVm : ObservableObject
     public SenzorVm? GranicaToplo { get; set; }
     public SenzorVm? GranicaVruce { get; set; }
 
-    /// <summary>The heading the row sits under in the list: "Temperature", "Takt", "Ventilatori"…</summary>
-    public string Vrsta => JeGranica ? Tekst.T("Granice koje prijavljuje uređaj") : Tekst.T(Senzor.Jedinica switch
+    /// <summary>
+    /// The heading the row sits under in the list: "Temperature", "Clock", "Fans"… A drive's rows say three
+    /// different things and used to be mixed in one list: the temperature read now, the health that comes from
+    /// SMART (and is read every ten minutes), and the space of the volumes that sit on the drive. Three sections,
+    /// so a 93 % lifetime is not read as "93 % full" (a report pointed at the mix, 19. 11. 2026).
+    /// </summary>
+    public string Vrsta => JeGranica ? Tekst.T("Granice koje prijavljuje uređaj")
+        : Senzor.Grupa == Grupa.Diskovi ? Disk() : Tekst.T(Senzor.Jedinica switch
+        {
+            Jedinica.Celzijus => "Temperature",
+            Jedinica.Procenat => "Opterećenje i zauzeće",
+            Jedinica.Megaherc => "Takt",
+            Jedinica.Obrtaj => "Ventilatori",
+            Jedinica.Vat => "Potrošnja",
+            Jedinica.Volt => "Napon",
+            Jedinica.Amper => "Struja",
+            Jedinica.Megabajt => "Količina",
+            Jedinica.MegabajtUSekundi => "Protok",
+            _ => "Ostalo",
+        });
+
+    private string Disk() => Ime switch
     {
-        Jedinica.Celzijus => "Temperature",
-        Jedinica.Procenat => "Opterećenje i zauzeće",
-        Jedinica.Megaherc => "Takt",
-        Jedinica.Obrtaj => "Ventilatori",
-        Jedinica.Vat => "Potrošnja",
-        Jedinica.Volt => "Napon",
-        Jedinica.Amper => "Struja",
-        Jedinica.Megabajt => "Količina",
-        Jedinica.MegabajtUSekundi => "Protok",
-        _ => "Ostalo",
-    });
+        "Zauzeće" or "Slobodan prostor" or "Ukupan prostor" => Tekst.T("Prostor (particija)"),
+        _ when Senzor.Jedinica == Jedinica.Celzijus => Tekst.T("Temperature"),
+        _ => Tekst.T("Zdravlje i SMART"),
+    };
 
     public double? Broj
     {

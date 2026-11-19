@@ -2,7 +2,7 @@
 ; Pravi se sa "Napravi instalaciju.bat": prvo dist-prenos (sa .NET-om u sebi), pa ova skripta.
 ; Setup nosi sve sto treba: na drugom racunaru ne treba ni .NET ni bilo sta drugo osim PawnIO drajvera.
 
-#define Ver "0.39.88"
+#define Ver "0.39.89"
 
 [Setup]
 AppId={{8E4C1D62-77A5-4B21-9E3C-5A1B7D0F2C64}

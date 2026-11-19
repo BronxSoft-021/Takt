@@ -30,6 +30,7 @@ public static class Izmene
             "**Prevedena su i imena senzora i tabele**: „Core 5 load“, „CPU temperature“, „VRAM used“, „Lifetime“, „Power-on hours“, zaglavlja „Sensor / Now / Min / Avg / Max“, dugmad u zaglavlju („Sessions“), izlaz iz Scene i izveštaj sesije. Šabloni sa brojevima idu kroz `Tekst.P` („Core {0} load“), pa i brojevi prate jezik.",
             "Šta još fali: ekran Sesija (naslovi kolona), tooltipovi i `Izmene` (dnevnik izmena ostaje na srpskom). Tekst kojeg u tabeli nema prikazuje se na srpskom — vidi se gde fali.",
             "Dovršeno: **ekran Sesija** (naslov, objašnjenje, prazno stanje), **tooltipovi** u zaglavlju (Solo, Utišaj, ritam, pomoćnik, Scena, Podešavanja), **čiplet** („CCD1 temperature“ umesto „Temperatura CCD1“) i **broj senzora** u podnožju („124 sensors“).",
+            "Diskovi više ne mešaju babe i žabe: tabela jednog diska ima **tri jasne sekcije** — „Temperature“ (ono što se čita sada), „Zdravlje i SMART“ (životni vek, istrošenost, rezervni blokovi — čitaju se na 10 minuta) i „Prostor (particija)“ (zauzeće, slobodan prostor — to pripada particiji, ne disku); granice koje disk sam prijavljuje su i dalje zasebna sekcija. Do sada je „životni vek 93 %“ stajao odmah iznad „zauzeće 54 %“ i čitao se kao ista vrsta broja.",
         ]),
         new("alfa", "19. 11. 2026.",
         [

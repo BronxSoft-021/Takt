@@ -80,6 +80,33 @@ public static class PrikazTestovi
     }
 
     /// <summary>
+    /// A drive's rows are three different things, and the list says which is which: the temperature now, the health
+    /// from SMART (read every ten minutes), the space of the volumes on the drive, and - apart - the limits the
+    /// drive reports about itself. Mixed together, "Životni vek 93 %" sat right above "Zauzeće 54 %" and read as
+    /// the same kind of number.
+    /// </summary>
+    public static Task VrsteDiskova()
+    {
+        const string disk = "ST12000VE";
+        var senzori = new[]
+        {
+            new Senzor(new SenzorKljuc(Grupa.Diskovi, disk, "Temperatura"), Jedinica.Celzijus),
+            new Senzor(new SenzorKljuc(Grupa.Diskovi, disk, "Životni vek"), Jedinica.Procenat),
+            new Senzor(new SenzorKljuc(Grupa.Diskovi, disk, "Zauzeće"), Jedinica.Procenat),
+            new Senzor(new SenzorKljuc(Grupa.Diskovi, disk, "Slobodan prostor"), Jedinica.Megabajt),
+            new Senzor(new SenzorKljuc(Grupa.Diskovi, disk, Granice.Upozorenje), Jedinica.Celzijus),
+        };
+        var vm = senzori.Select((s, i) => new SenzorVm(s, i, new Prsten(8))).ToList();
+
+        Proveri.Jednako("Temperature", vm[0].Vrsta, "temperatura je svoja sekcija");
+        Proveri.Jednako("Zdravlje i SMART", vm[1].Vrsta, "životni vek je zdravlje, ne zauzeće");
+        Proveri.Jednako("Prostor (particija)", vm[2].Vrsta, "zauzeće pripada particiji");
+        Proveri.Jednako("Prostor (particija)", vm[3].Vrsta, "i slobodan prostor");
+        Proveri.Jednako("Granice koje prijavljuje uređaj", vm[4].Vrsta, "granica nije merenje");
+        return Task.CompletedTask;
+    }
+
+    /// <summary>
     /// The board's numbered temperature channels are inputs of the Super I/O chip, and nobody knows what they
     /// measure. One that stands still at a high value ("Temperatura 6" at 80,0 °C, min = average = max) has nothing
     /// attached and leaves the list; the one that moves stays, but without colour or clip light (SenzorVm.Pragovi).

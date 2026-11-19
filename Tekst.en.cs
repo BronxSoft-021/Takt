@@ -192,6 +192,8 @@ public static class TekstEngleski
         ["Zauzeće commit-a"] = "Commit usage",
 
         // ---- Table captions (SenzorVm.Vrsta) ----
+        ["Zdravlje i SMART"] = "Health and SMART",
+        ["Prostor (particija)"] = "Space (volume)",
         ["Opterećenje i zauzeće"] = "Load and usage",
         ["Takt"] = "Clock",
         ["Ventilatori"] = "Fans",
