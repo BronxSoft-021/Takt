@@ -46,6 +46,41 @@ public sealed class Baza : IDisposable
         Naredba("create index if not exists ix_uzorci_senzor on uzorci(senzor, vreme);").ExecuteNonQuery();
     }
 
+    /// <summary>
+    /// Forgets the sensors that spoke once and never again. An older build read the board's +3.3 V rails; those rows
+    /// stayed in the table with a single sample each - lonely dots in a history nobody can use. The list of sensors
+    /// that live now is the judge: a sensor that is no longer read and left exactly one sample is a leftover, a
+    /// sensor that is read writes every minute and keeps everything.
+    /// </summary>
+    public int ObrisiMrtve(IReadOnlyCollection<string> zivi)
+    {
+        try
+        {
+            var samci = new List<string>();
+            using (var citaj = Naredba("select senzor from uzorci group by senzor having count(*) = 1;"))
+            using (var citac = citaj.ExecuteReader())
+            {
+                while (citac.Read()) samci.Add(citac.GetString(0));
+            }
+
+            int uklonjeno = 0;
+            foreach (var kljuc in samci.Where(k => !zivi.Contains(k)))
+            {
+                using var brisi = Naredba("delete from uzorci where senzor = $kljuc;", ("$kljuc", kljuc));
+                uklonjeno += brisi.ExecuteNonQuery();
+            }
+
+            // The catalogue row of that sensor stays: it is a few bytes and explains history that may still be read.
+            if (uklonjeno > 0) Dnevnik.Upisi($"Baza: uklonjeno {uklonjeno} usamljenih uzoraka senzora kojih više nema.");
+            return uklonjeno;
+        }
+        catch (Exception ex)
+        {
+            Dnevnik.Greska("Baza: uklanjanje usamljenih uzoraka", ex);
+            return 0;
+        }
+    }
+
     /// <summary>Remembers the sensors so old rows can still be explained after a restart.</summary>
     public void UpisiSenzore(IEnumerable<Merenje.Senzor> senzori)
     {

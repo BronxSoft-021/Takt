@@ -178,6 +178,9 @@ public sealed class Nadzor : IDisposable
             {
                 _baza = new Baza(Putanje.Baza);
                 _baza.UpisiSenzore(Senzori);
+                // A leftover of an older build (one lonely sample from a sensor we no longer read) goes once per run,
+                // here rather than in Baza's constructor: a test that opens a database must not lose its own rows.
+                _baza.ObrisiMrtve(Senzori.Select(s => s.Kljuc.Tekst).ToList());
             }
             catch (Exception ex)
             {

@@ -38,7 +38,10 @@ public sealed class LhmIzvor : IIzvorSenzora
             {
                 IsCpuEnabled = true,
                 IsGpuEnabled = true,
-                IsMemoryEnabled = true,
+                // Memory is RamIzvor's job: Windows' own numbers, with stable keys and no driver. LibreHardwareMonitor
+                // would add its own memory list beside it - the same totals twice, in two rows (a duplicate found on
+                // paper 19. 11. 2026, on a machine where the library could read it).
+                IsMemoryEnabled = false,
                 IsMotherboardEnabled = true,
                 IsStorageEnabled = true,
                 // Fan control is not implemented yet, and enabling the controllers starts LibreHardwareMonitor's

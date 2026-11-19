@@ -139,6 +139,24 @@ public static class IgreTestovi
         return Task.CompletedTask;
     }
 
+    /// <summary>
+    /// A maximized window covers the monitor rectangle on a screen without a taskbar, but it is not full screen: a
+    /// maximized browser used to count as a game because of that (found 19. 11. 2026).
+    /// </summary>
+    public static Task Pokrivanje()
+    {
+        // 1920 x 1080 monitor; Takt's own maximized window measures -8,-8 to 1928,1088.
+        Proveri.Da(!BiracIgre.Pokriva(-8, -8, 1928, 1088, 0, 0, 1920, 1080, maksimizovan: true),
+            "maksimizovan prozor nije ceo ekran");
+        Proveri.Da(BiracIgre.Pokriva(-8, -8, 1928, 1088, 0, 0, 1920, 1080, maksimizovan: false),
+            "isti prozor bez maksimizacije jeste ceo ekran (borderless)");
+        Proveri.Da(!BiracIgre.Pokriva(100, 100, 1000, 700, 0, 0, 1920, 1080, maksimizovan: false),
+            "prozor u sredini nije ceo ekran");
+        Proveri.Da(!BiracIgre.Pokriva(0, 0, 1920, 1000, 0, 0, 1920, 1080, maksimizovan: false),
+            "ni prozor koji ne pokriva donju ivicu");
+        return Task.CompletedTask;
+    }
+
     /// <summary>A temperature over the hot limit lights the clip, which stays on until clicked.</summary>
     public static Task Clip()
     {

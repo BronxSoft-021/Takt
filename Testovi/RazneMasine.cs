@@ -173,4 +173,38 @@ public static class RazneMasine
         Proveri.Jednako("Fan #2", senzori[1].Ime, "i kod ventilatora");
         return Task.CompletedTask;
     }
+
+    /// <summary>
+    /// The same number from two sources is one row: memory from the hardware library and from Windows would stand
+    /// side by side otherwise. The first source wins, and a reading still means the same sensor.
+    /// </summary>
+    public static Task BezDuplikata()
+    {
+        var prvi = new Jedan(new Senzor(new SenzorKljuc(Grupa.Memorija, "Računar", "Zauzeto"), Jedinica.Megabajt), 100);
+        var drugi = new Jedan(new Senzor(new SenzorKljuc(Grupa.Memorija, "ASUS", "Zauzeto"), Jedinica.Megabajt), 999);
+        using var spoj = new SlozeniIzvor(prvi, drugi);
+
+        Proveri.Jednako(1, spoj.Senzori.Count, "isto ime i jedinica se prikazuje jednom");
+        Proveri.Jednako(100.0, spoj.Uzmi().Vrednosti[0], "pobeđuje prvi izvor");
+        return Task.CompletedTask;
+    }
+
+    /// <summary>One sensor, one value: the smallest source there is, for the merge test.</summary>
+    private sealed class Jedan : IIzvorSenzora
+    {
+        private readonly double _vrednost;
+
+        public Jedan(Senzor senzor, double vrednost)
+        {
+            Senzori = [senzor];
+            _vrednost = vrednost;
+        }
+
+        public string Naziv => "probni";
+        public bool Pravi => true;
+        public IReadOnlyList<Senzor> Senzori { get; }
+        public string? Poruka => null;
+        public Snimak Uzmi() => new(DateTime.Now, [_vrednost]);
+        public void Dispose() { }
+    }
 }

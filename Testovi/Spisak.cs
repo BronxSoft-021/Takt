@@ -19,6 +19,7 @@ public static class Spisak
         ("kriva: provera pogrešnih kriva", KrivaTestovi.Provera),
         ("baza: upis senzora i vrednosti", BazaTestovi.UpisICitanje),
         ("baza: brisanje starog i ponovno otvaranje", BazaTestovi.Brisanje),
+        ("baza: usamljeni uzorci starih senzora se brišu", BazaTestovi.Mrtvi),
         ("nadzor: probni izvor daje vrednosti i istoriju", NadzorTestovi.Uzorkovanje),
         ("nadzor: posle 60 uzoraka istorija je u bazi", NadzorTestovi.UpisUMinuti),
         ("izvor: probni podaci pokrivaju svih pet grupa", NadzorTestovi.Grupe),
@@ -65,6 +66,7 @@ public static class Spisak
         ("usluga: sluša čuvanje i brisanje istorije", BezbednostTestovi.UslugaSlusaPodesavanja),
         ("prozor: samo jedan Takt, drugi otvara prvog", BezbednostTestovi.JedanTakt),
         ("igre: FPS, najduži kadar, 1% low i zastoji", IgreTestovi.Kadrovi),
+        ("igre: maksimizovan prozor nije ceo ekran", IgreTestovi.Pokrivanje),
         ("igre: 1% low sesije iz najgorih 1 % sekundi", IgreTestovi.Low1Sesije),
         ("igre: koja je igra (prvi plan, Takt, pregledač)", IgreTestovi.Birac),
         ("igre: sesija se snima sama i pravi izveštaj", IgreTestovi.Sesija),
@@ -80,6 +82,7 @@ public static class Spisak
         ("mašina: ploča bez ventilatora", RazneMasine.PlocaBezVentilatora),
         ("mašina: 150 senzora se pravi brzo", RazneMasine.StoPedesetSenzora),
         ("mašina: strana imena senzora ostaju kakva su", RazneMasine.NepoznataImena),
+        ("mašina: isti senzor iz dva izvora je jedan red", RazneMasine.BezDuplikata),
     ];
 }
 

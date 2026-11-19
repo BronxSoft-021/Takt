@@ -300,6 +300,8 @@ public sealed class UsluzniMotor : IDisposable
         {
             _baza = new Baza(_bazaFajl);
             _baza.UpisiSenzore(_senzori);
+            // Leftover rows of sensors an older build read once (the board's rails) go once per run.
+            _baza.ObrisiMrtve(_senzori.Select(s => s.Kljuc.Tekst).ToList());
         }
         catch (Exception ex)
         {

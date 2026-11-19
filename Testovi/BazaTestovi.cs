@@ -40,6 +40,35 @@ public static class BazaTestovi
         return Task.CompletedTask;
     }
 
+    /// <summary>
+    /// A sensor that spoke once and is no longer read is a leftover of an older build (the board's +3.3 V rail) and
+    /// goes; a sensor that is read now keeps every row, even its first one.
+    /// </summary>
+    public static Task Mrtvi()
+    {
+        var baza = new Baza(Spisak.NoviFajl("baza-mrtvi.db"));
+
+        var mrtav = new Senzor(new SenzorKljuc(Grupa.Hladjenje, "Ploča", "+3,3 V"), Jedinica.Volt);
+        var ziv = new Senzor(new SenzorKljuc(Grupa.Procesor, "CPU", "Temperatura procesora"), Jedinica.Celzijus);
+        var nov = new Senzor(new SenzorKljuc(Grupa.Diskovi, "Disk", "Temperatura"), Jedinica.Celzijus);
+        baza.UpisiSenzore([mrtav, ziv, nov]);
+
+        long sada = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+        baza.Upisi(sada, mrtav.Kljuc.Tekst, 3.3);                       // one sample, and nobody reads it any more
+        for (int i = 0; i < 5; i++) baza.Upisi(sada - i * 60, ziv.Kljuc.Tekst, 50 + i);
+        baza.Upisi(sada, nov.Kljuc.Tekst, 36);                          // it just appeared: one sample, still read
+
+        var zivi = new[] { ziv.Kljuc.Tekst, nov.Kljuc.Tekst };
+        Proveri.Jednako(1, baza.ObrisiMrtve(zivi), "usamljen uzorak senzora kojeg više nema je uklonjen");
+        Proveri.Jednako(0, baza.ObrisiMrtve(zivi), "drugi put nema šta da se ukloni");
+        Proveri.Jednako(0, baza.Citaj(mrtav.Kljuc.Tekst, 0, long.MaxValue).Count, "mrtav senzor nema više ni jedan uzorak");
+        Proveri.Jednako(5, baza.Citaj(ziv.Kljuc.Tekst, 0, long.MaxValue).Count, "živ senzor zadržava sve");
+        Proveri.Jednako(1, baza.Citaj(nov.Kljuc.Tekst, 0, long.MaxValue).Count, "nov senzor sa jednim uzorkom ostaje");
+
+        baza.Dispose();
+        return Task.CompletedTask;
+    }
+
     public static Task Brisanje()
     {
         var putanja = Spisak.NoviFajl("baza-2.db");

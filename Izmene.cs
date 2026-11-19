@@ -52,6 +52,9 @@ public static class Izmene
             "Kanal više ne ostaje prazan kad mašina **drugačije zove** svoje senzore (npr. „CPU Total“ umesto „Opterećenje procesora“): ako tačnog imena nema, merač uzima prvi senzor odgovarajuće jedinice (% levo, °C desno) — do sada je pult pokazivao „traži nadzor“ dok solo panel ima 32 jezgra.",
             "**Prenos na drugi računar**: `Napravi prenos.bat` pravi `dist-prenos` (~209 MB) sa .NET-om u sebi, pa program radi i tamo gde .NET 10 nije instaliran. Obična instalacija i dalje traži .NET 10 Desktop Runtime (x64); PawnIO drajver se u oba slučaja instalira posebno.",
             "**Pravi Windows Setup**: `Napravi instalaciju.bat` pravi `setup\\Takt-Setup-<verzija>.exe` (**58 MB**, sa .NET-om u sebi). Instalira u Program Files, registruje uslugu, pravi prečice u Start meniju i (po želji) na radnoj površini, upisuje se u „Programi i funkcije“ i ume da se ukloni; istorija i podešavanja ostaju. Ako PawnIO nije instaliran, na kraju ponudi da otvori pawnio.eu. Provereno: instalacija, nadgradnja preko upaljene usluge i uklanjanje.",
+            "**Maksimizovan prozor nije „ceo ekran“**: na monitoru bez trake zadataka njegov pravougaonik pokriva ceo ekran, pa je maksimizovan pregledač bio prijavljivan kao igra. Sada se maksimizacija prepoznaje (`IsZoomed`) i samo pravi borderless/pun ekran važi.",
+            "**RAM samo iz jednog izvora**: `RamIzvor` (Windows, bez drajvera, stabilni ključevi) je jedini, a LHM-ova memorija je isključena; uz to spoj dva izvora sada odbacuje isti senzor (isto ime i jedinica) iz drugog izvora, pa se jedna brojka ne može pojaviti dva puta.",
+            "**Baza se čisti od usamljenih uzoraka**: senzor koji **više nije u spisku** a ostavio je tačno jedan uzorak (stare šine +3,3 V) briše se pri pokretanju, i u prozoru i u usluzi; senzori koji se sada čitaju zadržavaju sve, uključujući prvi uzorak.",
         ]),
         new("alfa", "19. 11. 2026.",
         [

@@ -69,7 +69,11 @@ public sealed class BiracIgre
         }
     }
 
-    /// <summary>True when the program's front window covers the whole monitor it is on (borderless or exclusive full screen).</summary>
+    /// <summary>
+    /// True when the program's front window covers the whole monitor it is on (borderless or exclusive full screen).
+    /// A **maximized** window is not full screen, although on a monitor without a taskbar its rectangle covers the
+    /// whole monitor - which is why a maximized browser used to count as a game.
+    /// </summary>
     private static bool CeoEkran(int pid)
     {
         try
@@ -82,14 +86,23 @@ public sealed class BiracIgre
             var info = new MonitorInfo { cbSize = Marshal.SizeOf<MonitorInfo>() };
             if (!GetMonitorInfo(monitor, ref info)) return false;
 
-            return okvir.Left <= info.rcMonitor.Left && okvir.Top <= info.rcMonitor.Top &&
-                   okvir.Right >= info.rcMonitor.Right && okvir.Bottom >= info.rcMonitor.Bottom;
+            return Pokriva(okvir.Left, okvir.Top, okvir.Right, okvir.Bottom,
+                info.rcMonitor.Left, info.rcMonitor.Top, info.rcMonitor.Right, info.rcMonitor.Bottom,
+                maksimizovan: IsZoomed(prozor));
         }
         catch
         {
             return false;
         }
     }
+
+    /// <summary>
+    /// The rule without Windows, for a test: the window covers the whole monitor and is not merely maximized.
+    /// </summary>
+    public static bool Pokriva(int levo, int gore, int desno, int dole,
+        int monitorLevo, int monitorGore, int monitorDesno, int monitorDole, bool maksimizovan) =>
+        !maksimizovan &&
+        levo <= monitorLevo && gore <= monitorGore && desno >= monitorDesno && dole >= monitorDole;
 
     [StructLayout(LayoutKind.Sequential)]
     private struct Pravougaonik { public int Left, Top, Right, Bottom; }
@@ -105,6 +118,7 @@ public sealed class BiracIgre
 
     [DllImport("user32.dll")] private static extern IntPtr GetForegroundWindow();
     [DllImport("user32.dll")] private static extern uint GetWindowThreadProcessId(IntPtr prozor, out uint pid);
+    [DllImport("user32.dll")] [return: MarshalAs(UnmanagedType.Bool)] private static extern bool IsZoomed(IntPtr prozor);
     [DllImport("user32.dll")] [return: MarshalAs(UnmanagedType.Bool)] private static extern bool GetWindowRect(IntPtr prozor, out Pravougaonik okvir);
     [DllImport("user32.dll")] private static extern IntPtr MonitorFromWindow(IntPtr prozor, uint zastavice);
     [DllImport("user32.dll")] [return: MarshalAs(UnmanagedType.Bool)] private static extern bool GetMonitorInfo(IntPtr monitor, ref MonitorInfo info);
