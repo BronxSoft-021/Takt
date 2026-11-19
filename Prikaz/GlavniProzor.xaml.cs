@@ -32,11 +32,13 @@ public partial class GlavniProzor : Window
         if (e.PropertyName == nameof(ProzorVm.Scena) && Vm is { } vm) PrimeniScenu(vm.Scena);
     }
 
-    /// <summary>F11 turns the Scene on and off, Esc only leaves it.</summary>
+    /// <summary>The Scene on F1 or F11 (the button says F1), Esc only leaves it.</summary>
     private void NaTaster(object sender, KeyEventArgs e)
     {
         if (Vm is not { } vm) return;
-        if (e.Key == Key.F11) { vm.Scena = !vm.Scena; e.Handled = true; }
+        // The button says "Scene F1" and the handler listened only for F11, so the key written on the button did
+        // nothing (found 19. 11. 2026). Both open it now.
+        if (e.Key is Key.F1 or Key.F11) { vm.Scena = !vm.Scena; e.Handled = true; }
         else if (e.Key == Key.Escape && vm.Scena) { vm.Scena = false; e.Handled = true; }
     }
 

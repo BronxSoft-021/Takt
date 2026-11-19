@@ -188,7 +188,7 @@
                     <Button Style="{StaticResource DugmeTiho}" Margin="12,0,0,0" Content="{prikaz:T 'Sesije'}" Click="NaSesije"
                             ToolTip="{prikaz:T 'Izveštaji o odigranim sesijama: trajanje, FPS, zastoji, temperature'}" />
                     <Button Style="{StaticResource DugmeTamno}" Margin="6,0,0,0" Content="{prikaz:T 'Scene  F1'}" Click="NaScenu"
-                            ToolTip="{prikaz:T 'Veliki pult preko celog ekrana, za drugi monitor dok igraš (Esc izlazi)'}" />
+                            ToolTip="{prikaz:T 'Veliki pult preko celog ekrana, za drugi monitor dok igraš (F1 ili F11, Esc izlazi)'}" />
                     <Button x:Name="DugmePodesavanja" Margin="8,0,0,0" Width="32"
                             Padding="0" ToolTip="{prikaz:T 'Podešavanja'}" Click="NaPodesavanja">
                         <Button.Style>

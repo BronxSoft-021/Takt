@@ -346,7 +346,7 @@ public static class TekstEngleski
             "Starts the helper as administrator (Windows asks for permission). The window stays a standard user.",
         ["Izveštaji o odigranim sesijama: trajanje, FPS, zastoji, temperature"] =
             "Reports of played sessions: duration, FPS, stalls, temperatures",
-        ["Veliki pult preko celog ekrana, za drugi monitor dok igraš (Esc izlazi)"] =
+        ["Veliki pult preko celog ekrana, za drugi monitor dok igraš (F1 ili F11, Esc izlazi)"] =
             "A large console across the whole screen, for a second monitor while you play (Esc leaves)",        ["Kvar: neispravni sektori"] = "Failing: bad sectors",
         ["Upozorenje: životni vek se troši"] = "Warning: lifetime running out",
         ["Upozorenje: disk je istrošen"] = "Warning: the drive is worn",
