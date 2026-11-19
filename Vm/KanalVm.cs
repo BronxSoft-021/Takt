@@ -494,8 +494,9 @@ public sealed class KanalVm : ObservableObject
             ["Zauzeće"], ["Zauzeće commit-a"], "RAM", "com"), "RAM");
 
         // All disks in one group: each disk keeps its own channel inside (for the solo panel), and the group shows
-        // one meter per disk - its temperature, or its activity when it has no thermometer.
-        var diskovi = PoUredjaju(Grupa.Diskovi, (i, _) => $"Disk {i + 1}", ["Aktivnost", "Zauzeće"], ["Temperatura"], "akt", "°C");
+        // one meter per disk - its temperature. Activity in MB/s is no longer among the rows: it came from the
+        // drive itself, and drives are now asked once in ten minutes (see LhmIzvor).
+        var diskovi = PoUredjaju(Grupa.Diskovi, (i, _) => $"Disk {i + 1}", ["Zauzeće"], ["Temperatura"], "za", "°C");
         var meraciDiskova = diskovi.Select((d, i) =>
         {
             var senzor = d.Detalj.Senzori.FirstOrDefault(s => s.Ime == "Temperatura") ?? d.Levi?.Senzor;

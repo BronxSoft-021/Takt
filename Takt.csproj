@@ -16,8 +16,8 @@
     <RuntimeIdentifier>win-x64</RuntimeIdentifier>
     <SelfContained>false</SelfContained>
     <!-- keep in step with the top entry of Izmene.cs (a test checks they match) -->
-    <Version>0.38.58</Version>
-    <InformationalVersion>0.38.58-alfa</InformationalVersion>
+    <Version>0.38.60</Version>
+    <InformationalVersion>0.38.60-alfa</InformationalVersion>
     <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
     <Product>BronxSoft Takt</Product>
     <AssemblyTitle>BronxSoft Takt</AssemblyTitle>

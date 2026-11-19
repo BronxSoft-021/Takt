@@ -17,6 +17,13 @@ public sealed class LhmIzvor : IIzvorSenzora
     private readonly List<double> _faktori = [];
     private readonly List<(int Mesto, int Gore, int Dole)> _izvedeni = [];
     private string? _poruka;
+    private DateTime _sledeciDiskovi = DateTime.MinValue;
+
+    /// <summary>
+    /// How often a drive is asked anything. One question costs 1,2-1,6 s for six drives, and a hard disk woken
+    /// by it will not sleep again for minutes - so the clock is slow on purpose.
+    /// </summary>
+    public static TimeSpan RazmakDiskova { get; set; } = TimeSpan.FromMinutes(10);
 
     /// <summary>One sensor on its way in: the library's own, or one worked out from two others.</summary>
     /// <c>Faktor</c> turns the library's unit into ours (GB → MB, B/s → MB/s).
@@ -45,9 +52,9 @@ public sealed class LhmIzvor : IIzvorSenzora
             // read once: a fan is "switched on" by its first reading. Listing right after Open() left the fan
             // channel empty on a board the library supports (ASUS TUF B550, 18. 11. 2026). Two readings, a moment
             // apart, before the list is made; a fan that is not connected reads 0 and rightly stays out.
-            foreach (var hardver in racunar.Hardware) Osvezi(hardver);
+            foreach (var hardver in racunar.Hardware) Osvezi(hardver, true);
             Thread.Sleep(300);
-            foreach (var hardver in racunar.Hardware) Osvezi(hardver);
+            foreach (var hardver in racunar.Hardware) Osvezi(hardver, true);
 
             var stavke = new List<Stavka>();
             foreach (var hardver in racunar.Hardware)
@@ -100,8 +107,13 @@ public sealed class LhmIzvor : IIzvorSenzora
 
         try
         {
+            // Drives are read on a slow clock of their own (see Osvezi): once in ten minutes, the first reading
+            // included.
+            bool diskovi = DateTime.UtcNow >= _sledeciDiskovi;
+            if (diskovi) _sledeciDiskovi = DateTime.UtcNow + RazmakDiskova;
+
             foreach (var hardver in _racunar.Hardware)
-                Osvezi(hardver);
+                Osvezi(hardver, diskovi);
 
             for (int i = 0; i < _izvori.Count; i++)
             {
@@ -165,11 +177,17 @@ public sealed class LhmIzvor : IIzvorSenzora
     public static double? Procenat(double? deo, double? celina) =>
         deo is { } d && celina is { } c && c > 0 ? Math.Round(d / c * 100, 0) : null;
 
-    private static void Osvezi(IHardware hardver)
+    private static void Osvezi(IHardware hardver, bool diskovi)
     {
+        // A drive is asked for its SMART, its name and its free space as one slow question: measured 1,2-1,6 s
+        // for six drives (sonda, 19. 11. 2026), and LibreHardwareMonitor asks it on every reading - 750 ms a
+        // second, 75 % of one core, with every disk poked while nothing is wrong with it. Once in ten minutes
+        // is enough: temperature and free space move slowly, and the health check reads the same numbers.
+        if (hardver.HardwareType == HardwareType.Storage && !diskovi) return;
+
         hardver.Update();
         foreach (var pod in hardver.SubHardware)
-            Osvezi(pod);
+            Osvezi(pod, diskovi);
     }
 
     private static void Popisi(IHardware hardver, string? roditelj, List<Stavka> stavke)
@@ -186,6 +204,11 @@ public sealed class LhmIzvor : IIzvorSenzora
                 var (jedinica, faktor) = JedinicaZa(senzor.SensorType);
                 if (jedinica == Jedinica.Nepoznato) continue;
                 if (Zanemari(senzor.Name, jedinica)) continue;
+
+                // Disk activity ("Total Activity", "Read Activity", "Write Activity", in percent or MB/s) is worked
+                // out from the drive's own counters. Since the drive is now asked once in ten minutes, that number
+                // would be a ten-minute average drawn as a live bar - a lie.
+                if (g == Grupa.Diskovi && senzor.Name.Contains("Activity", StringComparison.Ordinal)) continue;
 
                 // The board's Super I/O reports the power rails as rough ADC guesses (+3.3 V, +5 V, +12 V, -12 V,
                 // 3VSB…): rarely within ten percent, and nothing a person can act on - a real check needs a
