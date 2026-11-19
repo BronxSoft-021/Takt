@@ -32,6 +32,7 @@ public static class Izmene
             "SMART se čita na **10 minuta**, ne svakog minuta: upit ume da probudi hard disk koji spava, a četiri diska buđena svakog minuta samo vrte ploče i troše sat rada bez potrebe. Prvi upit posle povezivanja je odmah.",
             "Ispravka koja se meri: LHM je pitao diskove **svake sekunde**, a jedno pitanje traje 1,2–1,6 s (šest diskova) — čitanje je bilo **750 ms** (75 % jezgra). Sada se diskovi pitaju na 10 minuta: čitanje je **15 ms** (1,5 %).",
             "Trake „Aktivnost“, „Aktivnost upisa“ i „Aktivnost čitanja“ su **sklonjene** sa diskova: brojale su se iz istih SMART brojača, pa bi uz pitanje na 10 minuta bile zamrznuta laž. Ostaju temperatura, zauzeće i slobodan prostor.",
+            "Podnožje više ne laže o pravima: pisalo je „običan korisnik“ i kad je gore stajalo „Potpuni nadzor · usluga“. Sada zaglavlje i podnožje dolaze iz **istog prekidača** (`ProzorVm.OpisStanja`): „usluga“, „pomoćnik“, „administrator“ ili — samo kad niko ne pomaže — „običan korisnik“.",
         ]),
         new("alfa", "19. 11. 2026.",
         [

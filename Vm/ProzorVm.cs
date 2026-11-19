@@ -202,7 +202,18 @@ public sealed class ProzorVm : ObservableObject, IDisposable
 
     public string Verzija => Izmene.Trenutna.Oznaka;
 
-    public string Prava => Admin.Stanje;
+    private string _prava = Admin.Stanje;
+
+    /// <summary>
+    /// Who is actually reading the sensors: the service, the helper, or this window raised to administrator.
+    /// The footer used to say „običan korisnik“ while the header said „Potpuni nadzor · usluga“ - two panels,
+    /// two truths. Now both come from one switch (<see cref="OpisStanja"/>).
+    /// </summary>
+    public string Prava
+    {
+        get => _prava;
+        private set => SetProperty(ref _prava, value);
+    }
 
     /// <summary>
     /// True when the PawnIO driver is installed. Without it the processor's temperature, clocks, power and
@@ -435,23 +446,50 @@ public sealed class ProzorVm : ObservableObject, IDisposable
         OnPropertyChanged(nameof(KanaliScene));
     }
 
+    /// <summary>
+    /// The header sentence, its colour kind, and the footer's word for who reads the sensors - one place, so the
+    /// two panels cannot tell different stories. Full monitoring has two keys: administrator rights (by the
+    /// window itself, or lent by the service/helper) and the PawnIO driver; each state names the one missing.
+    /// </summary>
+    /// <param name="pravi">False for the sample source: nothing here is a real reading.</param>
+    /// <param name="usluga">The readings come from the installed service.</param>
+    /// <param name="pomocnik">They come from the helper this window started (elevated for its lifetime only).</param>
+    /// <param name="drajver">PawnIO is installed.</param>
+    /// <param name="senzora">How many sensors this source gave.</param>
+    /// <param name="admin">This window itself runs as administrator.</param>
+    public static (string Stanje, string Vrsta, string Prava) OpisStanja(bool pravi, bool usluga, bool pomocnik,
+        bool drajver, int senzora, bool admin)
+    {
+        if (!pravi) return ("Probni podaci", "probno", Admin.Stanje);
+
+        if (pomocnik)
+        {
+            string ko = usluga ? "usluga" : "pomoćnik";
+            string nadzor = drajver ? $"Potpuni nadzor · {ko}" : $"Potpuni nadzor · {ko}, bez drajvera";
+            return (nadzor, drajver ? "pomocnik" : "pravo", ko);
+        }
+
+        if (senzora == 0) return ("Nema podataka", "nema", admin ? "administrator" : Admin.Stanje);
+
+        if (!admin)
+            return drajver
+                ? ("Ograničen nadzor", "pravo", Admin.Stanje)
+                : ("Ograničen nadzor · bez drajvera", "pravo", Admin.Stanje);
+
+        return drajver
+            ? ("Potpuni nadzor · administrator", "pomocnik", "administrator")
+            : ("Ograničen nadzor · bez drajvera", "pravo", "administrator");
+    }
+
     private void PostaviStanje(IIzvorSenzora izvor)
     {
         // Full monitoring has two keys, not one: administrator rights and the PawnIO driver. Only both together
         // give everything, so each state names the one that is missing instead of offering "potpuni nadzor".
-        (Stanje, VrstaStanja) = izvor switch
-        {
-            { Pravi: false } => ("Probni podaci", "probno"),
-            PomocnikKlijent { JeUsluga: true } when !Drajver => ("Potpuni nadzor · usluga, bez drajvera", "pravo"),
-            PomocnikKlijent { JeUsluga: true } => ("Potpuni nadzor · usluga", "pomocnik"),
-            PomocnikKlijent when !Drajver => ("Potpuni nadzor · pomoćnik, bez drajvera", "pravo"),
-            PomocnikKlijent => ("Potpuni nadzor · pomoćnik", "pomocnik"),
-            { Senzori.Count: > 0 } when Admin.JeAdmin && !Drajver => ("Ograničen nadzor · bez drajvera", "pravo"),
-            { Senzori.Count: > 0 } when Admin.JeAdmin => ("Potpuni nadzor · administrator", "pomocnik"),
-            { Senzori.Count: > 0 } when !Drajver => ("Ograničen nadzor · bez drajvera", "pravo"),
-            { Senzori.Count: > 0 } => ("Ograničen nadzor", "pravo"),
-            _ => ("Nema podataka", "nema"),
-        };
+        var (stanje, vrsta, prava) = OpisStanja(izvor.Pravi, izvor is PomocnikKlijent { JeUsluga: true },
+            izvor is PomocnikKlijent, Drajver, izvor.Senzori.Count, Admin.JeAdmin);
+        Stanje = stanje;
+        VrstaStanja = vrsta;
+        Prava = prava;
 
         OnPropertyChanged(nameof(Drajver));
         OnPropertyChanged(nameof(DrajverStanje));

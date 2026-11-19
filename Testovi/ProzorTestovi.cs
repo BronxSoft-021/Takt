@@ -26,6 +26,36 @@ public static class ProzorTestovi
         return Task.CompletedTask;
     }
 
+    /// <summary>
+    /// Header and footer must tell the same story. „Potpuni nadzor · usluga“ above and „običan korisnik“ below
+    /// was the lie a report pointed at (19. 11. 2026): the footer asked only this window, never the helper.
+    /// </summary>
+    public static Task Prava()
+    {
+        var usluga = ProzorVm.OpisStanja(pravi: true, usluga: true, pomocnik: true, drajver: true, senzora: 125,
+            admin: false);
+        Proveri.Jednako("Potpuni nadzor · usluga", usluga.Stanje, "zaglavlje: usluga");
+        Proveri.Jednako("usluga", usluga.Prava, "podnožje: usluga, ne „običan korisnik“");
+
+        var bezDrajvera = ProzorVm.OpisStanja(true, usluga: true, pomocnik: true, drajver: false, 60, admin: false);
+        Proveri.Jednako("Potpuni nadzor · usluga, bez drajvera", bezDrajvera.Stanje, "zaglavlje: usluga bez drajvera");
+        Proveri.Jednako("usluga", bezDrajvera.Prava, "podnožje: usluga i kad drajver fali");
+
+        var pomocnik = ProzorVm.OpisStanja(true, usluga: false, pomocnik: true, drajver: true, 125, admin: false);
+        Proveri.Jednako("pomoćnik", pomocnik.Prava, "podnožje: pomoćnik");
+
+        var sam = ProzorVm.OpisStanja(true, false, false, drajver: true, 40, admin: true);
+        Proveri.Jednako("Potpuni nadzor · administrator", sam.Stanje, "zaglavlje: administrator");
+        Proveri.Jednako("administrator", sam.Prava, "podnožje: administrator");
+
+        var obican = ProzorVm.OpisStanja(true, false, false, drajver: true, 40, admin: false);
+        Proveri.Jednako("običan korisnik", obican.Prava, "„običan korisnik“ samo kad niko ne pomaže");
+
+        var probni = ProzorVm.OpisStanja(false, false, false, drajver: true, 0, admin: false);
+        Proveri.Jednako("Probni podaci", probni.Stanje, "zaglavlje: probni podaci");
+        return Task.CompletedTask;
+    }
+
     public static Task PokretanjeSaWindowsom()
     {
         Proveri.Jednako("\"C:\\Program Files\\BronxSoft Takt\\Takt.exe\" --u-traci",
