@@ -52,6 +52,9 @@ public sealed class Baza : IDisposable
         using var transakcija = _veza.BeginTransaction();
         foreach (var senzor in senzori)
         {
+            // A one-time move: rows written before the stable key existed were keyed by the name as shown.
+            if (senzor.Kljuc.Ident is not null) Prebaci(transakcija, senzor.Kljuc.TekstImena, senzor.Kljuc.Tekst);
+
             using var naredba = _veza.CreateCommand();
             naredba.Transaction = transakcija;
             naredba.CommandText = """
@@ -71,6 +74,34 @@ public sealed class Baza : IDisposable
             naredba.ExecuteNonQuery();
         }
         transakcija.Commit();
+    }
+
+    /// <summary>
+    /// Moves the history of one sensor from the old name-keyed row to the stable key. It runs once, silently, and
+    /// never twice: when a row with the new key already exists nothing is touched, so no minute can be doubled.
+    /// </summary>
+    private void Prebaci(SqliteTransaction transakcija, string stari, string novi)
+    {
+        if (stari == novi) return;
+
+        using var senzor = _veza.CreateCommand();
+        senzor.Transaction = transakcija;
+        senzor.CommandText = """
+                             update or ignore senzori set kljuc = $novi
+                             where kljuc = $stari and not exists (select 1 from senzori where kljuc = $novi);
+                             """;
+        senzor.Parameters.AddWithValue("$novi", novi);
+        senzor.Parameters.AddWithValue("$stari", stari);
+        if (senzor.ExecuteNonQuery() == 0) return;
+
+        using var uzorci = _veza.CreateCommand();
+        uzorci.Transaction = transakcija;
+        uzorci.CommandText = "update uzorci set senzor = $novi where senzor = $stari;";
+        uzorci.Parameters.AddWithValue("$novi", novi);
+        uzorci.Parameters.AddWithValue("$stari", stari);
+        uzorci.ExecuteNonQuery();
+
+        Dnevnik.Upisi($"Baza: istorija prebačena na stabilan ključ {novi}.");
     }
 
     public void UpisiSve(long vreme, IEnumerable<(string Kljuc, double Vrednost)> redovi)

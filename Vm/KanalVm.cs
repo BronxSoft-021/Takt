@@ -129,8 +129,25 @@ public sealed class KanalVm : ObservableObject
         if (_izabraniPodkanal is not null) _detalj = _izabraniPodkanal.Detalj;
 
         Jezgra = detalj.Senzori
-            .Where(s => s.Senzor.Jedinica == Jedinica.Procenat && s.Ime.StartsWith("Opterećenje jezgra ", StringComparison.Ordinal))
+            .Where(s => s.Senzor.Jedinica == Jedinica.Procenat && JeJezgro(s.Senzor.Kljuc))
             .ToList();
+    }
+
+    /// <summary>
+    /// A per-core load, recognised by the library's own path (<c>/amdcpu/0/load/1</c> …) and not by the name that
+    /// is shown, so a translated or renamed sensor still lands in the row under the processor. Public for a test.
+    /// </summary>
+    public static bool JeJezgro(SenzorKljuc kljuc)
+    {
+        if (kljuc.Ident is { } ident)
+        {
+            int kosa = ident.LastIndexOf('/');
+            return ident.Contains("/load/", StringComparison.Ordinal) && kosa > 0 &&
+                   int.TryParse(ident[(kosa + 1)..], out int broj) && broj > 0;
+        }
+
+        // A source without a library path (probe data): the old way, by the name shown.
+        return kljuc.Ime.StartsWith("Opterećenje jezgra ", StringComparison.Ordinal);
     }
 
     /// <summary>Stable name for remembering a muted channel: group and device.</summary>

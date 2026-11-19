@@ -13,10 +13,18 @@ public enum Grupa
 /// <summary>
 /// What makes a sensor *that* sensor. The text is what the database stores, so it must stay stable:
 /// a renamed sensor would otherwise continue as a new row and the old history would look lost.
+/// <paramref name="Ident"/> is that stable name: the library's own path (for example
+/// <c>/amdcpu/0/temperature/2</c>), or a made-up one for a source that has no library. It does not depend on
+/// the language on screen, so the name may be translated without splitting the history; rows written before
+/// it existed are keyed by the text, and <see cref="Podaci.Baza"/> moves them over once.
 /// </summary>
-public sealed record SenzorKljuc(Grupa Grupa, string Uredjaj, string Ime)
+public sealed record SenzorKljuc(Grupa Grupa, string Uredjaj, string Ime, string? Ident = null)
 {
-    public string Tekst => $"{Grupa} | {Uredjaj} | {Ime}";
+    /// <summary>The key in the database: the stable name when there is one.</summary>
+    public string Tekst => Ident ?? TekstImena;
+
+    /// <summary>The old key (group, device, the name as shown); used only to move old history over.</summary>
+    public string TekstImena => $"{Grupa} | {Uredjaj} | {Ime}";
 
     public override string ToString() => Tekst;
 }

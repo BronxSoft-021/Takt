@@ -20,6 +20,16 @@ public static class Izmene
 {
     public static readonly Unos[] Spisak = Numerisi(
     [
+        new("alfa", "19. 11. 2026.",
+        [
+            "Senzor dobija stabilno ime (`Ident`) — putanju iz biblioteke, npr. `/amdcpu/0/temperature/2` — pa istorija preživljava preimenovanje i budući prevod na engleski.",
+        ],
+        [
+            "Stara istorija se pri prvom pokretanju prebacuje sa imena na novi ključ, bez gubljenja i bez dupliranja redova (provereno na kopiji prave baze: 176 senzora i 109.631 uzorak ostali su isti).",
+            "Ključ putuje i kroz cev, pa usluga i pomoćnik pišu istoriju pod istim ključem; stariji pomoćnik bez ključa se i dalje prihvata.",
+            "Jezgra se prepoznaju po putanji (`/load/N`), ne po imenu — prevod više ne može da ih izgubi iz reda pod procesorom.",
+            "`Testovi --prebaci <folder>`: prebacivanje baze na nove ključeve bez pokretanja usluge (za kopiju ili dok usluga ne radi).",
+        ]),
         new("alfa", "18. 11. 2026.",
         [
         ],

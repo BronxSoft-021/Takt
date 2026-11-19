@@ -72,7 +72,7 @@ public sealed class PomocnikKlijent : IIzvorSenzora
                 }
                 if (!Enum.TryParse<Jedinica>(opis.Jedinica, out var jedinica)) jedinica = Jedinica.Nepoznato;
 
-                senzori.Add(new Senzor(new SenzorKljuc(grupa, opis.Uredjaj, opis.Ime), jedinica));
+                senzori.Add(new Senzor(new SenzorKljuc(grupa, opis.Uredjaj, opis.Ime, opis.Ident), jedinica));
             }
 
             var klijent = new PomocnikKlijent(cev, citalac, senzori, poruka.Izvor);

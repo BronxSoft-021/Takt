@@ -189,7 +189,9 @@ public sealed class LhmIzvor : IIzvorSenzora
 
                 var osnovno = Prevedi(g, senzor.Name, jedinica);
                 var ime = Jedinstveno(osnovno, uredjaj, g, jedinica, stavke);
-                stavke.Add(new Stavka(new Senzor(new SenzorKljuc(g, uredjaj, ime), jedinica), senzor, Faktor: faktor));
+                // The library's own path is the stable key: the name beside it may be translated or renamed.
+                stavke.Add(new Stavka(new Senzor(new SenzorKljuc(g, uredjaj, ime, senzor.Identifier.ToString()), jedinica),
+                    senzor, Faktor: faktor));
             }
         }
 
@@ -214,11 +216,23 @@ public sealed class LhmIzvor : IIzvorSenzora
                 s.Senzor.Grupa == Grupa.Grafika && s.Senzor.Uredjaj == uredjaj && s.Senzor.Ime == "VRAM ukupno");
             if (gore is null || dole is null) continue;
 
-            var kljuc = new SenzorKljuc(Grupa.Grafika, uredjaj, "Zauzeće VRAM");
+            var kljuc = new SenzorKljuc(Grupa.Grafika, uredjaj, "Zauzeće VRAM",
+                IzvedenIdent(gore.Senzor.Kljuc.Ident, "zauzece-vram"));
             if (stavke.Any(s => s.Senzor.Kljuc == kljuc)) continue;
 
             stavke.Add(new Stavka(new Senzor(kljuc, Jedinica.Procenat), null, gore.Senzor.Kljuc, dole.Senzor.Kljuc));
         }
+    }
+
+    /// <summary>
+    /// A stable key for a sensor the library does not have: its neighbour's path with another last part
+    /// (<c>/gpu-amd/0/smalldata/1</c> → <c>/gpu-amd/0/zauzece-vram</c>), so it cannot collide with a reading.
+    /// </summary>
+    private static string? IzvedenIdent(string? ident, string ime)
+    {
+        if (ident is null) return null;
+        int kosa = ident.LastIndexOf('/');
+        return kosa <= 0 ? null : ident[..kosa] + "/" + ime;
     }
 
     /// <summary>Temperature, then load, clock, fan, power, voltage, memory: the order a person looks for.</summary>

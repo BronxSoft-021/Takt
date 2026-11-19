@@ -1,4 +1,19 @@
-﻿BronxSoft Takt 0.33.45 alfa
+﻿BronxSoft Takt 0.34.49 alfa
+19. 11. 2026.
+
+NOVO
+- Senzor ima stabilno ime (`Ident`) — putanju iz biblioteke, npr. "/amdcpu/0/temperature/2" — pa
+  istorija preživljava preimenovanje i budući prevod na engleski.
+
+DORADE
+- Stara istorija se pri prvom pokretanju prebacuje sa imena na novi ključ, bez gubljenja i bez
+  dupliranja redova. Provereno na kopiji prave baze: 176 senzora i 109.631 uzorak ostali su isti.
+- Ključ putuje i kroz cev, pa usluga i pomoćnik pišu istoriju pod istim ključem; stariji pomoćnik
+  bez ključa se i dalje prihvata.
+- Jezgra se prepoznaju po putanji ("/load/N"), ne po imenu - prevod više ne može da ih izgubi.
+- "Testovi --prebaci <folder>": prebacivanje baze na nove ključeve bez pokretanja usluge.
+
+BronxSoft Takt 0.33.45 alfa
 18. 11. 2026.
 
 Posle prve prave igre.

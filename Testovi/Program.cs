@@ -21,6 +21,10 @@ if (args.Length >= 1 && args[0] == "--popis")
 if (args.Length >= 1 && args[0] == "--meri")
     return MerenjeSenzora.Pokreni(args.Length >= 2 && int.TryParse(args[1], out int merenja) ? merenja : 20);
 
+// Moves an existing history folder onto the stable sensor keys: Testovi --prebaci <folder>.
+if (args.Length >= 2 && args[0] == "--prebaci")
+    return Prebacivanje.Pokreni(args[1]);
+
 var filter = args.FirstOrDefault();
 int pali = 0, ukupno = 0;
 

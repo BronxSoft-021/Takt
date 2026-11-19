@@ -16,8 +16,12 @@ public static class Protokol
         DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
     };
 
-    /// <summary>A sensor without its value: the helper sends this once, when the window connects.</summary>
-    public sealed record Opis(string Grupa, string Uredjaj, string Ime, string Jedinica);
+    /// <summary>
+    /// A sensor without its value: the helper sends this once, when the window connects. <paramref name="Ident"/>
+    /// is the stable key from the reading side, so the window writes the history under the same key as the
+    /// service would; it may be missing from an older build or a source without a library path.
+    /// </summary>
+    public sealed record Opis(string Grupa, string Uredjaj, string Ime, string Jedinica, string? Ident = null);
 
     /// <summary>
     /// One program that drew frames in the last second, as the service saw it through Windows' own events:
@@ -46,7 +50,8 @@ public static class Protokol
     public static string Spisak(IReadOnlyList<Senzor> senzori, string izvor = Pomocnik) =>
         JsonSerializer.Serialize(
             new Poruka(SpisakVrsta,
-                senzori.Select(s => new Opis(s.Grupa.ToString(), s.Uredjaj, s.Ime, s.Jedinica.ToString())).ToArray(),
+                senzori.Select(s => new Opis(s.Grupa.ToString(), s.Uredjaj, s.Ime, s.Jedinica.ToString(),
+                    s.Kljuc.Ident)).ToArray(),
                 null, 0, null, izvor),
             Opcije);
 
