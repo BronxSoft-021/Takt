@@ -518,6 +518,71 @@ public sealed class ProzorVm : ObservableObject, IDisposable
         Igra.Postavi(_pomocnik is { } izvor ? _birac.Izaberi(izvor.Igre)
             : _rad.ProbniPodaci ? ProbnaIgra(snimak.Vreme) : null);
         Sesija?.Uzmi(Igra, Kanali, sada);
+        ProveriZdravlje();
+        OsveziZdravlje();
+    }
+
+    private string? _prijavljenoZdravlje;
+
+    private readonly Dictionary<string, Protokol.DiskZdravlje> _zdravljePoModelu = new(StringComparer.OrdinalIgnoreCase);
+
+    /// <summary>
+    /// A drive that says something is wrong gets the line at the bottom and one log entry - once per verdict, not
+    /// every second. The window itself cannot read SMART (that needs administrator); the service or the helper
+    /// reads it and sends the verdicts.
+    /// </summary>
+    private void ProveriZdravlje()
+    {
+        if (_pomocnik is not { } izvor) return;
+
+        var diskovi = izvor.Diskovi;
+        if (diskovi.Length == 0) return;
+
+        _zdravljePoModelu.Clear();
+        foreach (var disk in diskovi) _zdravljePoModelu[disk.Model] = disk;
+
+        var najgore = diskovi
+            .Where(d => d.Nivo >= (int)NivoZdravlja.Upozorenje)
+            .OrderByDescending(d => d.Nivo)
+            .FirstOrDefault();
+
+        if (najgore is not null && najgore.Naslov != _prijavljenoZdravlje)
+        {
+            _prijavljenoZdravlje = najgore.Naslov;
+            Upozorenje = $"{najgore.Model}: {najgore.Naslov} — {najgore.Detalj}";
+            Dnevnik.Upisi($"Zdravlje diska: {najgore.Model}: {najgore.Naslov} - {najgore.Detalj}");
+        }
+
+        OsveziZdravlje();
+    }
+
+    /// <summary>
+    /// Writes the verdict of the disk that is chosen in the solo panel - each disk has its own, and the group strip
+    /// follows whichever one is picked. Cheap enough to run on every reading: the text only changes when it changes.
+    /// </summary>
+    private void OsveziZdravlje()
+    {
+        if (_zdravljePoModelu.Count == 0) return;
+
+        foreach (var kanal in Kanali.Where(k => k.Kljuc.StartsWith(Grupa.Diskovi + "|", StringComparison.Ordinal)))
+        {
+            var nadjen = _zdravljePoModelu.FirstOrDefault(p => IstiDisk(kanal.Uredjaj, p.Key));
+            if (nadjen.Value is not { } nalaz) continue;
+
+            // A healthy drive shows why ("Zdrav · 99 % · 34 °C · SSD"); a problem shows just the verdict, because the
+            // whole sentence is already in the line at the bottom and would not fit here.
+            string tekst = nalaz.Nivo >= (int)NivoZdravlja.Upozorenje ? nalaz.Naslov : "Zdrav · " + nalaz.Detalj;
+            kanal.PostaviZdravlje(tekst, nalaz.Nivo);
+        }
+    }
+
+    /// <summary>The library trims model names differently from the toolkit; a trimmed, case-blind compare is enough.</summary>
+    private static bool IstiDisk(string uredjaj, string model)
+    {
+        string a = uredjaj.Trim(), b = model.Trim();
+        return a.Equals(b, StringComparison.OrdinalIgnoreCase) ||
+               a.StartsWith(b, StringComparison.OrdinalIgnoreCase) ||
+               b.StartsWith(a, StringComparison.OrdinalIgnoreCase);
     }
 
     private KanalVm? _prePodesavanja;

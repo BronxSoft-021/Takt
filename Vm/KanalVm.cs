@@ -152,6 +152,37 @@ public sealed class KanalVm : ObservableObject
         return kljuc.Ime.StartsWith("Opterećenje jezgra ", StringComparison.Ordinal);
     }
 
+    /// <summary>
+    /// The drive health verdict for this channel, as one short line ("Zdrav · 45 °C · 31.700 h"); filled by the
+    /// window from what the service read, null when there is nothing to say (not a disk, or no SMART).
+    /// </summary>
+    public string? Zdravlje
+    {
+        get => _zdravlje;
+        set
+        {
+            if (!SetProperty(ref _zdravlje, value)) return;
+            OnPropertyChanged(nameof(ImaZdravlje));
+        }
+    }
+
+    public bool ImaZdravlje => !string.IsNullOrWhiteSpace(_zdravlje);
+
+    /// <summary>True when the verdict is a warning or a fault: the line then goes amber or red.</summary>
+    public bool ZdravljeLose => _zdravljeNivo is >= (int)Merenje.NivoZdravlja.Upozorenje;
+
+    public int _zdravljeNivo;
+
+    /// <summary>Sets the line and its colour in one go (used by the window, once a minute).</summary>
+    public void PostaviZdravlje(string? tekst, int nivo)
+    {
+        _zdravljeNivo = nivo;
+        Zdravlje = tekst;
+        OnPropertyChanged(nameof(ZdravljeLose));
+    }
+
+    private string? _zdravlje;
+
     /// <summary>Stable name for remembering a muted channel: group and device.</summary>
     public string Kljuc { get; }
 

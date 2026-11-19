@@ -45,6 +45,7 @@ public static class Spisak
         ("ključ: prevedeno ime ne menja ključ senzora", KljucTestovi.Kljuc),
         ("ključ: stara istorija se prebacuje bez gubljenja", KljucTestovi.Migracija),
         ("ključ: jezgra se prepoznaju po putanji", KljucTestovi.Jezgra),
+        ("zdravlje: pravila presude za diskove", ZdravljeTestovi.Provere),
         ("protokol: spisak i uzorak kroz tekst", ProtokolTestovi.SpisakIUzorak),
         ("prevod: imena senzora na srpski", PrevodTestovi.Imena),
         ("prevod: zauzeće VRAM u procentima", PrevodTestovi.Vram),

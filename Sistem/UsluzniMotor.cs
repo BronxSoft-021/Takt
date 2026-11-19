@@ -264,12 +264,21 @@ public sealed class UsluzniMotor : IDisposable
 
         string? poslednjaGreska = null;
 
+        // SMART changes slowly: once a minute is plenty, and it costs a few device queries.
+        DateTime sledeceZdravlje = DateTime.MinValue;
+
         while (_radi)
         {
             Snimak? snimak;
             lock (_bravaSnimka) snimak = _poslednji;
             if (snimak is not null) pisac.WriteLine(Protokol.Uzorak(snimak));
             if (_kadrovi is { Greska: null } kadrovi) pisac.WriteLine(Protokol.Igre(kadrovi.Stanje()));
+
+            if (DateTime.UtcNow >= sledeceZdravlje)
+            {
+                pisac.WriteLine(Protokol.Zdravlje(Smart.Nalazi()));
+                sledeceZdravlje = DateTime.UtcNow.AddMinutes(1);
+            }
 
             // Once, not every second: the window shows the last message it got anyway.
             if (Poruka is { } poruka && poruka != poslednjaGreska)

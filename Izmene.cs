@@ -22,6 +22,16 @@ public static class Izmene
     [
         new("alfa", "19. 11. 2026.",
         [
+            "Zdravlje diskova: čitaju se samo brojke koje odlučuju (preraspoređeni i sektori na čekanju, neispravni, CRC greške, rezervni blokovi, životni vek, sati rada, temperature) i daje se presuda — Zdrav / Upozorenje / Kvar, sa jednom rečenicom šta se dešava. Puna SMART tabela se nikad ne prikazuje.",
+            "`Testovi --zdravlje`: ispiše presudu za svaki disk, isto što program pokaže (kao administrator).",
+        ],
+        [
+            "SMART čita usluga ili pomoćnik (prozor kao običan korisnik ne može) i šalje presudu kroz cev; kanal „Diskovi“ dobija red ispod imena, a statusna traka kaže celu rečenicu kad nešto nije u redu.",
+            "Disk koji ne odgovori (USB most, nema administratora) prijavljuje „nema podataka o zdravlju“, nikad „zdrav“.",
+            "Red zdravlja prati **izabrani** disk u grupi (ranije je grupa uzimala presudu prvog/najgoreg diska, pa je uz ST12000VE pisalo da je NVMe).",
+        ]),
+        new("alfa", "19. 11. 2026.",
+        [
         ],
         [
             "Rampa merača: zeleno do 60 % skale, žuto oko 80 %, crveno tek pri vrhu — pola opterećenja više ne izgleda kao alarm. Granice dela i dalje pomeraju žuto na granicu upozorenja.",

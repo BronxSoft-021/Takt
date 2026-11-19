@@ -31,14 +31,21 @@ public static class Protokol
     public sealed record Igra(int Pid, string Ime, string? Putanja, double Fps, double ProsekMs, double NajviseMs,
         double Low1, int Stucanja);
 
-    /// <summary>vrsta: "spisak", "uzorak", "greska" or "igre". <paramref name="Izvor"/> says who serves: "usluga" or "pomocnik".</summary>
+    /// <summary>One drive's verdict: the level for the colour, the line and the sentence for the tool tip.</summary>
+    public sealed record DiskZdravlje(string Model, int Nivo, string Naslov, string Detalj);
+
+    /// <summary>vrsta: "spisak", "uzorak", "greska", "igre" or "zdravlje". <paramref name="Izvor"/> says who serves: "usluga" or "pomocnik".</summary>
     public sealed record Poruka(string Vrsta, Opis[]? Senzori, double?[]? Vrednosti, long Vreme, string? Greska,
-        string? Izvor = null, Igra[]? Igre = null);
+        string? Izvor = null, Igra[]? Igre = null, DiskZdravlje[]? Diskovi = null);
 
     public const string SpisakVrsta = "spisak";
     public const string UzorakVrsta = "uzorak";
     public const string GreskaVrsta = "greska";
     public const string IgreVrsta = "igre";
+    public const string ZdravljeVrsta = "zdravlje";
+
+    public static string Zdravlje(IEnumerable<DiskZdravlje> diskovi) =>
+        JsonSerializer.Serialize(new Poruka(ZdravljeVrsta, null, null, 0, null, null, null, diskovi.ToArray()), Opcije);
 
     public static string Igre(IEnumerable<Igra> igre) =>
         JsonSerializer.Serialize(new Poruka(IgreVrsta, null, null, 0, null, null, igre.ToArray()), Opcije);

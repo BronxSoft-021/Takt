@@ -96,6 +96,22 @@ public sealed class PomocnikKlijent : IIzvorSenzora
     private Protokol.Igra[] _igre = [];
     private DateTime _igreVreme = DateTime.MinValue;
 
+    private Protokol.DiskZdravlje[] _diskovi = [];
+    private DateTime _diskoviVreme = DateTime.MinValue;
+
+    /// <summary>
+    /// The health verdicts the reader sent; empty until it sends them, and empty again after five minutes without
+    /// a word (the service stopped, or it cannot read SMART at all).
+    /// </summary>
+    public Protokol.DiskZdravlje[] Diskovi
+    {
+        get
+        {
+            lock (_brava)
+                return DateTime.UtcNow - _diskoviVreme < TimeSpan.FromMinutes(5) ? _diskovi : [];
+        }
+    }
+
     /// <summary>
     /// The programs that drew frames in the last second, as the service measured them; empty when the list is
     /// older than three seconds (the service stopped measuring, or nothing draws). Only the service and the helper
@@ -148,6 +164,14 @@ public sealed class PomocnikKlijent : IIzvorSenzora
                         {
                             _igre = poruka.Igre ?? [];
                             _igreVreme = DateTime.UtcNow;
+                        }
+                        break;
+
+                    case Protokol.ZdravljeVrsta:
+                        lock (_brava)
+                        {
+                            _diskovi = poruka.Diskovi ?? [];
+                            _diskoviVreme = DateTime.UtcNow;
                         }
                         break;
                 }

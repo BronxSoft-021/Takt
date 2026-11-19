@@ -47,6 +47,19 @@
                                        VerticalAlignment="Bottom" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" />
                         </StackPanel>
                         <TextBlock Text="{Binding Detalj.Izabran.Ime}" Style="{StaticResource Natpis}" Margin="0,4,0,0" />
+                        <TextBlock Text="{Binding Zdravlje}" FontSize="11" Margin="0,3,0,0" TextTrimming="CharacterEllipsis"
+                                   Visibility="{Binding ImaZdravlje, Converter={StaticResource BoolUVidljivost}}">
+                            <TextBlock.Style>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="Foreground" Value="{StaticResource Dobro}" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding ZdravljeLose}" Value="True">
+                                            <Setter Property="Foreground" Value="{StaticResource Upozorenje}" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
                     </StackPanel>
                     <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Bottom"
                                 DataContext="{Binding Detalj.Izabran}">

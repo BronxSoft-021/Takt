@@ -25,6 +25,10 @@ if (args.Length >= 1 && args[0] == "--meri")
 if (args.Length >= 2 && args[0] == "--prebaci")
     return Prebacivanje.Pokreni(args[1]);
 
+// What each drive says about its own health: Testovi --zdravlje (as administrator for every drive).
+if (args.Length >= 1 && args[0] == "--zdravlje")
+    return ZdravljeIspis.Pokreni();
+
 var filter = args.FirstOrDefault();
 int pali = 0, ukupno = 0;
 

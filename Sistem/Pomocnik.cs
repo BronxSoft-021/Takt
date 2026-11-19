@@ -76,12 +76,21 @@ public static class Pomocnik
 
             string? poslednjaGreska = null;
 
+            // The drive verdicts travel the same way as the readings: the window cannot read SMART as a user.
+            DateTime sledeceZdravlje = DateTime.MinValue;
+
             while (true)
             {
                 if (roditelj is { } pid && !Ziv(pid)) return 0;
 
                 var snimak = izvor.Uzmi();
                 pisac.WriteLine(Protokol.Uzorak(snimak));
+
+                if (DateTime.UtcNow >= sledeceZdravlje)
+                {
+                    pisac.WriteLine(Protokol.Zdravlje(Smart.Nalazi()));
+                    sledeceZdravlje = DateTime.UtcNow.AddMinutes(1);
+                }
                 if (kadrovi.Greska is null) pisac.WriteLine(Protokol.Igre(kadrovi.Stanje()));
 
                 // Once, not every second: the window shows the last message it got anyway.
