@@ -12,15 +12,15 @@
             </Grid.RowDefinitions>
 
             <StackPanel Margin="0,0,0,12">
-                <TextBlock Style="{StaticResource NaslovStrane}" Text="Sesije igara" />
+                <TextBlock Style="{StaticResource NaslovStrane}" Text="{prikaz:T 'Sesije igara'}" />
                 <TextBlock Style="{StaticResource OpisStrane}" Margin="0,3,0,0"
-                           Text="Takt sam snima svaku igru duže od minuta (kad usluga meri kadrove) i posle nje pravi izveštaj." />
+                           Text="{prikaz:T 'Takt sam snima svaku igru duže od minuta (kad usluga meri kadrove) i posle nje pravi izveštaj.'}" />
             </StackPanel>
 
             <TextBlock Grid.Row="1" Foreground="{StaticResource Mutan}" FontSize="13" TextWrapping="Wrap"
                        HorizontalAlignment="Center" VerticalAlignment="Center" MaxWidth="460" TextAlignment="Center"
                        Visibility="{Binding Prazno, Converter={StaticResource BoolUVidljivost}}"
-                       Text="Još nema nijedne sesije. Pokreni igru: posle deset sekundi Takt počinje da snima, a kad je ugasiš, izveštaj se pojavi ovde." />
+                       Text="{prikaz:T 'Još nema nijedne sesije. Pokreni igru: posle deset sekundi Takt počinje da snima, a kad je ugasiš, izveštaj se pojavi ovde.'}" />
 
             <Grid Grid.Row="1" Visibility="{Binding Prazno, Converter={StaticResource BoolUNevidljivost}}">
                 <Grid.ColumnDefinitions>

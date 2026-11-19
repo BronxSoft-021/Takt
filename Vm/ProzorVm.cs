@@ -239,9 +239,9 @@ public sealed class ProzorVm : ObservableObject, IDisposable
 
     public string BrojSenzoraTekst => BrojSenzora switch
     {
-        0 => "nema senzora",
-        var n when n % 10 == 1 && n % 100 != 11 => $"{n} senzor",
-        var n => $"{n} senzora",
+        0 => Tekst.T("nema senzora"),
+        var n when n % 10 == 1 && n % 100 != 11 => Tekst.P("{0} senzor", n),
+        var n => Tekst.P("{0} senzora", n),
     };
 
     private bool _pokrecem;

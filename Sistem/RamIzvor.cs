@@ -17,14 +17,14 @@ public sealed class RamIzvor : IIzvorSenzora
     public RamIzvor()
     {
         // Made-up but stable keys ("ram/0/…"): the name beside them may be translated without touching history.
-        _senzori.Add(new Senzor(new SenzorKljuc(Grupa.Memorija, "Računar", "Zauzeće", "ram/0/zauzece"), Jedinica.Procenat));
-        _senzori.Add(new Senzor(new SenzorKljuc(Grupa.Memorija, "Računar", "Zauzeto", "ram/0/zauzeto"), Jedinica.Megabajt));
-        _senzori.Add(new Senzor(new SenzorKljuc(Grupa.Memorija, "Računar", "Slobodno", "ram/0/slobodno"), Jedinica.Megabajt));
-        _senzori.Add(new Senzor(new SenzorKljuc(Grupa.Memorija, "Računar", "Ukupno", "ram/0/ukupno"), Jedinica.Megabajt));
-        _senzori.Add(new Senzor(new SenzorKljuc(Grupa.Memorija, "Računar", "Commit", "ram/0/commit"), Jedinica.Megabajt));
-        _senzori.Add(new Senzor(new SenzorKljuc(Grupa.Memorija, "Računar", "Pagefile (procena)", "ram/0/pagefile"), Jedinica.Megabajt));
-        _senzori.Add(new Senzor(new SenzorKljuc(Grupa.Memorija, "Računar", "Brzina memorije", "ram/0/brzina"), Jedinica.Megaherc));
-        _senzori.Add(new Senzor(new SenzorKljuc(Grupa.Memorija, "Računar", "Zauzeće commit-a", "ram/0/commit-procenat"), Jedinica.Procenat));
+        _senzori.Add(new Senzor(new SenzorKljuc(Grupa.Memorija, Tekst.T("Računar"), "Zauzeće", "ram/0/zauzece"), Jedinica.Procenat));
+        _senzori.Add(new Senzor(new SenzorKljuc(Grupa.Memorija, Tekst.T("Računar"), "Zauzeto", "ram/0/zauzeto"), Jedinica.Megabajt));
+        _senzori.Add(new Senzor(new SenzorKljuc(Grupa.Memorija, Tekst.T("Računar"), "Slobodno", "ram/0/slobodno"), Jedinica.Megabajt));
+        _senzori.Add(new Senzor(new SenzorKljuc(Grupa.Memorija, Tekst.T("Računar"), "Ukupno", "ram/0/ukupno"), Jedinica.Megabajt));
+        _senzori.Add(new Senzor(new SenzorKljuc(Grupa.Memorija, Tekst.T("Računar"), "Commit", "ram/0/commit"), Jedinica.Megabajt));
+        _senzori.Add(new Senzor(new SenzorKljuc(Grupa.Memorija, Tekst.T("Računar"), "Pagefile (procena)", "ram/0/pagefile"), Jedinica.Megabajt));
+        _senzori.Add(new Senzor(new SenzorKljuc(Grupa.Memorija, Tekst.T("Računar"), "Brzina memorije", "ram/0/brzina"), Jedinica.Megaherc));
+        _senzori.Add(new Senzor(new SenzorKljuc(Grupa.Memorija, Tekst.T("Računar"), "Zauzeće commit-a", "ram/0/commit-procenat"), Jedinica.Procenat));
     }
 
     public string Naziv => "Memorija";

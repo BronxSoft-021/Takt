@@ -237,5 +237,32 @@ public static class TekstEngleski
         ["Sesije"] = "Sessions",
         ["Izađi iz Scene  (Esc)"] = "Leave the Scene  (Esc)",
         ["Najduži kadar svake sekunde (ms) — zastoj je šiljak"] = "Longest frame of each second (ms) — a stall is the spike",
-    };
+        ["Računar"] = "This computer",
+        ["Scene  F1"] = "Scene  F1",
+
+        // ---- Chart labels ----
+        ["pre {0} s"] = "{0} s ago",
+        ["pre {0} min"] = "{0} min ago",
+        ["pre {0} h"] = "{0} h ago",
+        ["pre {0} h {1} min"] = "{0} h {1} min ago",
+        ["sada"] = "now",
+
+        // ---- Sessions screen ----
+        ["Sesije igara"] = "Game sessions",
+        ["Takt sam snima svaku igru duže od minuta (kad usluga meri kadrove) i posle nje pravi izveštaj."] =
+            "Takt records every game longer than a minute by itself (when the service counts frames) and writes a report afterwards.",
+        ["Još nema nijedne sesije. Pokreni igru: posle deset sekundi Takt počinje da snima, a kad je ugasiš, izveštaj se pojavi ovde."] =
+            "No sessions yet. Start a game: after ten seconds Takt begins recording, and when you close it the report appears here.",
+
+        // ---- Tool tips (the console and the header) ----
+        ["Solo: ovaj kanal desno"] = "Solo: this channel on the right",
+        ["Utišaj: skupi kanal (pamti se)"] = "Mute: fold this channel (remembered)",
+        ["Vrati kanal"] = "Restore the channel",
+        ["Ritam čitanja senzora; menja se u podešavanjima"] = "Sensor reading rate; changed in the settings",
+        ["Pokreće pomoćnika kao administratora (Windows pita za dozvolu). Prozor ostaje običan korisnik."] =
+            "Starts the helper as administrator (Windows asks for permission). The window stays a standard user.",
+        ["Izveštaji o odigranim sesijama: trajanje, FPS, zastoji, temperature"] =
+            "Reports of played sessions: duration, FPS, stalls, temperatures",
+        ["Veliki pult preko celog ekrana, za drugi monitor dok igraš (Esc izlazi)"] =
+            "A large console across the whole screen, for a second monitor while you play (Esc leaves)",    };
 }

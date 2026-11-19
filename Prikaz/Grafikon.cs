@@ -103,10 +103,10 @@ public sealed class Grafikon : FrameworkElement
     /// <summary>"pre 45 s", "pre 2 min", "pre 1 h 10 min" - how long ago the oldest point on the chart was read.</summary>
     public static string PreKoliko(int sekundi)
     {
-        if (sekundi < 90) return $"pre {Math.Max(1, sekundi)} s";
+        if (sekundi < 90) return Takt.Tekst.P("pre {0} s", Math.Max(1, sekundi));
         int minuta = (int)Math.Round(sekundi / 60.0);
-        if (minuta < 60) return $"pre {minuta} min";
-        return minuta % 60 == 0 ? $"pre {minuta / 60} h" : $"pre {minuta / 60} h {minuta % 60} min";
+        if (minuta < 60) return Takt.Tekst.P("pre {0} min", minuta);
+        return minuta % 60 == 0 ? Takt.Tekst.P("pre {0} h", minuta / 60) : Takt.Tekst.P("pre {0} h {1} min", minuta / 60, minuta % 60);
     }
 
     public Prsten? Prsten
@@ -151,7 +151,7 @@ public sealed class Grafikon : FrameworkElement
 
         if (brojevi.Length == 0)
         {
-            var nema = Tekst("Nema podataka", 12, mutan, dpi);
+            var nema = Tekst(Takt.Tekst.T("Nema podataka"), 12, mutan, dpi);
             dc.DrawText(nema, new Point((sirina - nema.Width) / 2, (visina - nema.Height) / 2));
             return;
         }
@@ -261,7 +261,7 @@ public sealed class Grafikon : FrameworkElement
         }
 
         var pocetak = Tekst(PreKoliko((uzorci.Length - 1) * Math.Max(1, Perioda)), 9.5, mutan, dpi);
-        var sada = Tekst("sada", 9.5, mutan, dpi);
+        var sada = Tekst(Takt.Tekst.T("sada"), 9.5, mutan, dpi);
         dc.DrawText(pocetak, new Point(levo, visina - dole + 7));
         dc.DrawText(sada, new Point(levo + sirinaCrteza - sada.Width, visina - dole + 7));
 
@@ -277,7 +277,7 @@ public sealed class Grafikon : FrameworkElement
 
             string zaTo = uzorci[indeks] is { } v ? Format.Vrednost(v, Mera) : Format.Nema;
             int pre = (uzorci.Length - 1 - indeks) * Math.Max(1, Perioda);
-            string kada = pre == 0 ? "sada" : PreKoliko(pre);
+            string kada = pre == 0 ? Takt.Tekst.T("sada") : PreKoliko(pre);
 
             if (uzorci[indeks] is { } tackaVrednost)
             {

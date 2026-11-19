@@ -427,9 +427,9 @@ public sealed class LhmIzvor : IIzvorSenzora
             "Cores (Average)" => "Prosečan takt",
             "Cores (Average Effective)" => "Prosečan efektivni takt",
             "Bus Speed" => "Takt magistrale",
-            // Ryzen: one die temperature per chiplet, "CCD1 (Tdie)".
+            // Ryzen: one die temperature per chiplet, "CCD1 (Tdie)". English puts the name first ("CCD1 temperature").
             _ when ime.StartsWith("CCD", StringComparison.Ordinal) && jedinica == Jedinica.Celzijus
-                => "Temperatura " + ime.Split(' ')[0],
+                => Tekst.JeEngleski ? $"{ime.Split(' ')[0]} temperature" : "Temperatura " + ime.Split(' ')[0],
             "Package" when jedinica == Jedinica.Vat => "Potrošnja paketa",
             "Package" when jedinica == Jedinica.Celzijus => "Temperatura paketa",
             _ => ime,

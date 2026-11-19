@@ -95,9 +95,9 @@
 
                         <StackPanel Grid.Row="6" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,8,0,0">
                             <Button Style="{StaticResource Taster}" Content="S" Tag="{Binding Solo}" Click="NaSolo"
-                                    ToolTip="Solo: ovaj kanal desno" Margin="0,0,4,0" />
+                                    ToolTip="{prikaz:T 'Solo: ovaj kanal desno'}" Margin="0,0,4,0" />
                             <Button Style="{StaticResource Taster}" Content="M" Tag="{Binding Utisan}" Click="NaUtisaj"
-                                    ToolTip="Utišaj: skupi kanal (pamti se)" />
+                                    ToolTip="{prikaz:T 'Utišaj: skupi kanal (pamti se)'}" />
                         </StackPanel>
                     </Grid>
                 </Border>
@@ -107,7 +107,7 @@
                         Visibility="Collapsed" ToolTip="{Binding OpisKanala}">
                     <DockPanel>
                         <Button DockPanel.Dock="Bottom" Style="{StaticResource Taster}" Content="M" Tag="{Binding Utisan}"
-                                Click="NaUtisaj" ToolTip="Vrati kanal" HorizontalAlignment="Center" />
+                                Click="NaUtisaj" ToolTip="{prikaz:T 'Vrati kanal'}" HorizontalAlignment="Center" />
                         <TextBlock Text="{Binding Naslov}" Style="{StaticResource Natpis}" HorizontalAlignment="Center"
                                    VerticalAlignment="Top">
                             <TextBlock.LayoutTransform>
@@ -154,7 +154,7 @@
                     <TextBlock Text="BronxSoft" Style="{StaticResource Natpis}" Margin="8,2,0,0" VerticalAlignment="Center" />
                     <TextBlock Text="{Binding Ritam}" Foreground="{StaticResource Mutan}" FontSize="11"
                                Margin="18,2,0,0" VerticalAlignment="Center"
-                               ToolTip="Ritam čitanja senzora; menja se u podešavanjima" />
+                               ToolTip="{prikaz:T 'Ritam čitanja senzora; menja se u podešavanjima'}" />
                 </StackPanel>
 
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
@@ -182,15 +182,15 @@
                     <TextBlock Text="{Binding Stanje}" Foreground="{StaticResource Mutan}" FontSize="12"
                                VerticalAlignment="Center" />
                     <Button Style="{StaticResource Dugme}" Content="Uključi potpuni nadzor" Margin="12,0,0,0"
-                            ToolTip="Pokreće pomoćnika kao administratora (Windows pita za dozvolu). Prozor ostaje običan korisnik."
+                            ToolTip="{prikaz:T 'Pokreće pomoćnika kao administratora (Windows pita za dozvolu). Prozor ostaje običan korisnik.'}"
                             Visibility="{Binding PomocnikMoguc, Converter={StaticResource BoolUVidljivost}}"
                             Click="NaPomocnika" />
                     <Button Style="{StaticResource DugmeTiho}" Margin="12,0,0,0" Content="{prikaz:T 'Sesije'}" Click="NaSesije"
-                            ToolTip="Izveštaji o odigranim sesijama: trajanje, FPS, zastoji, temperature" />
-                    <Button Style="{StaticResource DugmeTamno}" Margin="6,0,0,0" Content="Scena  F11" Click="NaScenu"
-                            ToolTip="Veliki pult preko celog ekrana, za drugi monitor dok igraš (Esc izlazi)" />
+                            ToolTip="{prikaz:T 'Izveštaji o odigranim sesijama: trajanje, FPS, zastoji, temperature'}" />
+                    <Button Style="{StaticResource DugmeTamno}" Margin="6,0,0,0" Content="{prikaz:T 'Scene  F1'}" Click="NaScenu"
+                            ToolTip="{prikaz:T 'Veliki pult preko celog ekrana, za drugi monitor dok igraš (Esc izlazi)'}" />
                     <Button x:Name="DugmePodesavanja" Margin="8,0,0,0" Width="32"
-                            Padding="0" ToolTip="Podešavanja" Click="NaPodesavanja">
+                            Padding="0" ToolTip="{prikaz:T 'Podešavanja'}" Click="NaPodesavanja">
                         <Button.Style>
                             <Style TargetType="Button" BasedOn="{StaticResource DugmeTiho}">
                                 <Style.Triggers>
