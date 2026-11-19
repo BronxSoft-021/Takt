@@ -60,8 +60,15 @@ public sealed class VuMerac : FrameworkElement
         (byte)Math.Round(od.B + (ka.B - od.B) * t));
 
     /// <summary>
+    /// The colour for a share of a scale (0-1), from the same ramp the meters use: the small bar under a
+    /// processor follows the big meters, so one screen never shows two languages of colour.
+    /// </summary>
+    public static Brush CetkaZa(double udeo) => Rampa[(int)Math.Round(Polozaj(udeo, null, null))];
+
+    /// <summary>
     /// Where a segment sits on the green - amber - red ramp (0 green, 50 amber, 100 red). With the part's own
-    /// limits the amber starts at the warm limit and the red at the hot one; without them the scale is the ramp.
+    /// limits the amber starts at the warm limit and the red at the hot one; without them the scale is green
+    /// until 60 %, amber around 80 % and red only at the very top - a processor at half load is not an alarm.
     /// Public for a test.
     /// </summary>
     public static double Polozaj(double udeo, double? toplo, double? vruce)
@@ -74,7 +81,10 @@ public sealed class VuMerac : FrameworkElement
             return Math.Clamp(50 * udeo / topla, 0, 50);
         }
 
-        return Math.Clamp(udeo * 100, 0, 100);
+        // A gentle warm-up to 60 %, then amber, then red: green is where most readings live.
+        if (udeo <= 0.60) return 20 * udeo / 0.60;
+        if (udeo <= 0.85) return 20 + 55 * (udeo - 0.60) / 0.25;
+        return 75 + 25 * (udeo - 0.85) / 0.15;
     }
 
     public double Udeo { get => (double)GetValue(UdeoProperty); set => SetValue(UdeoProperty, value); }

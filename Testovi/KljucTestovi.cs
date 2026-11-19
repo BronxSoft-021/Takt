@@ -77,10 +77,14 @@ public static class KljucTestovi
 
     public static Task Jezgra()
     {
-        Proveri.Da(KanalVm.JeJezgro(new SenzorKljuc(Grupa.Procesor, "CPU", "Bilo koje ime", "/amdcpu/0/load/3")),
+        Proveri.Da(KanalVm.JeJezgro(new SenzorKljuc(Grupa.Procesor, "CPU", "Opterećenje jezgra 3", "/amdcpu/0/load/3")),
             "jezgro se prepoznaje po putanji, ne po imenu");
+        Proveri.Da(KanalVm.JeJezgro(new SenzorKljuc(Grupa.Procesor, "CPU", "CPU Core #3", "/amdcpu/0/load/3")),
+            "radi i sa engleskim imenom (ime završava brojem)");
         Proveri.Da(!KanalVm.JeJezgro(new SenzorKljuc(Grupa.Procesor, "CPU", "Opterećenje procesora", "/amdcpu/0/load/0")),
             "ukupno opterećenje nije jezgro");
+        Proveri.Da(!KanalVm.JeJezgro(new SenzorKljuc(Grupa.Procesor, "CPU", "Najopterećenije jezgro", "/amdcpu/0/load/13")),
+            "sažetak (najopterećenije) nije nit");
         Proveri.Da(KanalVm.JeJezgro(new SenzorKljuc(Grupa.Procesor, "CPU", "Opterećenje jezgra 4")),
             "bez putanje (probni podaci) - po imenu");
         return Task.CompletedTask;

@@ -135,15 +135,17 @@ public sealed class KanalVm : ObservableObject
 
     /// <summary>
     /// A per-core load, recognised by the library's own path (<c>/amdcpu/0/load/1</c> …) and not by the name that
-    /// is shown, so a translated or renamed sensor still lands in the row under the processor. Public for a test.
+    /// is shown, so a translated or renamed sensor still lands in the row under the processor. The library also
+    /// lists "Core Max" and "Core Average" on the same path; a core's name ends with its number, theirs does not,
+    /// which holds in any language. Public for a test.
     /// </summary>
     public static bool JeJezgro(SenzorKljuc kljuc)
     {
-        if (kljuc.Ident is { } ident)
+        if (kljuc.Ident is { } ident && ident.Contains("/load/", StringComparison.Ordinal))
         {
             int kosa = ident.LastIndexOf('/');
-            return ident.Contains("/load/", StringComparison.Ordinal) && kosa > 0 &&
-                   int.TryParse(ident[(kosa + 1)..], out int broj) && broj > 0;
+            if (kosa <= 0 || !int.TryParse(ident[(kosa + 1)..], out int broj) || broj <= 0) return false;
+            return kljuc.Ime.Length > 0 && char.IsDigit(kljuc.Ime[^1]);
         }
 
         // A source without a library path (probe data): the old way, by the name shown.

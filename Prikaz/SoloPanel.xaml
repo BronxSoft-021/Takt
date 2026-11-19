@@ -74,10 +74,10 @@
                         </ItemsControl.ItemsPanel>
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
-                                <Border Width="14" Height="34" Margin="0,0,4,0" Background="#22272B" CornerRadius="2"
+                                <Border Width="14" Height="34" Margin="0,0,4,0" Background="#171C24" CornerRadius="2"
                                         ToolTip="{Binding Vrednost}">
-                                    <Border Background="{StaticResource Akcenat}" CornerRadius="2"
-                                            RenderTransformOrigin="0.5,1">
+                                    <Border Background="{Binding Udeo, Converter={StaticResource UdeoUCetka}}"
+                                            CornerRadius="2" RenderTransformOrigin="0.5,1">
                                         <Border.RenderTransform>
                                             <ScaleTransform ScaleY="{Binding Udeo, FallbackValue=0}" />
                                         </Border.RenderTransform>

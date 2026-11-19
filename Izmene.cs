@@ -22,6 +22,14 @@ public static class Izmene
     [
         new("alfa", "19. 11. 2026.",
         [
+        ],
+        [
+            "Rampa merača: zeleno do 60 % skale, žuto oko 80 %, crveno tek pri vrhu — pola opterećenja više ne izgleda kao alarm. Granice dela i dalje pomeraju žuto na granicu upozorenja.",
+            "Red jezgara je opet tačan: LHM-ov „Najopterećenije jezgro“ (i prosek) više ne ulaze u red niti — jezgro se prepoznaje po tome što ime završava brojem, pa pravilo radi i posle prevoda.",
+            "Male crtice jezgara idu istom rampom kao merači (zeleno → crveno) umesto ćilibara — jedna slika, jedan jezik boja.",
+        ]),
+        new("alfa", "19. 11. 2026.",
+        [
             "Točkić miša više ne skače: pult i stranica podešavanja klize do novog mesta u oko 0,2 s, a drugi pokret točkića nastavlja odakle je krenuo (`Prikaz/Glatko.cs`).",
             "Merači idu zeleno → žuto → crveno po visini; kada deo prijavi svoje granice, žuto počinje na granici upozorenja, a crveno na kritičnoj, pa hladan deo nikad ne izgleda vruć samo zato što je visoko na skali.",
         ],

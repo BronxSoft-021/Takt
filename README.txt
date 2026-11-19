@@ -1,4 +1,11 @@
-﻿BronxSoft Takt 0.36.51 alfa
+﻿BronxSoft Takt 0.36.54 alfa
+19. 11. 2026.
+
+DORADE
+- Rampa merača: zeleno do 60 % skale, žuto oko 80 %, crveno tek pri vrhu - pola opterećenja više ne
+  izgleda kao alarm. Granice dela i dalje pomeraju žuto na granicu upozorenja.
+
+BronxSoft Takt 0.36.51 alfa
 19. 11. 2026.
 
 NOVO

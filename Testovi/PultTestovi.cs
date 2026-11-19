@@ -90,11 +90,13 @@ public static class PultTestovi
         return Task.CompletedTask;
     }
 
-    /// <summary>The ramp: green at the bottom, amber halfway, red at the top; the part's own limits move the amber.</summary>
+    /// <summary>The ramp: green to 60 %, amber around 80 %, red at the top; the part's own limits move the amber.</summary>
     public static Task Rampa()
     {
         Proveri.Blizu(0, VuMerac.Polozaj(0, null, null), 0.01, "dno je zeleno");
-        Proveri.Blizu(50, VuMerac.Polozaj(0.5, null, null), 0.01, "pola skale je žuto");
+        Proveri.Da(VuMerac.Polozaj(0.5, null, null) < 25, "pola skale je još zeleno");
+        Proveri.Blizu(20, VuMerac.Polozaj(0.60, null, null), 0.01, "na 60 % tek počinje da žuti");
+        Proveri.Blizu(75, VuMerac.Polozaj(0.85, null, null), 0.01, "na 85 % je narandžasto");
         Proveri.Blizu(100, VuMerac.Polozaj(1, null, null), 0.01, "vrh je crven");
 
         // With the part's limits: amber starts at the warm limit, red at the hot one.
