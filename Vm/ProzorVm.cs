@@ -20,6 +20,7 @@ public sealed class ProzorVm : ObservableObject, IDisposable
     private Nadzor? _nadzor;
     private PomocnikKlijent? _pomocnik;
     private MeracKadrova? _kadrovi;
+    private DispatcherTimer? _trazenje;
     private object? _prikaz;
     private KanalVm? _kanal;
     private string _stanje = "";
@@ -300,6 +301,11 @@ public sealed class ProzorVm : ObservableObject, IDisposable
             OnPropertyChanged(nameof(PomocnikMoguc));
             OnPropertyChanged(nameof(BrojSenzora));
             OnPropertyChanged(nameof(BrojSenzoraTekst));
+
+            // If the service was not up yet (it is installed but Windows starts it a moment after logon, and right
+            // after an update), this window would read with its own rights until it was closed and opened again.
+            // Keep asking every few seconds instead.
+            PokreniTrazenje();
         }
         catch (Exception ex)
         {
@@ -361,6 +367,47 @@ public sealed class ProzorVm : ObservableObject, IDisposable
 
     /// <summary>True while a button offering the helper makes sense: real data, not elevated, no helper yet.</summary>
     public bool PomocnikMoguc => !_rad.ProbniPodaci && _pomocnik is null && !Admin.JeAdmin && !_trazimPomocnika;
+
+    /// <summary>Whether asking again makes sense: real data, nobody connected, no request already open. Public for a test.</summary>
+    public static bool VrediTrazi(bool probno, bool imaPomocnika, bool trazi, bool disposed) =>
+        !probno && !imaPomocnika && !trazi && !disposed;
+
+    private void PokreniTrazenje()
+    {
+        if (!VrediTrazi(_rad.ProbniPodaci, _pomocnik is not null, _trazimPomocnika, _disposed)) return;
+
+        _trazenje ??= new DispatcherTimer(TimeSpan.FromSeconds(5), DispatcherPriority.Background,
+            (_, _) => TraziVeze(), _dispatcher);
+        _trazenje.Start();
+    }
+
+    /// <summary>
+    /// Asks the pipe every five seconds while this window reads with its own rights. The connect is a blocking
+    /// call, so it runs off the drawing thread; when the service answers, the window moves onto it (one driver,
+    /// full monitoring) without being restarted.
+    /// </summary>
+    private async void TraziVeze()
+    {
+        if (!VrediTrazi(_rad.ProbniPodaci, _pomocnik is not null, _trazimPomocnika || _pokrecem, _disposed))
+        {
+            _trazenje?.Stop();
+            return;
+        }
+
+        PomocnikKlijent? klijent = null;
+        for (int pokusaj = 0; pokusaj < 3 && klijent is null && !_disposed; pokusaj++)
+            klijent = await Task.Run(() => PomocnikKlijent.Probaj(500));
+
+        if (klijent is null || _disposed || _pomocnik is not null)
+        {
+            klijent?.Dispose();
+            return;
+        }
+
+        _trazenje?.Stop();
+        Upozorenje = null;
+        await PonovoOtvoriAsync(klijent);
+    }
 
     /// <summary>
     /// Asks for administrator rights. The Windows question is modal and can stay on screen for a while, so it
@@ -743,6 +790,9 @@ public sealed class ProzorVm : ObservableObject, IDisposable
     {
         if (_disposed) return;
         _disposed = true;
+
+        _trazenje?.Stop();
+        _trazenje = null;
 
         try
         {

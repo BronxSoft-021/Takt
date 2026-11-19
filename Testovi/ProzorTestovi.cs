@@ -41,6 +41,43 @@ public static class ProzorTestovi
     }
 
     /// <summary>
+    /// The chart scale: a narrow range must fill the chart instead of being drawn in a window twice as tall. The
+    /// step used to jump straight from 2 to 5, so 51,6-58,4 °C got a 50-70 window (seen on screen, 19. 11. 2026).
+    /// </summary>
+    public static Task Skala()
+    {
+        var (donja, gornja, korak) = Takt.Prikaz.Grafikon.Skala(51.6, 58.4, nenegativno: true);
+        Proveri.Blizu(50, donja, 0.001, "donja granica");
+        Proveri.Blizu(60, gornja, 0.001, "gornja je 60, ne 70");
+        Proveri.Blizu(2.5, korak, 0.001, "korak 2,5");
+
+        var nula = Takt.Prikaz.Grafikon.Skala(0, 2, nenegativno: true);
+        Proveri.Blizu(0, nula.Donja, 0.001, "nula ostaje donja granica za procente");
+
+        var ravno = Takt.Prikaz.Grafikon.Skala(55, 55, nenegativno: true);
+        Proveri.Da(ravno.Gornja > ravno.Donja, "i ravna linija dobija prozor");
+        return Task.CompletedTask;
+    }
+
+    /// <summary>
+    /// The window keeps asking the service (or the helper) while it reads with its own rights: right after an
+    /// update, or at logon, the service is not up yet and the window used to stay "Ograničen nadzor" until it was
+    /// closed and opened again (seen 19. 11. 2026).
+    /// </summary>
+    public static Task TrazenjeVeze()
+    {
+        Proveri.Da(ProzorVm.VrediTrazi(probno: false, imaPomocnika: false, trazi: false, disposed: false),
+            "bez veze se pita ponovo");
+        Proveri.Da(!ProzorVm.VrediTrazi(false, imaPomocnika: true, trazi: false, disposed: false),
+            "kad veza postoji, ne pita se");
+        Proveri.Da(!ProzorVm.VrediTrazi(true, false, trazi: false, disposed: false), "probni podaci ne traže vezu");
+        Proveri.Da(!ProzorVm.VrediTrazi(false, false, trazi: true, disposed: false),
+            "dok se pomoćnik diže, ne pita se ponovo");
+        Proveri.Da(!ProzorVm.VrediTrazi(false, false, trazi: false, disposed: true), "zatvoren prozor ne pita");
+        return Task.CompletedTask;
+    }
+
+    /// <summary>
     /// Header and footer must tell the same story. „Potpuni nadzor · usluga“ above and „običan korisnik“ below
     /// was the lie a report pointed at (19. 11. 2026): the footer asked only this window, never the helper.
     /// </summary>

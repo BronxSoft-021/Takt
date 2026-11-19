@@ -37,6 +37,8 @@ public static class Izmene
             "Usluga se Windowsu javi **odmah**, a motor (drajver, diskovi) otvara u pozadini: `OnStart` je blokirao dok se sve ne otvori — mereno **9 s** do „Running“, a sa uspavanim diskovima to bi prešlo 30 s koliko SCM daje i Windows bi rekao da usluga nije pokrenuta.",
             "Reč **„zastoj“** umesto „štucanje“: štucanje je hiccup, a u programskom svetu se meša i sa prazninom u podacima. Zastoj je kadar znatno duži od susednih (preko 50 ms i 2,5 × medijana). Sačuvani izveštaji se i dalje čitaju (stari ključ u JSON-u).",
             "**Jedan „1 % low“**, ne dva: izveštaj sesije je uzimao 5. percentil sekundi („najgorih 5 % sekundi“) i zvao ga 1 % low, pa su ekran i izveštaj davali dva broja za istu igru. Sada je i u izveštaju prosek najgorih **1 %** sekundi, gde je svaka sekunda računata iz kadrova.",
+            "Prozor više ne ostaje bez usluge: ako se podigne dok se usluga još diže (posle instalacije, na prijavi), pita cev **svakih 5 s** i sam pređe na potpuni nadzor — ranije je tako ostajao na „Ograničen nadzor“ do zatvaranja i ponovnog otvaranja.",
+            "Grafikon više ne stoji u praznom: korak skale je skakao sa 2 na 5, pa se linija od 51,6–58,4 °C crtala u prozoru 50–70 (donja trećina). Sada korak ide 1, 2, **2,5**, 5, 10 — ista linija dobija 50–60. Visina grafikona je ograničena na **300 px**, pa u velikom prozoru tabela senzora dobija prostor umesto praznine.",
         ]),
         new("alfa", "19. 11. 2026.",
         [

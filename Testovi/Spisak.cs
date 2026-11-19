@@ -40,6 +40,8 @@ public static class Spisak
         ("prozor: podešavanja iz trake se ne zatvaraju drugim klikom", ProzorTestovi.Podesavanja),
         ("prozor: podnožje kaže ko čita senzore", ProzorTestovi.Prava),
         ("prozor: FPS i kad je prozor sam povišen", ProzorTestovi.Kadrovi),
+        ("prozor: veza sa uslugom se traži i posle starta", ProzorTestovi.TrazenjeVeze),
+        ("grafikon: uska skala puni visinu (korak 2,5)", ProzorTestovi.Skala),
         ("pokretanje: linija za Windows Run", ProzorTestovi.PokretanjeSaWindowsom),
         ("pokretanje: upis u Run, čitanje i brisanje", PokretanjeTest.UpisiProcitajObrisi),
         ("drajver: fajl ili upis u registru znače instaliran", PawnIoTest.Provera),

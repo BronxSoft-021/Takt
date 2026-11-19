@@ -158,25 +158,14 @@ public sealed class Grafikon : FrameworkElement
 
         double najmanje = brojevi.Min();
         double najvise = brojevi.Max();
-        if (najvise - najmanje < 0.001)
-        {
-            double pomeraj = Math.Max(Math.Abs(najvise) * 0.1, 1);
-            najmanje -= pomeraj;
-            najvise += pomeraj;
-        }
-
-        double rezerva = (najvise - najmanje) * 0.12;
-        najmanje -= rezerva;
-        najvise += rezerva;
 
         // Percentages, temperatures, clocks, fans, watts and bytes never go below zero, so a scale that dips
         // under it (and shows 0 % as a line in the middle) would be misleading.
-        if (brojevi.Min() >= 0 && Mera is Jedinica.Procenat or Jedinica.Celzijus or Jedinica.Obrtaj
-                or Jedinica.Vat or Jedinica.Megaherc or Jedinica.Megabajt or Jedinica.MegabajtUSekundi
-                or Jedinica.Kadrovi or Jedinica.Milisekunda)
-            najmanje = Math.Max(0, najmanje);
+        bool nenegativno = brojevi.Min() >= 0 && Mera is Jedinica.Procenat or Jedinica.Celzijus or Jedinica.Obrtaj
+            or Jedinica.Vat or Jedinica.Megaherc or Jedinica.Megabajt or Jedinica.MegabajtUSekundi
+            or Jedinica.Kadrovi or Jedinica.Milisekunda;
 
-        if (najvise - najmanje < 0.001) najvise = najmanje + 1;
+        (najmanje, najvise, double korak) = Skala(najmanje, najvise, nenegativno);
 
         double Y(double vrednost) => gore + (1 - (vrednost - najmanje) / (najvise - najmanje)) * visinaCrteza;
 
@@ -184,13 +173,7 @@ public sealed class Grafikon : FrameworkElement
         // once there are 120 it scrolls.
         double X(int indeks) => levo + indeks * (sirinaCrteza / Math.Max(1, uzorci.Length - 1));
 
-        // Grid with values on the right. The scale is rounded to steps a person reads easily (1, 2 or 5 times
-        // a power of ten), and a narrow range gets decimals, or every label would read the same.
-        double opseg = Math.Max(najvise - najmanje, 0.001);
-        double korak = LepKorak(opseg / 4);
-        najmanje = Math.Floor(najmanje / korak) * korak;
-        najvise = najmanje + korak * 4;
-
+        // Grid with values on the right; a narrow range gets decimals, or every label would read the same.
         int decimala = 0;
         if (korak < 1) decimala = 1;
         if (korak < 0.1) decimala = 2;
@@ -337,14 +320,43 @@ public sealed class Grafikon : FrameworkElement
     private SolidColorBrush Cetka(string kljuc, Color rezerva) =>
         TryFindResource(kljuc) as SolidColorBrush ?? new SolidColorBrush(rezerva);
 
-    /// <summary>Rounds a step to 1, 2 or 5 times a power of ten, so the scale reads 0/2/4/6 and not 0/1,35/2,7.</summary>
+    /// <summary>
+    /// The four-step scale of a chart: a little headroom, then steps a person reads - 1, 2, 2,5, 5 or 10 times a
+    /// power of ten. Public for a test: the old step jumped straight from 2 to 5, so a line moving between 51,6
+    /// and 58,4 °C was drawn in a 50-70 window - the chart looked half empty and the line hugged the bottom
+    /// (seen on screen, 19. 11. 2026).
+    /// </summary>
+    public static (double Donja, double Gornja, double Korak) Skala(double najmanje, double najvise, bool nenegativno)
+    {
+        if (najvise - najmanje < 0.001)
+        {
+            double pomeraj = Math.Max(Math.Abs(najvise) * 0.1, 1);
+            najmanje -= pomeraj;
+            najvise += pomeraj;
+        }
+
+        double rezerva = (najvise - najmanje) * 0.12;
+        najmanje -= rezerva;
+        najvise += rezerva;
+
+        // A scale that dips under zero (and shows 0 % as a line in the middle) would be misleading.
+        if (nenegativno) najmanje = Math.Max(0, najmanje);
+
+        if (najvise - najmanje < 0.001) najvise = najmanje + 1;
+
+        double korak = LepKorak(Math.Max(najvise - najmanje, 0.001) / 4);
+        double donja = Math.Floor(najmanje / korak) * korak;
+        return (donja, donja + korak * 4, korak);
+    }
+
+    /// <summary>Rounds a step to 1, 2, 2.5, 5 or 10 times a power of ten, so the scale reads 0/2/4/6 and not 0/1,35/2,7.</summary>
     private static double LepKorak(double korak)
     {
         if (korak <= 0 || double.IsNaN(korak)) return 1;
 
         double red = Math.Pow(10, Math.Floor(Math.Log10(korak)));
         double odnos = korak / red;
-        double lep = odnos <= 1 ? 1 : odnos <= 2 ? 2 : odnos <= 5 ? 5 : 10;
+        double lep = odnos <= 1 ? 1 : odnos <= 2 ? 2 : odnos <= 2.5 ? 2.5 : odnos <= 5 ? 5 : 10;
         return lep * red;
     }
 }
