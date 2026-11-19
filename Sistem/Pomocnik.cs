@@ -89,7 +89,8 @@ public static class Pomocnik
                 if (DateTime.UtcNow >= sledeceZdravlje)
                 {
                     pisac.WriteLine(Protokol.Zdravlje(Smart.Nalazi()));
-                    sledeceZdravlje = DateTime.UtcNow.AddMinutes(1);
+                    // Ten minutes, not one: a SMART query can wake a sleeping hard disk (see UsluzniMotor).
+                    sledeceZdravlje = DateTime.UtcNow.AddMinutes(10);
                 }
                 if (kadrovi.Greska is null) pisac.WriteLine(Protokol.Igre(kadrovi.Stanje()));
 

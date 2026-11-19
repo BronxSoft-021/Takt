@@ -29,6 +29,7 @@ public static class Izmene
             "SMART čita usluga ili pomoćnik (prozor kao običan korisnik ne može) i šalje presudu kroz cev; kanal „Diskovi“ dobija red ispod imena, a statusna traka kaže celu rečenicu kad nešto nije u redu.",
             "Disk koji ne odgovori (USB most, nema administratora) prijavljuje „nema podataka o zdravlju“, nikad „zdrav“.",
             "Red zdravlja prati **izabrani** disk u grupi (ranije je grupa uzimala presudu prvog/najgoreg diska, pa je uz ST12000VE pisalo da je NVMe).",
+            "SMART se čita na **10 minuta**, ne svakog minuta: upit ume da probudi hard disk koji spava, a četiri diska buđena svakog minuta samo vrte ploče i troše sat rada bez potrebe. Prvi upit posle povezivanja je odmah.",
         ]),
         new("alfa", "19. 11. 2026.",
         [

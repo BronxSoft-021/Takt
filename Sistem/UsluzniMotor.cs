@@ -277,7 +277,9 @@ public sealed class UsluzniMotor : IDisposable
             if (DateTime.UtcNow >= sledeceZdravlje)
             {
                 pisac.WriteLine(Protokol.Zdravlje(Smart.Nalazi()));
-                sledeceZdravlje = DateTime.UtcNow.AddMinutes(1);
+                // Ten minutes, not one: a SMART query can wake a sleeping hard disk, and four drives woken every
+                // minute would spin, hum and wear for nothing. Health changes over months, not seconds.
+                sledeceZdravlje = DateTime.UtcNow.AddMinutes(10);
             }
 
             // Once, not every second: the window shows the last message it got anyway.
