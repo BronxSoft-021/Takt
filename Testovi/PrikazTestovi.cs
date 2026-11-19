@@ -105,6 +105,37 @@ public static class PrikazTestovi
     }
 
     /// <summary>
+    /// The chosen quantity is matched in the language the sensors arrive in: a service speaking English sends
+    /// "Temperature", and comparing it with the Serbian "Temperatura" left the whole strip without a single bar
+    /// (the bug a report found, 19. 11. 2026).
+    /// </summary>
+    public static Task MetarDiskovaNaEngleskom()
+    {
+        try
+        {
+            Tekst.Postavi(Tekst.Engleski);
+
+            // What the service sends when the program speaks English.
+            var senzori = new List<SenzorVm>
+            {
+                new(new Senzor(new SenzorKljuc(Grupa.Diskovi, "Topli", "Temperature"), Jedinica.Celzijus), 0, new Prsten(8)),
+                new(new Senzor(new SenzorKljuc(Grupa.Diskovi, "Topli", "Usage"), Jedinica.Procenat), 1, new Prsten(8)),
+            };
+
+            var diskovi = KanalVm.Napravi(senzori).Single(k => k.Naslov == "Diskovi");
+            Proveri.Jednako(1, diskovi.Meraci.Count, "termometar se nalazi i kad ime dođe na engleskom");
+            Proveri.Jednako(Jedinica.Celzijus, diskovi.Meraci[0].Senzor.Senzor.Jedinica, "stub je temperatura");
+        }
+        finally
+        {
+            Tekst.Postavi(Tekst.Srpski);
+            Format.PostaviKulturu();
+        }
+
+        return Task.CompletedTask;
+    }
+
+    /// <summary>
     /// A drive's rows are three different things, and the list says which is which: the temperature now, the health
     /// from SMART (read every ten minutes), the space of the volumes on the drive, and - apart - the limits the
     /// drive reports about itself. Mixed together, "Životni vek 93 %" sat right above "Zauzeće 54 %" and read as

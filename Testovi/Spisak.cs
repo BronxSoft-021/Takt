@@ -33,6 +33,7 @@ public static class Spisak
         ("ekran: mrtav kanal ploče se ne prikazuje", PrikazTestovi.MrtvePloce),
         ("ekran: diskovi su tri sekcije, ne jedna", PrikazTestovi.VrsteDiskova),
         ("ekran: traka diskova meri jednu veličinu", PrikazTestovi.MetarDiskova),
+        ("ekran: traka diskova radi i na engleskom", PrikazTestovi.MetarDiskovaNaEngleskom),
         ("pult: kanali i njihovi merači", PultTestovi.Kanali),
         ("pult: prazna mesta za diskove i ventilatore", PultTestovi.PraznaMesta),
         ("pult: šest diskova je jedan kanal", PultTestovi.GrupaDiskova),

@@ -258,7 +258,7 @@ public sealed class KanalVm : ObservableObject
     /// </summary>
     public SenzorVm? Glavni => JeGrupa
         ? Meraci.Select(m => m.Senzor).Where(s => s.Broj is not null)
-              .OrderByDescending(s => s.Ime == GlavnaVrsta)
+              .OrderByDescending(s => s.Ime == Takt.Tekst.T(GlavnaVrsta))
               .ThenByDescending(s => s.Senzor.Jedinica == Jedinica.Celzijus)
               .ThenByDescending(s => s.Broj)
               .FirstOrDefault() ?? Levi?.Senzor
@@ -531,16 +531,18 @@ public sealed class KanalVm : ObservableObject
         // drive itself, and drives are now asked once in ten minutes (see LhmIzvor).
         var diskovi = PoUredjaju(Grupa.Diskovi, (i, _) => $"Disk {i + 1}", ["Zauzeće"], ["Temperatura"], "za", "°C");
 
-        // One quantity for every drive, the one the user chose: with a mixed strip, a drive without a thermometer
-        // fell back to its used space and a "99 %" bar stood beside a "45 °C" bar - two different things in one
-        // row of bars. A drive without the chosen quantity gets no bar, and its number is still in its own panel.
+        // The sensor's name arrives translated from the service ("Temperature" when the program speaks English), so
+        // the choice is compared in the same language. Comparing "Temperatura" with an English list found no
+        // thermometer at all and left the whole strip empty (a report, 19. 11. 2026).
+        var trazeno = Takt.Tekst.T(metar);
         var meraciDiskova = diskovi.Select((d, i) =>
         {
-            var senzor = d.Detalj.Senzori.FirstOrDefault(s => s.Ime == metar);
+            var senzor = d.Detalj.Senzori.FirstOrDefault(s => s.Ime == trazeno);
             return senzor is null ? null : new MeracVm(senzor, (i + 1).ToString());
         }).ToList();
         kanali.Add(new KanalVm($"{Grupa.Diskovi}|", "Diskovi", GrupaOpis.Naslov(Grupa.Diskovi),
-            diskovi.FirstOrDefault()?.Detalj ?? new EkranVm(Grupa.Diskovi, []), meraciDiskova, diskovi) { GlavnaVrsta = metar });
+            diskovi.FirstOrDefault()?.Detalj ?? new EkranVm(Grupa.Diskovi, []), meraciDiskova, diskovi)
+            { GlavnaVrsta = metar });
 
         // Fans live on the board and on the cards; the strip shows the first two the board gives.
         var ventilatori = sviSenzori.Where(s => s.Senzor.Grupa == Grupa.Hladjenje).ToList();
