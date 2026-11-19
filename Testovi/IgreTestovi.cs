@@ -8,7 +8,7 @@ namespace Takt.Testovi;
 public static class IgreTestovi
 {
     /// <summary>
-    /// Ten seconds at 60 FPS with nine 80 ms frames, one of them in the last second: 60 FPS, one stutter now, and
+    /// Ten seconds at 60 FPS with nine 80 ms frames, one of them in the last second: 60 FPS, one stall now, and
     /// a 1 % low far below the average (nine of ~590 frames is more than 1 %). One slow frame alone would not move
     /// the 1 % low - that is the definition, not a fault.
     /// </summary>
@@ -26,7 +26,7 @@ public static class IgreTestovi
         var igra = merac.Stanje(sada: t).Single();
         Proveri.Da(igra.Fps is >= 56 and <= 61, $"oko 60 kadrova u poslednjoj sekundi (dobijeno {igra.Fps})");
         Proveri.Blizu(80, igra.NajviseMs, 0.5, "najduži kadar je onaj od 80 ms");
-        Proveri.Jednako(1, igra.Stucanja, "jedan kadar od 80 ms u poslednjoj sekundi je štucanje");
+        Proveri.Jednako(1, igra.Zastoji, "jedan kadar od 80 ms u poslednjoj sekundi je zastoj");
         Proveri.Blizu(12.5, igra.Low1, 0.2, "1% low je 1000 / 80 ms kad je više od 1 % kadrova sporo");
 
         // Events arrive about a second late, so a program counts as drawing for 2,5 s after its last frame.
@@ -90,7 +90,8 @@ public static class IgreTestovi
         Proveri.Da(zavrsena is not null, "izveštaj je napravljen");
         Proveri.Jednako("Dead Space", zavrsena!.Igra, "ime igre");
         Proveri.Blizu(60, zavrsena.ProsekFps, 0.01, "prosečan FPS");
-        Proveri.Jednako(1, zavrsena.Stucanja, "jedno štucanje");
+        Proveri.Blizu(48, zavrsena.Low1, 0.01, "1% low sesije je prosek najgorih 1 % sekundi");
+        Proveri.Jednako(1, zavrsena.Zastoji, "jedan zastoj");
         Proveri.Da(zavrsena.TrajanjeSekundi is >= 100 and <= 120, $"trajanje bez prvih 10 s čekanja ({zavrsena.TrajanjeSekundi})");
 
         var sacuvane = snimac.Ucitaj();
@@ -102,6 +103,24 @@ public static class IgreTestovi
         for (int s = 0; s < 40; s++) { igra.Postavi(new Protokol.Igra(6, "Kratko", null, 60, 16, 18, 50, 0)); kratak.Uzmi(igra, [], t.AddSeconds(s)); }
         for (int s = 40; s < 60; s++) { igra.Postavi(null); kratak.Uzmi(igra, [], t.AddSeconds(s)); }
         Proveri.Jednako(0, kratak.Ucitaj().Count, "kraće od minuta se ne čuva");
+        return Task.CompletedTask;
+    }
+
+    /// <summary>
+    /// The session's 1 % low is the average of the worst one percent of its seconds. The old code took the 5th
+    /// percentile - a "worst 5 % of seconds" - so the report and the screen showed two numbers for one game.
+    /// </summary>
+    public static Task Low1Sesije()
+    {
+        Proveri.Jednako(0.0, IzvestajSesije.Najgorih1Procenat([]), "bez uzoraka nema 1% low");
+        Proveri.Blizu(20, IzvestajSesije.Najgorih1Procenat([20, 60, 60, 60, 60]), 0.01,
+            "1 % od pet uzoraka je jedan uzorak, i to najgori");
+
+        var sto = Enumerable.Repeat(60.0, 95).Concat([10, 11, 12, 13, 14]).ToList();
+        Proveri.Blizu(10, IzvestajSesije.Najgorih1Procenat(sto), 0.01, "1 % od sto je jedan, i to najgori (ne peti)");
+
+        var cetiristo = Enumerable.Repeat(60.0, 396).Concat(Enumerable.Repeat(10.0, 4)).ToList();
+        Proveri.Blizu(10, IzvestajSesije.Najgorih1Procenat(cetiristo), 0.01, "1 % od četiristo su četiri najgora");
         return Task.CompletedTask;
     }
 

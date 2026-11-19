@@ -67,10 +67,10 @@ public sealed class ProzorVm : ObservableObject, IDisposable
     {
         int t = _probniKadar++;
         double fps = 58 + 8 * Math.Sin(t / 20.0);
-        bool stuca = t % 37 == 0;
-        double najduzi = stuca ? 74 : 1000 / fps + 3 * Math.Abs(Math.Sin(t / 3.0));
+        bool zastoj = t % 37 == 0;
+        double najduzi = zastoj ? 74 : 1000 / fps + 3 * Math.Abs(Math.Sin(t / 3.0));
         return new Protokol.Igra(0, "Probna igra", null, Math.Round(fps), 1000 / fps, najduzi,
-            Math.Round(fps * 0.72), stuca ? 1 : 0);
+            Math.Round(fps * 0.72), zastoj ? 1 : 0);
     }
 
     /// <summary>The list of past sessions, opened from the header in place of the solo panel.</summary>

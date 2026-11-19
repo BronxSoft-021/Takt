@@ -1,4 +1,5 @@
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Takt.Merenje;
 
@@ -11,7 +12,8 @@ public sealed record IzvestajSesije(
     double TrajanjeSekundi,
     double ProsekFps,
     double Low1,
-    int Stucanja,
+    // Saved reports keep the old key ("Stucanja"): the word changed on screen, the files that exist must still read.
+    [property: JsonPropertyName("Stucanja")] int Zastoji,
     double? NajCpu, DateTime? NajCpuKada,
     double? NajGpu, DateTime? NajGpuKada,
     double? NajHotspot,
@@ -32,13 +34,13 @@ public sealed record IzvestajSesije(
             {
                 $"Trajanje: {TrajanjeTekst}, od {Pocetak:HH:mm}",
                 $"Prosečno {ProsekFps:0} FPS, 1% low {Low1:0} FPS",
-                Stucanja == 0 ? "Bez štucanja" : $"Štucanja: {Stucanja}",
+                Zastoji == 0 ? "Bez zastoja" : $"Zastoji: {Zastoji}",
             };
             if (NajCpu is { } c) redovi.Add($"Procesor najtopliji {c:0.0} °C u {NajCpuKada:HH:mm}");
             if (NajGpu is { } g) redovi.Add($"Grafička najtoplija {g:0.0} °C u {NajGpuKada:HH:mm}" +
                                             (NajHotspot is { } h ? $" (hotspot {h:0.0} °C)" : ""));
             redovi.Add(VramPunSekundi > 0
-                ? $"VRAM pun (95 % i više): {Trajanje(VramPunSekundi)} - tada igra najlakše štuca"
+                ? $"VRAM pun (95 % i više): {Trajanje(VramPunSekundi)} - tada igra najčešće secka"
                 : "VRAM nijednom pun");
             if (NajJezgro is not null)
                 redovi.Add($"Najopterećenije: {NajJezgro} do {NajJezgroProcenat:0} %" +
@@ -53,6 +55,21 @@ public sealed record IzvestajSesije(
         if (t.TotalHours >= 1) return $"{(int)t.TotalHours} h {t.Minutes} min";
         if (t.TotalMinutes >= 1) return $"{t.Minutes} min {t.Seconds} s";
         return $"{t.Seconds} s";
+    }
+
+    /// <summary>
+    /// The 1 % low of a whole session: the average of the worst one percent of its seconds, where each second's
+    /// own 1 % low was worked out from frames (see <c>MeracKadrova.Izracunaj</c>). The old code took the 5th
+    /// percentile of those seconds - a "worst 5 % of seconds" wearing the name of a 1 % low, so the report and
+    /// the screen showed two different numbers for the same game. Public for a test.
+    /// </summary>
+    public static double Najgorih1Procenat(IReadOnlyList<double> uzorci)
+    {
+        if (uzorci.Count == 0) return 0;
+
+        var sortirano = uzorci.OrderBy(x => x).ToList();
+        int koliko = Math.Max(1, (int)Math.Ceiling(sortirano.Count * 0.01));
+        return sortirano.Take(koliko).Average();
     }
 }
 
@@ -71,7 +88,7 @@ public sealed class SnimacSesije : ObservableObject
     private string? _igra;
     private DateTime _pocetak, _poslednje;
     private double _zbirFps;
-    private int _uzoraka, _stucanja, _vramPun, _jezgroNa100;
+    private int _uzoraka, _zastoji, _vramPun, _jezgroNa100;
     private readonly List<double> _low = [];
     private double? _najCpu, _najGpu, _najHotspot;
     private DateTime? _najCpuKada, _najGpuKada;
@@ -121,7 +138,7 @@ public sealed class SnimacSesije : ObservableObject
         _uzoraka++;
         _zbirFps += fps;
         if (igra.Low1 is { } low) _low.Add(low);
-        _stucanja += igra.PoslednjaStucanja;
+        _zastoji += igra.PoslednjiZastoji;
 
         foreach (var kanal in kanali)
         {
@@ -153,12 +170,11 @@ public sealed class SnimacSesije : ObservableObject
         var trajanje = _poslednje - _pocetak;
         if (trajanje >= Najkraca && _uzoraka > 0)
         {
-            _low.Sort();
             var izvestaj = new IzvestajSesije(
                 _igra, _pocetak, trajanje.TotalSeconds,
                 _zbirFps / _uzoraka,
-                _low.Count > 0 ? _low[(int)(_low.Count * 0.05)] : 0,   // the 5th percentile of the per-second 1 % lows
-                _stucanja,
+                IzvestajSesije.Najgorih1Procenat(_low),
+                _zastoji,
                 _najCpu, _najCpuKada, _najGpu, _najGpuKada, _najHotspot,
                 _vramPun, _najJezgro, _najJezgroProcenat, _jezgroNa100);
 
@@ -169,7 +185,7 @@ public sealed class SnimacSesije : ObservableObject
         _igra = null;
         _kandidatOd = null;
         _zbirFps = 0;
-        _uzoraka = _stucanja = _vramPun = _jezgroNa100 = 0;
+        _uzoraka = _zastoji = _vramPun = _jezgroNa100 = 0;
         _low.Clear();
         _najCpu = _najGpu = _najHotspot = null;
         _najCpuKada = _najGpuKada = null;

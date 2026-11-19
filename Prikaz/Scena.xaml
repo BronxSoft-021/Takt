@@ -71,12 +71,12 @@
                         <RowDefinition Height="*" />
                         <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
-                    <TextBlock Text="Najduži kadar svake sekunde (ms) - štucanje je šiljak" Style="{StaticResource Natpis}"
+                    <TextBlock Text="Najduži kadar svake sekunde (ms) — zastoj je šiljak" Style="{StaticResource Natpis}"
                                FontSize="12" />
                     <prikaz:Grafikon Grid.Row="1" Margin="0,6,0,6" MinHeight="90"
                                      Prsten="{Binding Frametime}" Mera="Milisekunda" Tik="{Binding Tik}"
                                      Perioda="{Binding DataContext.Perioda, RelativeSource={RelativeSource AncestorType=UserControl}}" />
-                    <TextBlock Grid.Row="2" Text="{Binding StucanjaTekst}" Foreground="{StaticResource Mutan}" FontSize="13" />
+                    <TextBlock Grid.Row="2" Text="{Binding ZastojiTekst}" Foreground="{StaticResource Mutan}" FontSize="13" />
                 </Grid>
             </Grid>
         </Border>

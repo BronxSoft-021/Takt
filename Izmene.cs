@@ -1,4 +1,4 @@
-﻿namespace Takt;
+namespace Takt;
 
 /// <summary>One entry of "what is new": the date, what was added and what was polished.</summary>
 public sealed record Unos(string Faza, string Datum, string[] Nove, string[] Dorade)
@@ -35,6 +35,8 @@ public static class Izmene
             "Podnožje više ne laže o pravima: pisalo je „običan korisnik“ i kad je gore stajalo „Potpuni nadzor · usluga“. Sada zaglavlje i podnožje dolaze iz **istog prekidača** (`ProzorVm.OpisStanja`): „usluga“, „pomoćnik“, „administrator“ ili — samo kad niko ne pomaže — „običan korisnik“.",
             "FPS više ne nestaje kad je **prozor sam povišen**: merenje kadrova je bilo samo u usluzi i pomoćniku, pa je baš najviše prava imao prozor koji igru ne vidi. Sada povišen prozor meri kadrove sam — i samo tada, jer uz uslugu ili pomoćnika postoji jedna ETW sesija, ne dve.",
             "Usluga se Windowsu javi **odmah**, a motor (drajver, diskovi) otvara u pozadini: `OnStart` je blokirao dok se sve ne otvori — mereno **9 s** do „Running“, a sa uspavanim diskovima to bi prešlo 30 s koliko SCM daje i Windows bi rekao da usluga nije pokrenuta.",
+            "Reč **„zastoj“** umesto „štucanje“: štucanje je hiccup, a u programskom svetu se meša i sa prazninom u podacima. Zastoj je kadar znatno duži od susednih (preko 50 ms i 2,5 × medijana). Sačuvani izveštaji se i dalje čitaju (stari ključ u JSON-u).",
+            "**Jedan „1 % low“**, ne dva: izveštaj sesije je uzimao 5. percentil sekundi („najgorih 5 % sekundi“) i zvao ga 1 % low, pa su ekran i izveštaj davali dva broja za istu igru. Sada je i u izveštaju prosek najgorih **1 %** sekundi, gde je svaka sekunda računata iz kadrova.",
         ]),
         new("alfa", "19. 11. 2026.",
         [
@@ -82,8 +84,8 @@ public static class Izmene
         new("alfa", "18. 11. 2026.",
         [
             "Scena (dugme ili F11, Esc izlazi): veliki pult preko celog drugog ekrana, za gledanje krajičkom oka dok igraš; gore igra, dole pet velikih kanala sa po jednim dodatnim redom (najopterećenije jezgro, VRAM, najtopliji disk).",
-            "FPS igre: usluga meri kadrove preko Windows-ovih događaja (bez ubacivanja u igru), a Scena pokazuje FPS, 1% low, vreme kadra i grafikon najdužeg kadra svake sekunde, gde se štucanje vidi kao šiljak.",
-            "Sesije igara: svaka igra duža od minuta se snima sama i posle nje Takt pravi izveštaj (trajanje, FPS, 1% low, štucanja, najviše temperature, koliko je VRAM bio pun, najopterećenije jezgro) - dugme „Sesije“.",
+            "FPS igre: usluga meri kadrove preko Windows-ovih događaja (bez ubacivanja u igru), a Scena pokazuje FPS, 1% low, vreme kadra i grafikon najdužeg kadra svake sekunde, gde se zastoj vidi kao šiljak.",
+            "Sesije igara: svaka igra duža od minuta se snima sama i posle nje Takt pravi izveštaj (trajanje, FPS, 1% low, zastoji, najviše temperature, koliko je VRAM bio pun, najopterećenije jezgro) - dugme „Sesije“.",
             "Clip lampice: crvena lampica iznad kanala se pali kad temperatura pređe granicu, naglo skoči, VRAM se napuni, jezgro dugo stoji na 100 % ili stane ventilator, i ostaje upaljena dok je ne klikneš.",
         ],
         [

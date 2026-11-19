@@ -21,7 +21,7 @@ public sealed class IgraVm : ObservableObject
     private double? _fps, _low1, _frametime;
     private int _tik;
     private string _sesija = "";
-    private readonly Queue<int> _stucanja = new();
+    private readonly Queue<int> _zastoji = new();
 
     /// <summary>The longest frame of each second (ms), for the chart. 600 = ten minutes at one reading per second.</summary>
     public Prsten Frametime { get; } = new(600);
@@ -53,21 +53,21 @@ public sealed class IgraVm : ObservableObject
     /// <summary>The 1 % low of the last reading, as a number (the session keeps these).</summary>
     public double? Low1 => _low1;
 
-    /// <summary>Stutters in the last second, as the service counted them.</summary>
-    public int PoslednjaStucanja { get; private set; }
+    /// <summary>Frames that stalled in the last second, as the service counted them.</summary>
+    public int PoslednjiZastoji { get; private set; }
 
-    /// <summary>"2 štucanja u poslednjih 60 s", or nothing when the game runs smooth.</summary>
-    public string StucanjaTekst
+    /// <summary>"2 zastoja u poslednjih 60 s", or "bez zastoja" when the game runs smooth.</summary>
+    public string ZastojiTekst
     {
         get
         {
-            int n = _stucanja.Sum();
+            int n = _zastoji.Sum();
             return n switch
             {
-                0 => "bez štucanja u poslednjih 60 s",
-                _ when n % 10 == 1 && n % 100 != 11 => $"{n} štucanje u poslednjih 60 s",
-                _ when n % 10 is >= 2 and <= 4 && n % 100 is < 12 or > 14 => $"{n} štucanja u poslednjih 60 s",
-                _ => $"{n} štucanja u poslednjih 60 s",
+                0 => "bez zastoja u poslednjih 60 s",
+                _ when n % 10 == 1 && n % 100 != 11 => $"{n} zastoj u poslednjih 60 s",
+                _ when n % 10 is >= 2 and <= 4 && n % 100 is < 12 or > 14 => $"{n} zastoja u poslednjih 60 s",
+                _ => $"{n} zastoja u poslednjih 60 s",
             };
         }
     }
@@ -94,7 +94,7 @@ public sealed class IgraVm : ObservableObject
             {
                 Aktivna = false;
                 Frametime.Ocisti();
-                _stucanja.Clear();
+                _zastoji.Clear();
             }
             return;
         }
@@ -110,7 +110,7 @@ public sealed class IgraVm : ObservableObject
             Ime = LepoIme(igra.Ime);
             Ikona = Slicica(igra.Putanja);
             Frametime.Ocisti();
-            _stucanja.Clear();
+            _zastoji.Clear();
         }
 
         Aktivna = true;
@@ -119,15 +119,15 @@ public sealed class IgraVm : ObservableObject
         _frametime = igra.ProsekMs > 0 ? igra.ProsekMs : null;
         Frametime.Dodaj(igra.NajviseMs > 0 ? igra.NajviseMs : null);
 
-        PoslednjaStucanja = igra.Stucanja;
-        _stucanja.Enqueue(igra.Stucanja);
-        while (_stucanja.Count > 60) _stucanja.Dequeue();
+        PoslednjiZastoji = igra.Zastoji;
+        _zastoji.Enqueue(igra.Zastoji);
+        while (_zastoji.Count > 60) _zastoji.Dequeue();
 
         OnPropertyChanged(nameof(FpsTekst));
         OnPropertyChanged(nameof(Low1Tekst));
         OnPropertyChanged(nameof(FrametimeTekst));
         OnPropertyChanged(nameof(Fps));
-        OnPropertyChanged(nameof(StucanjaTekst));
+        OnPropertyChanged(nameof(ZastojiTekst));
         Tik++;
     }
 

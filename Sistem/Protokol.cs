@@ -25,11 +25,11 @@ public static class Protokol
 
     /// <summary>
     /// One program that drew frames in the last second, as the service saw it through Windows' own events:
-    /// frames per second, the average and the longest frame, the 1 % low (fps of the slowest 1 % of the last ten
-    /// seconds) and how many frames were stutters (far longer than the frames around them).
+    /// frames per second, the average and the longest frame, the 1 % low (fps of the slowest 1 % of frames in the
+    /// last ten seconds) and how many frames were stalls - far longer than the frames around them.
     /// </summary>
     public sealed record Igra(int Pid, string Ime, string? Putanja, double Fps, double ProsekMs, double NajviseMs,
-        double Low1, int Stucanja);
+        double Low1, int Zastoji);
 
     /// <summary>One drive's verdict: the level for the colour, the line and the sentence for the tool tip.</summary>
     public sealed record DiskZdravlje(string Model, int Nivo, string Naslov, string Detalj);

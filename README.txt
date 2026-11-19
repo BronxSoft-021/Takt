@@ -1,4 +1,4 @@
-﻿BronxSoft Takt 0.38.63 alfa
+BronxSoft Takt 0.38.65 alfa
 19. 11. 2026.
 
 NOVO
@@ -84,9 +84,9 @@ NOVO
 - Scena (dugme ili F11, Esc izlazi): veliki pult preko celog drugog ekrana, za gledanje krajickom oka
   dok igras; gore igra, dole pet velikih kanala sa po jednim dodatnim redom.
 - FPS igre: usluga meri kadrove preko Windows-ovih dogadjaja (bez ubacivanja u igru); Scena pokazuje
-  FPS, 1% low, vreme kadra i grafikon najduzeg kadra, gde se stucanje vidi kao siljak.
+  FPS, 1% low, vreme kadra i grafikon najduzeg kadra, gde se zastoj vidi kao siljak.
 - Sesije igara: svaka igra duza od minuta se snima sama; posle nje izvestaj (trajanje, FPS, 1% low,
-  stucanja, temperature, VRAM, najopterecenije jezgro) - dugme "Sesije".
+  zastoji, temperature, VRAM, najopterecenije jezgro) - dugme "Sesije".
 - Clip lampice: crvena lampica iznad kanala se pali kad nesto predje granicu i ostaje do klika.
 
 DORADE

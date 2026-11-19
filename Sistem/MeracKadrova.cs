@@ -180,7 +180,7 @@ public sealed class MeracKadrova : IDisposable
         double najduzi = razmaciSekunde.Count > 0 ? razmaciSekunde.Max() : 0;
 
         double low1 = 0;
-        int stucanja = 0;
+        int zastoji = 0;
         if (razmaci.Count >= 10)
         {
             var sortirano = razmaci.OrderBy(r => r).ToArray();
@@ -188,11 +188,11 @@ public sealed class MeracKadrova : IDisposable
             low1 = p99 > 0 ? 1000 / p99 : 0;
 
             double medijana = sortirano[sortirano.Length / 2];
-            stucanja = razmaciSekunde.Count(r => r > 50 && r > medijana * 2.5);
+            zastoji = razmaciSekunde.Count(r => r > 50 && r > medijana * 2.5);
         }
 
         return new Protokol.Igra(pid, ime, putanja, sekunda.Length, Math.Round(prosek, 2), Math.Round(najduzi, 2),
-            Math.Round(low1, 1), stucanja);
+            Math.Round(low1, 1), zastoji);
     }
 
     private static (string Ime, string? Putanja) Ime(int pid)
