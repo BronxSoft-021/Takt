@@ -60,6 +60,7 @@ public static class TekstEngleski
         ["najtopliji"] = "hottest",
         ["traži drajver"] = "needs driver",
         ["traži nadzor"] = "needs monitoring",
+        ["nema termometra"] = "no thermometer",
         ["nema senzora"] = "no sensors",
         ["nema diskova"] = "no drives",
         ["Matična ploča"] = "Motherboard",
@@ -190,6 +191,11 @@ public static class TekstEngleski
         ["Pagefile (procena)"] = "Pagefile (estimate)",
         ["Brzina memorije"] = "Memory speed",
         ["Zauzeće commit-a"] = "Commit usage",
+
+        ["DISKOVI"] = "DRIVES",
+        ["Merač na traci diskova pokazuje:"] = "The drive strip measures:",
+        ["Merač na traci diskova važi posle ponovnog pokretanja programa."] =
+            "The drive strip measure takes effect after the program is restarted.",
 
         // ---- Table captions (SenzorVm.Vrsta) ----
         ["Zdravlje i SMART"] = "Health and SMART",

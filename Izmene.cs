@@ -31,6 +31,7 @@ public static class Izmene
             "Šta još fali: ekran Sesija (naslovi kolona), tooltipovi i `Izmene` (dnevnik izmena ostaje na srpskom). Tekst kojeg u tabeli nema prikazuje se na srpskom — vidi se gde fali.",
             "Dovršeno: **ekran Sesija** (naslov, objašnjenje, prazno stanje), **tooltipovi** u zaglavlju (Solo, Utišaj, ritam, pomoćnik, Scena, Podešavanja), **čiplet** („CCD1 temperature“ umesto „Temperatura CCD1“) i **broj senzora** u podnožju („124 sensors“).",
             "Diskovi više ne mešaju babe i žabe: tabela jednog diska ima **tri jasne sekcije** — „Temperature“ (ono što se čita sada), „Zdravlje i SMART“ (životni vek, istrošenost, rezervni blokovi — čitaju se na 10 minuta) i „Prostor (particija)“ (zauzeće, slobodan prostor — to pripada particiji, ne disku); granice koje disk sam prijavljuje su i dalje zasebna sekcija. Do sada je „životni vek 93 %“ stajao odmah iznad „zauzeće 54 %“ i čitao se kao ista vrsta broja.",
+            "**Traka diskova meri jednu veličinu**: do sada je disk bez termometra padao na zauzeće, pa je stub od „99 %“ stajao pored stuba od „45 °C“. Sada se bira u Podešavanjima — **Temperatura** (podrazumevano), Zauzeće ili Životni vek — i svi stubovi su ista veličina; disk koji nema izabranu veličinu nema stub, a traka kaže „nema termometra“.",
         ]),
         new("alfa", "19. 11. 2026.",
         [

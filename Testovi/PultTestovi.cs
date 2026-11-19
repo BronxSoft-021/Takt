@@ -35,19 +35,19 @@ public static class PultTestovi
     {
         var senzori = new List<SenzorVm>
         {
-            new(new Senzor(new SenzorKljuc(Grupa.Diskovi, "Topli", "Temperatura"), Jedinica.Celzijus), 0, new Prsten(4)),
-            new(new Senzor(new SenzorKljuc(Grupa.Diskovi, "Topli", "Zauzeće"), Jedinica.Procenat), 1, new Prsten(4)),
-            new(new Senzor(new SenzorKljuc(Grupa.Diskovi, "Puni", "Zauzeće"), Jedinica.Procenat), 2, new Prsten(4)),
+            new(new Senzor(new SenzorKljuc(Grupa.Diskovi, "Hladniji", "Temperatura"), Jedinica.Celzijus), 0, new Prsten(4)),
+            new(new Senzor(new SenzorKljuc(Grupa.Diskovi, "Topliji", "Temperatura"), Jedinica.Celzijus), 1, new Prsten(4)),
+            new(new Senzor(new SenzorKljuc(Grupa.Diskovi, "Topliji", "Zauzeće"), Jedinica.Procenat), 2, new Prsten(4)),
         };
 
         var diskovi = KanalVm.Napravi(senzori).Single(k => k.Naslov == "Diskovi");
-        double?[] vrednosti = [45, 20, 76];
+        double?[] vrednosti = [45, 52, 76];
         diskovi.Osvezi(new Snimak(DateTime.Now, vrednosti), vrednosti, vrednosti, DateTime.Now);
 
-        Proveri.Jednako("Temperatura", diskovi.Glavni?.Ime, "glavni je temperatura, ne 76 % zauzeća");
+        Proveri.Jednako(52.0, diskovi.Glavni?.Broj, "glavni je najtoplija temperatura, ne 76 % zauzeća");
         Proveri.Jednako("najtopliji", diskovi.DrugiTekst, "reč stoji uz temperaturu");
 
-        // No thermometer anywhere: the big number is a percentage and must not be called "the hottest".
+        // No thermometer anywhere: the group has drives but no meter, and it says so.
         var bez = new List<SenzorVm>
         {
             new(new Senzor(new SenzorKljuc(Grupa.Diskovi, "Jedan", "Zauzeće"), Jedinica.Procenat), 0, new Prsten(4)),
@@ -56,7 +56,7 @@ public static class PultTestovi
         var grupa = KanalVm.Napravi(bez).Single(k => k.Naslov == "Diskovi");
         double?[] procenti = [40, 76];
         grupa.Osvezi(new Snimak(DateTime.Now, procenti), procenti, procenti, DateTime.Now);
-        Proveri.Jednako("", grupa.DrugiTekst, "bez temperature nema reči „najtopliji“");
+        Proveri.Jednako("nema termometra", grupa.DrugiTekst, "bez termometra kaže zašto nema stuba");
         return Task.CompletedTask;
     }
 

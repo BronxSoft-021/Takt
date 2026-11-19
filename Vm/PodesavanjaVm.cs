@@ -9,6 +9,8 @@ namespace Takt.Vm;
 /// probe data) waits for the next start - opening the sensors twice in one run would mean two drivers.
 /// "Sačuvaj" writes everything to podesavanja.json.
 /// </summary>
+public sealed record OpcijaMetra(string Vrednost, string Naziv);
+
 public sealed class PodesavanjaVm : ObservableObject
 {
     private readonly Sistem.Podesavanja _podesavanja;
@@ -27,6 +29,42 @@ public sealed class PodesavanjaVm : ObservableObject
 
     public int[] OpcijeOsvezavanja { get; } = [1, 2, 5];
     public int[] OpcijeDana { get; } = [1, 7, 30, 90];
+
+    /// <summary>The three quantities the drive strip can show, each with its name in the chosen language.</summary>
+    public OpcijaMetra[] OpcijeMetra { get; } =
+    [
+        new("Temperatura", Tekst.T("Temperatura")),
+        new("Zauzeće", Tekst.T("Zauzeće")),
+        new("Životni vek", Tekst.T("Životni vek")),
+    ];
+
+    public OpcijaMetra? IzabraniMetar
+    {
+        get => OpcijeMetra.FirstOrDefault(o => o.Vrednost == _podesavanja.DiskMetar) ?? OpcijeMetra[0];
+        set
+        {
+            if (value is not null) DiskMetar = value.Vrednost;
+        }
+    }
+
+    /// <summary>
+    /// What the drive strip measures. One quantity for all drives: a strip mixing "99 %" and "45 °C" bars cannot be
+    /// read (a report called it a mishmash, 19. 11. 2026). Takes effect at the next start, like the language.
+    /// </summary>
+    public string DiskMetar
+    {
+        get => _podesavanja.DiskMetar;
+        set
+        {
+            if (value is null || _podesavanja.DiskMetar == value) return;
+
+            _podesavanja.DiskMetar = value;
+            _podesavanja.Sacuvaj();
+            OnPropertyChanged();
+            OnPropertyChanged(nameof(IzabraniMetar));
+            Poruka = Tekst.T("Merač na traci diskova važi posle ponovnog pokretanja programa.");
+        }
+    }
 
     public int Osvezavanje
     {

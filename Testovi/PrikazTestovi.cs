@@ -80,6 +80,31 @@ public static class PrikazTestovi
     }
 
     /// <summary>
+    /// The drive strip measures one quantity for all drives, and the user picks which: temperature (default), used
+    /// space or lifetime. A drive without the chosen quantity gets no bar - before, it fell back to its used space,
+    /// so a "99 %" bar stood beside a "45 °C" bar (a report called it a mishmash, 19. 11. 2026).
+    /// </summary>
+    public static Task MetarDiskova()
+    {
+        var senzori = new List<SenzorVm>
+        {
+            new(new Senzor(new SenzorKljuc(Grupa.Diskovi, "Topli", "Temperatura"), Jedinica.Celzijus), 0, new Prsten(8)),
+            new(new Senzor(new SenzorKljuc(Grupa.Diskovi, "Topli", "Zauzeće"), Jedinica.Procenat), 1, new Prsten(8)),
+            new(new Senzor(new SenzorKljuc(Grupa.Diskovi, "Bez termometra", "Zauzeće"), Jedinica.Procenat), 2, new Prsten(8)),
+        };
+
+        var poTemperaturi = KanalVm.Napravi(senzori).Single(k => k.Naslov == "Diskovi");
+        Proveri.Jednako(1, poTemperaturi.Meraci.Count, "samo disk sa termometrom dobija stub");
+        Proveri.Jednako(Jedinica.Celzijus, poTemperaturi.Meraci[0].Senzor.Senzor.Jedinica, "stub je temperatura");
+
+        var poZauzecu = KanalVm.Napravi(senzori, metar: "Zauzeće").Single(k => k.Naslov == "Diskovi");
+        Proveri.Jednako(2, poZauzecu.Meraci.Count, "po zauzeću oba diska imaju stub");
+        Proveri.Da(poZauzecu.Meraci.All(m => m.Senzor.Senzor.Jedinica == Jedinica.Procenat), "svi stubovi su procenti");
+        Proveri.Jednako("Zauzeće", poZauzecu.Meraci[0].Senzor.Ime, "i to je zauzeće");
+        return Task.CompletedTask;
+    }
+
+    /// <summary>
     /// A drive's rows are three different things, and the list says which is which: the temperature now, the health
     /// from SMART (read every ten minutes), the space of the volumes on the drive, and - apart - the limits the
     /// drive reports about itself. Mixed together, "Životni vek 93 %" sat right above "Zauzeće 54 %" and read as

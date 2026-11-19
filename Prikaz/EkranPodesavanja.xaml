@@ -39,6 +39,17 @@
 
                     <Border Height="1" Background="{StaticResource Linija}" Margin="0,18,0,16" />
 
+                    <TextBlock Style="{StaticResource NaslovSekcije}" Text="{prikaz:T 'DISKOVI'}" />
+                    <TextBlock Text="{prikaz:T 'Merač na traci diskova pokazuje:'}" Foreground="{StaticResource Mutan}"
+                               FontSize="12" Margin="0,8,0,0" />
+                    <ListBox Style="{StaticResource Pilule}" ItemsSource="{Binding OpcijeMetra}"
+                             SelectedItem="{Binding IzabraniMetar, Mode=TwoWay}" DisplayMemberPath="Naziv"
+                             Margin="0,8,0,0" />
+                    <TextBlock Text="{prikaz:T 'Merač na traci diskova važi posle ponovnog pokretanja programa.'}"
+                               Foreground="{StaticResource Bled}" FontSize="11" Margin="0,7,0,0" />
+
+                    <Border Height="1" Background="{StaticResource Linija}" Margin="0,18,0,16" />
+
                     <TextBlock Style="{StaticResource NaslovSekcije}" Text="{prikaz:T 'JEZIK'}" />
                     <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
                         <RadioButton Content="{prikaz:T 'Srpski'}" IsChecked="{Binding Srpski}" GroupName="Jezik"

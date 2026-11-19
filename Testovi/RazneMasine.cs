@@ -107,8 +107,8 @@ public static class RazneMasine
 
         var diskovi = KanalVm.Napravi(senzori).Single(k => k.Naslov == "Diskovi");
         Proveri.Jednako("2 diska", diskovi.Kratko, "dva diska");
-        Proveri.Jednako("", diskovi.DrugiTekst, "nema „najtopliji“ kad nijedan nema termometar");
-        Proveri.Jednako(2, diskovi.Meraci.Count, "merači postoje i bez temperature");
+        Proveri.Jednako("nema termometra", diskovi.DrugiTekst, "kaže zašto nema stuba");
+        Proveri.Jednako(0, diskovi.Meraci.Count, "bez termometra nema stubova — traka meri jednu veličinu");
         return Task.CompletedTask;
     }
 

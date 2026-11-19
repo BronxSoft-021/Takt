@@ -20,6 +20,9 @@ public sealed class Podesavanja
 
     public string Faza { get; set; } = "alfa";
 
+    /// <summary>The quantity the drive strip measures: "Temperatura", "Zauzeće" or "Životni vek".</summary>
+    public string DiskMetar { get; set; } = "Temperatura";
+
     /// <summary>"sr" (Serbian) or "en" (English). Takes effect at the next start, like the driver.</summary>
     public string Jezik { get; set; } = Tekst.Srpski;
 
@@ -107,6 +110,7 @@ public sealed class Podesavanja
         if (Osvezavanje is not (1 or 2 or 5)) Osvezavanje = 1;
         if (IstorijaDana is not (1 or 7 or 30 or 90)) IstorijaDana = 7;
         if (Jezik is not (Tekst.Srpski or Tekst.Engleski)) Jezik = Tekst.Srpski;
+        if (DiskMetar is not ("Temperatura" or "Zauzeće" or "Životni vek")) DiskMetar = "Temperatura";
         Utisani ??= [];
         return this;
     }
