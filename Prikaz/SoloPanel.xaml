@@ -111,11 +111,11 @@
                             <ColumnDefinition Width="88" />
                             <ColumnDefinition Width="88" />
                         </Grid.ColumnDefinitions>
-                        <TextBlock Text="Senzor" Style="{StaticResource Natpis}" />
-                        <TextBlock Grid.Column="1" Text="Sada" Style="{StaticResource Natpis}" TextAlignment="Right" />
-                        <TextBlock Grid.Column="2" Text="Najmanje" Style="{StaticResource Natpis}" TextAlignment="Right" />
-                        <TextBlock Grid.Column="3" Text="Prosek" Style="{StaticResource Natpis}" TextAlignment="Right" />
-                        <TextBlock Grid.Column="4" Text="Najviše" Style="{StaticResource Natpis}" TextAlignment="Right" />
+                        <TextBlock Text="{prikaz:T 'Senzor'}" Style="{StaticResource Natpis}" />
+                        <TextBlock Grid.Column="1" Text="{prikaz:T 'Sada'}" Style="{StaticResource Natpis}" TextAlignment="Right" />
+                        <TextBlock Grid.Column="2" Text="{prikaz:T 'Najmanje'}" Style="{StaticResource Natpis}" TextAlignment="Right" />
+                        <TextBlock Grid.Column="3" Text="{prikaz:T 'Prosek'}" Style="{StaticResource Natpis}" TextAlignment="Right" />
+                        <TextBlock Grid.Column="4" Text="{prikaz:T 'Najviše'}" Style="{StaticResource Natpis}" TextAlignment="Right" />
                     </Grid>
 
                     <Button DockPanel.Dock="Bottom" Style="{StaticResource Veza}" Margin="0,4,0,0"

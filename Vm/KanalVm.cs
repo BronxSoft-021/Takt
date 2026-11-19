@@ -400,7 +400,7 @@ public sealed class KanalVm : ObservableObject
 
     public bool ImaJezgra => Jezgra.Count > 0;
 
-    public string JezgraNaslov => Jezgra.Count == 1 ? "Jezgro" : $"Jezgra ({Jezgra.Count} niti)";
+    public string JezgraNaslov => Jezgra.Count == 1 ? Tekst.T("Jezgro") : Tekst.P("Jezgra ({0} niti)", Jezgra.Count);
 
     public bool Solo
     {
@@ -461,15 +461,18 @@ public sealed class KanalVm : ObservableObject
     }
 
     /// <summary>"Opterećenje jezgra 6" → "jezgro 6": the sensor's name is in the genitive, a label is not.</summary>
-    public static string ImeJezgra(string imeSenzora) =>
-        imeSenzora.Replace("Opterećenje jezgra ", "jezgro ").Replace("Opterećenje ", "");
+    public static string ImeJezgra(string imeSenzora)
+    {
+        var srpski = imeSenzora.Replace("Opterećenje jezgra ", "jezgro ").Replace("Opterećenje ", "");
+        return srpski.StartsWith("jezgro ", StringComparison.Ordinal) ? Tekst.P("jezgro {0}", srpski[7..]) : srpski;
+    }
 
     public static string BrojDiskova(int n) => n switch
     {
-        0 => "nema diskova",
-        _ when n % 10 == 1 && n % 100 != 11 => $"{n} disk",
-        _ when n % 10 is >= 2 and <= 4 && n % 100 is < 12 or > 14 => $"{n} diska",
-        _ => $"{n} diskova",
+        0 => Tekst.T("nema diskova"),
+        _ when n % 10 == 1 && n % 100 != 11 => Tekst.P("{0} disk", n),
+        _ when n % 10 is >= 2 and <= 4 && n % 100 is < 12 or > 14 => Tekst.P("{0} diska", n),
+        _ => Tekst.P("{0} diskova", n),
     };
 
     /// <summary>

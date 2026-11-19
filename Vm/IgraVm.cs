@@ -68,10 +68,10 @@ public sealed class IgraVm : ObservableObject
             int n = _zastoji.Sum();
             return n switch
             {
-                0 => "bez zastoja u poslednjih 60 s",
-                _ when n % 10 == 1 && n % 100 != 11 => $"{n} zastoj u poslednjih 60 s",
-                _ when n % 10 is >= 2 and <= 4 && n % 100 is < 12 or > 14 => $"{n} zastoja u poslednjih 60 s",
-                _ => $"{n} zastoja u poslednjih 60 s",
+                0 => Tekst.T("bez zastoja u poslednjih 60 s"),
+                _ when n % 10 == 1 && n % 100 != 11 => Tekst.P("{0} zastoj u poslednjih 60 s", n),
+                _ when n % 10 is >= 2 and <= 4 && n % 100 is < 12 or > 14 => Tekst.P("{0} zastoja u poslednjih 60 s", n),
+                _ => Tekst.P("{0} zastoja u poslednjih 60 s", n),
             };
         }
     }

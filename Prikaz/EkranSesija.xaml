@@ -1,6 +1,7 @@
 <UserControl x:Class="Takt.Prikaz.EkranSesija"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:prikaz="clr-namespace:Takt.Prikaz">
 
     <!-- Past game sessions: the list on the left, the report on the right. DataContext is a SesijeVm. -->
     <Border Style="{StaticResource Kartica}" Padding="18,16">

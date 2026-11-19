@@ -41,7 +41,7 @@ public sealed class SenzorVm : ObservableObject
     public SenzorVm? GranicaVruce { get; set; }
 
     /// <summary>The heading the row sits under in the list: "Temperature", "Takt", "Ventilatori"…</summary>
-    public string Vrsta => JeGranica ? "Granice koje prijavljuje uređaj" : Senzor.Jedinica switch
+    public string Vrsta => JeGranica ? Tekst.T("Granice koje prijavljuje uređaj") : Tekst.T(Senzor.Jedinica switch
     {
         Jedinica.Celzijus => "Temperature",
         Jedinica.Procenat => "Opterećenje i zauzeće",
@@ -53,7 +53,7 @@ public sealed class SenzorVm : ObservableObject
         Jedinica.Megabajt => "Količina",
         Jedinica.MegabajtUSekundi => "Protok",
         _ => "Ostalo",
-    };
+    });
 
     public double? Broj
     {

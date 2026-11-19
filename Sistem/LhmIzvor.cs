@@ -360,7 +360,7 @@ public sealed class LhmIzvor : IIzvorSenzora
     /// temperature where it starts to slow down or shut off); they are named as limits so nobody reads them
     /// as heat, and <see cref="Vm.SenzorVm"/> uses them as that drive's warm and hot marks.
     /// </summary>
-    private static string Disk(string ime, string? broj) => ime switch
+    private static string Disk(string ime, string? broj) => Tekst.T(ime switch
     {
         "Temperature" or "Composite Temperature" or "Drive Temperature" => "Temperatura",
         _ when ime.StartsWith("Temperature #", StringComparison.Ordinal) => $"Temperatura senzora {broj}",
@@ -383,9 +383,9 @@ public sealed class LhmIzvor : IIzvorSenzora
         "Power On Hours" => "Radni sati",
         "Power On Count" => "Broj uključivanja",
         _ => ime,
-    };
+    });
 
-    private static string Grafika(string ime, Jedinica jedinica) => ime switch
+    private static string Grafika(string ime, Jedinica jedinica) => Tekst.T(ime switch
     {
         "GPU Core" when jedinica == Jedinica.Celzijus => "Temperatura",
         "GPU Core" when jedinica == Jedinica.Procenat => "Opterećenje",
@@ -400,24 +400,24 @@ public sealed class LhmIzvor : IIzvorSenzora
         "GPU Package" when jedinica == Jedinica.Vat => "Potrošnja",
         "GPU Power" when jedinica == Jedinica.Vat => "Potrošnja",
         _ => ime,
-    };
+    });
 
     private static string Procesor(string ime, Jedinica jedinica, string? broj)
     {
-        if (ime.StartsWith("CPU Core #", StringComparison.Ordinal)) return $"Opterećenje jezgra {broj}";
-        if (ime.EndsWith(" (Effective)", StringComparison.Ordinal)) return $"Takt jezgra {broj} (efektivni)";
-        if (ime.EndsWith(" VID", StringComparison.Ordinal)) return $"Napon jezgra {broj} (VID)";
-        if (ime.EndsWith(" (SMU)", StringComparison.Ordinal)) return $"Potrošnja jezgra {broj}";
+        if (ime.StartsWith("CPU Core #", StringComparison.Ordinal)) return Tekst.P("Opterećenje jezgra {0}", broj);
+        if (ime.EndsWith(" (Effective)", StringComparison.Ordinal)) return Tekst.P("Takt jezgra {0} (efektivni)", broj);
+        if (ime.EndsWith(" VID", StringComparison.Ordinal)) return Tekst.P("Napon jezgra {0} (VID)", broj);
+        if (ime.EndsWith(" (SMU)", StringComparison.Ordinal)) return Tekst.P("Potrošnja jezgra {0}", broj);
 
         if (ime.StartsWith("Core #", StringComparison.Ordinal))
             return jedinica switch
             {
-                Jedinica.Celzijus => $"Temperatura jezgra {broj}",
-                Jedinica.Megaherc => $"Takt jezgra {broj}",
+                Jedinica.Celzijus => Tekst.P("Temperatura jezgra {0}", broj),
+                Jedinica.Megaherc => Tekst.P("Takt jezgra {0}", broj),
                 _ => ime,
             };
 
-        return ime switch
+        return Tekst.T(ime switch
         {
             "CPU Total" => "Opterećenje procesora",
             "CPU Core Max" => "Najopterećenije jezgro",
@@ -433,23 +433,26 @@ public sealed class LhmIzvor : IIzvorSenzora
             "Package" when jedinica == Jedinica.Vat => "Potrošnja paketa",
             "Package" when jedinica == Jedinica.Celzijus => "Temperatura paketa",
             _ => ime,
-        };
+        });
     }
 
     private static string Hladjenje(string ime, string? broj) => ime switch
     {
-        _ when ime.StartsWith("Fan #", StringComparison.Ordinal) => $"Ventilator {broj}",
-        _ when ime.StartsWith("Temperature #", StringComparison.Ordinal) => $"Temperatura {broj}",
-        _ when ime.StartsWith("Voltage #", StringComparison.Ordinal) => $"Napon {broj}",
-        _ when ime.StartsWith("Pump #", StringComparison.Ordinal) => $"Pumpa {broj}",
-        "Fan" => "Ventilator",
-        // The Super I/O's named voltages (Nuvoton NCT6798D on ASUS TUF B550, 18. 11. 2026).
-        "Vcore" => "Napon procesora (ploča)",
-        "CMOS Battery" => "Baterija CMOS-a",
-        "+3V Standby" => "+3 V u mirovanju",
-        "+3.3V" => "+3,3 V",
-        "CPU Termination" => "Terminacija procesora",
-        _ => ime,
+        _ when ime.StartsWith("Fan #", StringComparison.Ordinal) => Tekst.P("Ventilator {0}", broj),
+        _ when ime.StartsWith("Temperature #", StringComparison.Ordinal) => Tekst.P("Temperatura {0}", broj),
+        _ when ime.StartsWith("Voltage #", StringComparison.Ordinal) => Tekst.P("Napon {0}", broj),
+        _ when ime.StartsWith("Pump #", StringComparison.Ordinal) => Tekst.P("Pumpa {0}", broj),
+        _ => Tekst.T(ime switch
+        {
+            "Fan" => "Ventilator",
+            // The Super I/O's named voltages (Nuvoton NCT6798D on ASUS TUF B550, 18. 11. 2026).
+            "Vcore" => "Napon procesora (ploča)",
+            "CMOS Battery" => "Baterija CMOS-a",
+            "+3V Standby" => "+3 V u mirovanju",
+            "+3.3V" => "+3,3 V",
+            "CPU Termination" => "Terminacija procesora",
+            _ => ime,
+        }),
     };
 
     /// <summary>Engine counters, "free" leftovers and the memory-controller load are noise on one card's screen.</summary>

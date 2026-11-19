@@ -32,7 +32,7 @@
                              Visibility="{Binding Sesija.Snima, Converter={StaticResource BoolUVidljivost}}" />
                     <TextBlock Text="{Binding Stanje}" Foreground="{StaticResource Mutan}" FontSize="12"
                                VerticalAlignment="Center" Margin="0,0,12,0" />
-                    <Button Style="{StaticResource DugmeTamno}" Content="Izađi iz Scene  (Esc)" Click="NaIzlaz" />
+                    <Button Style="{StaticResource DugmeTamno}" Content="{prikaz:T 'Izađi iz Scene  (Esc)'}" Click="NaIzlaz" />
                 </StackPanel>
             </Grid>
         </Border>

@@ -27,6 +27,10 @@ var korisnik = Instalacija.Argument(args, "--korisnik");
 var podesavanja = korisnik is null ? null : Path.Combine(Path.GetFullPath(korisnik), "podesavanja.json");
 Func<Podesavanja> ucitaj = () => podesavanja is null ? new Podesavanja() : Podesavanja.Ucitaj(podesavanja);
 
+// The service names the sensors (it is the one that reads the hardware and sends the list), so it must speak the
+// language the user chose: with "sr" here and "en" in the window, the table showed Serbian names in an English UI.
+Takt.Tekst.Postavi(ucitaj().Jezik);
+
 if (args.Contains("--konzola"))
 {
     using var motor = new UsluzniMotor(ucitaj);

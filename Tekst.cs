@@ -36,5 +36,11 @@ public static class Tekst
     /// </summary>
     public static string T(string srpski) => JeEngleski ? NaEngleskom(srpski) : srpski;
 
+    /// <summary>
+    /// A text with a number in it: the table holds the Serbian pattern ("Opterećenje jezgra {0}") and its English
+    /// one ("Core {0} load"), and the number is put in after the language is chosen. Numbers follow the culture.
+    /// </summary>
+    public static string P(string sablon, params object?[] brojevi) => string.Format(T(sablon), brojevi);
+
     private static string NaEngleskom(string srpski) => TekstEngleski.Nadji(srpski) ?? srpski;
 }

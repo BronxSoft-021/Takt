@@ -27,6 +27,8 @@ public static class Izmene
         [
             "Prevedeno za sada: naslovi i opisi kanala, prazna stanja („traži drajver“, „nema senzora“), stanje u zaglavlju i podnožju („Potpuni nadzor · usluga“), ceo ekran Podešavanja, imena prava („administrator“, „običan korisnik“) i kanal „Vent.“. Ostaje: Scena, tabela senzora, ekran sesija, izveštaji i `Izmene`.",
             "Jezik važi posle ponovnog pokretanja programa (kao drajver); prekidač je u Podešavanjima i odmah upisuje izbor.",
+            "**Prevedena su i imena senzora i tabele**: „Core 5 load“, „CPU temperature“, „VRAM used“, „Lifetime“, „Power-on hours“, zaglavlja „Sensor / Now / Min / Avg / Max“, dugmad u zaglavlju („Sessions“), izlaz iz Scene i izveštaj sesije. Šabloni sa brojevima idu kroz `Tekst.P` („Core {0} load“), pa i brojevi prate jezik.",
+            "Šta još fali: ekran Sesija (naslovi kolona), tooltipovi i `Izmene` (dnevnik izmena ostaje na srpskom). Tekst kojeg u tabeli nema prikazuje se na srpskom — vidi se gde fali.",
         ]),
         new("alfa", "19. 11. 2026.",
         [

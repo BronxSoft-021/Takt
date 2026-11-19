@@ -32,16 +32,16 @@ public sealed record IzvestajSesije(
         {
             var redovi = new List<string>
             {
-                $"Trajanje: {TrajanjeTekst}, od {Pocetak:HH:mm}",
-                $"Prosečno {ProsekFps:0} FPS, 1% low {Low1:0} FPS",
-                Zastoji == 0 ? "Bez zastoja" : $"Zastoji: {Zastoji}",
+                Tekst.P("Trajanje: {0}, od {1}", TrajanjeTekst, $"{Pocetak:HH:mm}"),
+                Tekst.P("Prosečno {0} FPS, 1% low {1} FPS", ProsekFps.ToString("0"), Low1.ToString("0")),
+                Zastoji == 0 ? Tekst.T("Bez zastoja") : Tekst.P("Zastoji: {0}", Zastoji),
             };
             if (NajCpu is { } c) redovi.Add($"Procesor najtopliji {c:0.0} °C u {NajCpuKada:HH:mm}");
             if (NajGpu is { } g) redovi.Add($"Grafička najtoplija {g:0.0} °C u {NajGpuKada:HH:mm}" +
                                             (NajHotspot is { } h ? $" (hotspot {h:0.0} °C)" : ""));
             redovi.Add(VramPunSekundi > 0
-                ? $"VRAM pun (95 % i više): {Trajanje(VramPunSekundi)} - tada igra najčešće secka"
-                : "VRAM nijednom pun");
+                ? Tekst.P("VRAM pun (95 % i više): {0} - tada igra najčešće secka", Trajanje(VramPunSekundi))
+                : Tekst.T("VRAM nijednom pun"));
             if (NajJezgro is not null)
                 redovi.Add($"Najopterećenije: {NajJezgro} do {NajJezgroProcenat:0} %" +
                            (JezgroNa100Sekundi > 0 ? $", na 100 % ukupno {Trajanje(JezgroNa100Sekundi)} (usko grlo)" : ""));
@@ -138,7 +138,7 @@ public sealed class SnimacSesije : ObservableObject
 
             _poslednje = sada;
             Dodaj(fps, igra, kanali, sada);
-            Tekst = $"snima sesiju {Formatiraj(sada - _pocetak)}";
+            Tekst = Takt.Tekst.P("snima sesiju {0}", Formatiraj(sada - _pocetak));
             return;
         }
 
