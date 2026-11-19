@@ -6,6 +6,9 @@ using TaktSluzba;
 if (args.Contains("--instaliraj")) return Instalacija.Instaliraj(args);
 if (args.Contains("--ukloni")) return Instalacija.Ukloni();
 
+// Serbian text means Serbian numbers, and the log is read beside the window: one culture for both.
+Takt.Merenje.Format.PostaviKulturu();
+
 // The service writes only into its own locked folder in ProgramData (history and log): never into the user's
 // %APPDATA%, which anything running as that user could turn into a link. Set before anything logs.
 Environment.SetEnvironmentVariable("TAKT_PODACI", PodaciUsluge.Folder);

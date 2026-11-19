@@ -4,6 +4,22 @@ namespace Takt.Testovi;
 
 public static class FormatTestovi
 {
+    /// <summary>
+    /// One culture for the whole program: the rows (Format), the chart labels and plain interpolations must all
+    /// write "52,8" - a report that reads "52.8" beside a screen that reads "52,8" is the same number told twice.
+    /// Windows on this machine is en-GB, which is what made the difference visible (19. 11. 2026).
+    /// </summary>
+    public static Task Kultura()
+    {
+        Format.PostaviKulturu();
+
+        Proveri.Jednako("sr-Latn-RS", Format.Kultura.Name, "kultura programa");
+        Proveri.Jednako("52,8 °C", $"{52.8:0.0} °C", "interpolacija piše zapetu, kao Format");
+        Proveri.Jednako(Format.Vrednost(52.8, Jedinica.Celzijus), $"{52.8:0.0} °C", "Format i interpolacija se poklapaju");
+        Proveri.Jednako("55", $"{55.4:0}", "ceo broj bez separatora");
+        return Task.CompletedTask;
+    }
+
     public static Task Zapeta()
     {
         Proveri.Jednako("45,3 °C", Format.Vrednost(45.28, Jedinica.Celzijus), "temperatura sa zapetom");

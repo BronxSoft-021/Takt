@@ -39,6 +39,7 @@ public static class Izmene
             "**Jedan „1 % low“**, ne dva: izveštaj sesije je uzimao 5. percentil sekundi („najgorih 5 % sekundi“) i zvao ga 1 % low, pa su ekran i izveštaj davali dva broja za istu igru. Sada je i u izveštaju prosek najgorih **1 %** sekundi, gde je svaka sekunda računata iz kadrova.",
             "Prozor više ne ostaje bez usluge: ako se podigne dok se usluga još diže (posle instalacije, na prijavi), pita cev **svakih 5 s** i sam pređe na potpuni nadzor — ranije je tako ostajao na „Ograničen nadzor“ do zatvaranja i ponovnog otvaranja.",
             "Grafikon više ne stoji u praznom: korak skale je skakao sa 2 na 5, pa se linija od 51,6–58,4 °C crtala u prozoru 50–70 (donja trećina). Sada korak ide 1, 2, **2,5**, 5, 10 — ista linija dobija 50–60. Visina grafikona je ograničena na **300 px**, pa u velikom prozoru tabela senzora dobija prostor umesto praznine.",
+            "**Jedna kultura za ceo program**: redovi i osa grafikona forsiraju srpski (52,8), a sve ostalo je pratilo Windows — na ovoj mašini en-GB, pa je izveštaj pisao „52.8 °C“ pored ekrana koji piše „52,8 °C“. Sada se kultura postavlja na startu (prozor, usluga, testovi) i sve interpolacije pišu zapetu.",
         ]),
         new("alfa", "19. 11. 2026.",
         [

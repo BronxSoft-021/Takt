@@ -19,6 +19,9 @@ public partial class App : Application
 
     protected override void OnStartup(StartupEventArgs e)
     {
+        // Before anything is drawn or written: Serbian text means Serbian numbers (52,8 and not 52.8).
+        Merenje.Format.PostaviKulturu();
+
         base.OnStartup(e);
 
         DispatcherUnhandledException += (_, a) =>

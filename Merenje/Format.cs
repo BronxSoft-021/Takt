@@ -5,7 +5,21 @@ namespace Takt.Merenje;
 /// <summary>Numbers and units as the user reads them: decimal comma, never a dot.</summary>
 public static class Format
 {
-    private static readonly CultureInfo Kultura = CultureInfo.GetCultureInfo("sr-Latn-RS");
+    /// <summary>The one culture of the program: rows, chart labels and every interpolation must agree.</summary>
+    public static readonly CultureInfo Kultura = CultureInfo.GetCultureInfo("sr-Latn-RS");
+
+    /// <summary>
+    /// Called once at start (window, service, tests): the text is Serbian, so the numbers are too. Without this the
+    /// rows read "52,8 °C" and a report line reads "52.8 °C" - the same number told two ways, because Format forced
+    /// sr-Latn-RS while everything else followed Windows (found 19. 11. 2026, Windows in en-GB).
+    /// </summary>
+    public static void PostaviKulturu()
+    {
+        CultureInfo.DefaultThreadCurrentCulture = Kultura;
+        CultureInfo.DefaultThreadCurrentUICulture = Kultura;
+        CultureInfo.CurrentCulture = Kultura;
+        CultureInfo.CurrentUICulture = Kultura;
+    }
 
     /// <summary>Shown instead of a number the hardware did not give.</summary>
     public const string Nema = "—";

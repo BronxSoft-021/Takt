@@ -15,7 +15,7 @@ public sealed class Grafikon : FrameworkElement
     /// <summary>How many readings fit in the window.</summary>
     private const int BrojUzoraka = 120;
 
-    private static readonly CultureInfo Kultura = CultureInfo.GetCultureInfo("sr-Latn-RS");
+    private static readonly CultureInfo Kultura = Takt.Merenje.Format.Kultura;
     private static readonly Typeface Pismo = new("Segoe UI");
 
     // Brushes and pens are frozen and shared: OnRender runs every second, and a new gradient each time is

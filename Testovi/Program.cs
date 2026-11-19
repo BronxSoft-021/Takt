@@ -2,6 +2,9 @@
 
 Console.OutputEncoding = System.Text.Encoding.UTF8;
 
+// The program's own culture: a test must format numbers the way the program does (52,8 and not 52.8).
+Takt.Merenje.Format.PostaviKulturu();
+
 // Everything temporary stays inside the test's own output folder.
 var radni = Path.Combine(AppContext.BaseDirectory, "privremeno");
 if (Directory.Exists(radni)) Directory.Delete(radni, true);
