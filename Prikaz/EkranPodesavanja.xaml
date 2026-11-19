@@ -18,23 +18,23 @@
             </Grid.ColumnDefinitions>
 
             <StackPanel Grid.ColumnSpan="3" Margin="2,4,0,14">
-                <TextBlock Style="{StaticResource NaslovStrane}" Text="Podešavanja" />
+                <TextBlock Style="{StaticResource NaslovStrane}" Text="{prikaz:T 'Podešavanja'}" />
                 <TextBlock Style="{StaticResource OpisStrane}" Margin="0,3,0,0"
-                           Text="Program ništa ne šalje na internet. Sve što izmeri ostaje u folderu podataka na ovom računaru." />
+                           Text="{prikaz:T 'Program ništa ne šalje na internet. Sve što izmeri ostaje u folderu podataka na ovom računaru.'}" />
             </StackPanel>
 
             <!-- Left: what the user chooses -->
             <Border Grid.Row="1" Grid.Column="0" Style="{StaticResource Kartica}" VerticalAlignment="Top">
                 <StackPanel Margin="20,18,20,18">
-                    <TextBlock Style="{StaticResource NaslovSekcije}" Text="OSVEŽAVANJE" />
+                    <TextBlock Style="{StaticResource NaslovSekcije}" Text="{prikaz:T 'OSVEŽAVANJE'}" />
                     <StackPanel Orientation="Horizontal" Margin="0,9,0,0">
                         <ListBox Style="{StaticResource Pilule}"
                                  ItemsSource="{Binding OpcijeOsvezavanja}"
                                  SelectedItem="{Binding Osvezavanje}" />
-                        <TextBlock Text="sekundi između dva čitanja" Foreground="{StaticResource Mutan}"
+                        <TextBlock Text="{prikaz:T 'sekundi između dva čitanja'}" Foreground="{StaticResource Mutan}"
                                    FontSize="12" VerticalAlignment="Center" Margin="6,0,0,0" />
                     </StackPanel>
-                    <TextBlock Text="Važi odmah. Ređe čitanje znači i manje posla za procesor."
+                    <TextBlock Text="{prikaz:T 'Važi odmah. Ređe čitanje znači i manje posla za procesor.'}"
                                Foreground="{StaticResource Bled}" FontSize="11" Margin="0,7,0,0" />
 
                     <Border Height="1" Background="{StaticResource Linija}" Margin="0,18,0,16" />
@@ -83,19 +83,19 @@
 
                     <Border Height="1" Background="{StaticResource Linija}" Margin="0,18,0,16" />
 
-                    <TextBlock Style="{StaticResource NaslovSekcije}" Text="PROZOR I TRAKA" />
-                    <CheckBox Content="Zatvori u traku umesto gašenja (X)" IsChecked="{Binding ZatvoriUTraku}"
+                    <TextBlock Style="{StaticResource NaslovSekcije}" Text="{prikaz:T 'PROZOR I TRAKA'}" />
+                    <CheckBox Content="{prikaz:T 'Zatvori u traku umesto gašenja (X)'}" IsChecked="{Binding ZatvoriUTraku}"
                               Margin="0,9,0,0" />
-                    <CheckBox Content="Pokreni sa Windowsom, u traci (bez prozora)" IsChecked="{Binding PokreniSaWindowsom}"
+                    <CheckBox Content="{prikaz:T 'Pokreni sa Windowsom, u traci (bez prozora)'}" IsChecked="{Binding PokreniSaWindowsom}"
                               Margin="0,8,0,0" />
-                    <TextBlock Text="Ikonica pored sata vraća prozor; bez nje se sakriveni prozor ne može vratiti. Ako traka ne uspe, X gasi program."
+                    <TextBlock Text="{prikaz:T 'Ikonica pored sata vraća prozor; bez nje se sakriveni prozor ne može vratiti. Ako traka ne uspe, X gasi program.'}"
                                Foreground="{StaticResource Bled}" FontSize="11" TextWrapping="Wrap" Margin="0,7,0,0" />
 
                     <Border Height="1" Background="{StaticResource Linija}" Margin="0,18,0,16" />
 
-                    <TextBlock Style="{StaticResource NaslovSekcije}" Text="DRAJVER (PAWNIO)" />
+                    <TextBlock Style="{StaticResource NaslovSekcije}" Text="{prikaz:T 'DRAJVER (PAWNIO)'}" />
                     <DockPanel Margin="0,9,0,0">
-                        <Button DockPanel.Dock="Right" Style="{StaticResource DugmeTamno}" Content="Otvori pawnio.eu"
+                        <Button DockPanel.Dock="Right" Style="{StaticResource DugmeTamno}" Content="{prikaz:T 'Otvori pawnio.eu'}"
                                 Click="NaDrajver" Padding="10,3" VerticalAlignment="Center"
                                 Visibility="{Binding DrajverFali, Converter={StaticResource BoolUVidljivost}}" />
                         <TextBlock Text="{Binding DrajverStanje}" FontSize="12.5" VerticalAlignment="Center">
@@ -115,8 +115,8 @@
                                TextWrapping="Wrap" LineHeight="17" Margin="0,6,0,0" />
 
                     <WrapPanel Margin="0,18,0,0">
-                        <Button Style="{StaticResource Dugme}" Content="Sačuvaj" Click="NaSacuvaj" Margin="0,0,8,0" />
-                        <Button Style="{StaticResource DugmeTamno}" Content="Otvori folder" Click="NaFolder"
+                        <Button Style="{StaticResource Dugme}" Content="{prikaz:T 'Sačuvaj'}" Click="NaSacuvaj" Margin="0,0,8,0" />
+                        <Button Style="{StaticResource DugmeTamno}" Content="{prikaz:T 'Otvori folder'}" Click="NaFolder"
                                 Margin="0,0,8,0" />
                         <Button Style="{StaticResource DugmeTamno}" Content="{Binding TekstBrisanja}" Click="NaObrisi" />
                     </WrapPanel>
@@ -129,7 +129,7 @@
             <!-- Right: about the program and what changed -->
             <Border Grid.Row="2" Grid.Column="0" Style="{StaticResource Kartica}" VerticalAlignment="Top" Margin="0,12,0,0">
                 <StackPanel Margin="20,18,20,18">
-                    <TextBlock Style="{StaticResource NaslovSekcije}" Text="O PROGRAMU" />
+                    <TextBlock Style="{StaticResource NaslovSekcije}" Text="{prikaz:T 'O PROGRAMU'}" />
 
                     <Grid Margin="0,10,0,0">
                         <Grid.ColumnDefinitions>
@@ -142,24 +142,24 @@
                             <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
 
-                        <TextBlock Grid.Row="0" Text="Verzija" Foreground="{StaticResource Bled}" FontSize="11.5"
+                        <TextBlock Grid.Row="0" Text="{prikaz:T 'Verzija'}" Foreground="{StaticResource Bled}" FontSize="11.5"
                                    Margin="0,0,0,6" />
                         <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding Verzija}" Foreground="{StaticResource Tekst}"
                                    FontSize="11.5" Margin="0,0,0,6" />
 
-                        <TextBlock Grid.Row="1" Text="Prava" Foreground="{StaticResource Bled}" FontSize="11.5"
+                        <TextBlock Grid.Row="1" Text="{prikaz:T 'Prava'}" Foreground="{StaticResource Bled}" FontSize="11.5"
                                    Margin="0,0,0,6" />
                         <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding Prava}" Foreground="{StaticResource Tekst}"
                                    FontSize="11.5" Margin="0,0,0,6" />
 
-                        <TextBlock Grid.Row="2" Text="Podaci" Foreground="{StaticResource Bled}" FontSize="11.5" />
+                        <TextBlock Grid.Row="2" Text="{prikaz:T 'Podaci'}" Foreground="{StaticResource Bled}" FontSize="11.5" />
                         <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding Folder}" Foreground="{StaticResource Mutan}"
                                    FontSize="11.5" TextTrimming="CharacterEllipsis" ToolTip="{Binding Folder}" />
                     </Grid>
 
                     <Border Height="1" Background="{StaticResource Linija}" Margin="0,16,0,14" />
 
-                    <TextBlock Style="{StaticResource NaslovSekcije}" Text="ŠTA JE NOVO" />
+                    <TextBlock Style="{StaticResource NaslovSekcije}" Text="{prikaz:T 'ŠTA JE NOVO'}" />
                     <ItemsControl ItemsSource="{Binding Istorijat}" Margin="0,4,0,0">
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>

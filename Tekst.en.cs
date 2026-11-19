@@ -370,5 +370,7 @@ public static class TekstEngleski
         ["{0}: ovaj deo ne daje senzore ni uz potpuni nadzor. Klikni za objašnjenje."] =
             "{0}: this part gives no sensors even with full monitoring. Click for the explanation.",
         ["{0}: ovaj deo traži potpuni nadzor (administrator i drajver). Klikni za objašnjenje."] =
-            "{0}: this part needs full monitoring (administrator and driver). Click for the explanation.",    };
+            "{0}: this part needs full monitoring (administrator and driver). Click for the explanation.",        ["Otvori pawnio.eu"] = "Open pawnio.eu",
+        ["Sačuvaj"] = "Save",
+        ["Otvori folder"] = "Open folder",    };
 }

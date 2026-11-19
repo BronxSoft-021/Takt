@@ -33,9 +33,9 @@ public static class GrupaOpis
         // board's temperatures and the warning when a fan stops. The numbered ones ("Temperatura 3") are inputs of
         // the Super I/O chip and nothing says what they measure: they never turn amber or red, never light the clip,
         // and a channel that stands still at a high value is not shown at all.
-        Grupa.Hladjenje => "Brzina ventilatora i temperature matične ploče. Brojane temperature („Temperatura 3“) su " +
+        Grupa.Hladjenje => Tekst.T("Brzina ventilatora i temperature matične ploče. Brojane temperature („Temperatura 3“) su " +
                            "ulazi čipa za koje se ne zna šta mere — ne pale lampicu, a onaj koji stoji na istoj " +
-                           "visokoj vrednosti se i ne prikazuje.",
+                           "visokoj vrednosti se i ne prikazuje."),
         _ => "",
     };
 
@@ -47,18 +47,18 @@ public static class GrupaOpis
     public static string Prazno(Grupa grupa, bool drajver = true, bool potpunNadzor = false) =>
         drajver && potpunNadzor ? PraznoUzPotpunNadzor(grupa) : (grupa, drajver) switch
     {
-        (Grupa.Procesor, false) => "Temperatura, takt, potrošnja i napon procesora idu preko PawnIO drajvera, a on se " +
-                                   "instalira posebno (pawnio.eu). Bez njega se vidi samo opterećenje - i kao administrator.",
-        (Grupa.Diskovi, false) => "Temperatura, zdravlje i SMART diskova traže PawnIO drajver (pawnio.eu); " +
-                                   "administratorska prava sama nisu dovoljna.",
-        (Grupa.Hladjenje, false) => "Ventilatori kućišta i procesora i temperature matične ploče traže PawnIO drajver " +
-                                     "(pawnio.eu). Bez njega ni administrator ne dobija te senzore.",
+        (Grupa.Procesor, false) => Tekst.T("Temperatura, takt, potrošnja i napon procesora idu preko PawnIO drajvera, a on se " +
+                                   "instalira posebno (pawnio.eu). Bez njega se vidi samo opterećenje - i kao administrator."),
+        (Grupa.Diskovi, false) => Tekst.T("Temperatura, zdravlje i SMART diskova traže PawnIO drajver (pawnio.eu); " +
+                                   "administratorska prava sama nisu dovoljna."),
+        (Grupa.Hladjenje, false) => Tekst.T("Ventilatori kućišta i procesora i temperature matične ploče traže PawnIO drajver " +
+                                     "(pawnio.eu). Bez njega ni administrator ne dobija te senzore."),
         (_, false) => Tekst.T("Ovaj deo traži PawnIO drajver (pawnio.eu); bez njega ni administrator ne dobija te senzore."),
 
-        (Grupa.Diskovi, true) => "Temperatura, zdravlje i SMART diskova se čitaju preko drajvera, a on traži administratora. " +
-                                 "Uključi potpuni nadzor i diskovi će se pojaviti ovde.",
-        (Grupa.Hladjenje, true) => "Ventilatore kućišta i procesora i temperature matične ploče čita Super I/O čip, a do njega " +
-                                   "se stiže samo preko drajvera. Uključi potpuni nadzor.",
+        (Grupa.Diskovi, true) => Tekst.T("Temperatura, zdravlje i SMART diskova se čitaju preko drajvera, a on traži administratora. " +
+                                 "Uključi potpuni nadzor i diskovi će se pojaviti ovde."),
+        (Grupa.Hladjenje, true) => Tekst.T("Ventilatore kućišta i procesora i temperature matične ploče čita Super I/O čip, a do njega " +
+                                   "se stiže samo preko drajvera. Uključi potpuni nadzor."),
         _ => Tekst.T("Ovaj deo računara ne daje nijedan senzor bez drajvera. Uključi potpuni nadzor."),
     };
 
