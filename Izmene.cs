@@ -51,6 +51,7 @@ public static class Izmene
             "Na **manjem ekranu** (laptop 1366×768, projektor) prozor se sada skrati da stane: ranije je sačuvan prozor od 1240×760 ostajao veći od ekrana i desna ivica i statusna traka su ispadale. Prozor koji je potpuno van ekrana se i dalje odbacuje (monitor je odkačen), a sa dva monitora se ništa ne pomera.",
             "Kanal više ne ostaje prazan kad mašina **drugačije zove** svoje senzore (npr. „CPU Total“ umesto „Opterećenje procesora“): ako tačnog imena nema, merač uzima prvi senzor odgovarajuće jedinice (% levo, °C desno) — do sada je pult pokazivao „traži nadzor“ dok solo panel ima 32 jezgra.",
             "**Prenos na drugi računar**: `Napravi prenos.bat` pravi `dist-prenos` (~209 MB) sa .NET-om u sebi, pa program radi i tamo gde .NET 10 nije instaliran. Obična instalacija i dalje traži .NET 10 Desktop Runtime (x64); PawnIO drajver se u oba slučaja instalira posebno.",
+            "**Pravi Windows Setup**: `Napravi instalaciju.bat` pravi `setup\\Takt-Setup-<verzija>.exe` (**58 MB**, sa .NET-om u sebi). Instalira u Program Files, registruje uslugu, pravi prečice u Start meniju i (po želji) na radnoj površini, upisuje se u „Programi i funkcije“ i ume da se ukloni; istorija i podešavanja ostaju. Ako PawnIO nije instaliran, na kraju ponudi da otvori pawnio.eu. Provereno: instalacija, nadgradnja preko upaljene usluge i uklanjanje.",
         ]),
         new("alfa", "19. 11. 2026.",
         [

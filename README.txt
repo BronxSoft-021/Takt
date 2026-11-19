@@ -1,4 +1,4 @@
-BronxSoft Takt 0.38.79 alfa
+BronxSoft Takt 0.38.80 alfa
 19. 11. 2026.
 
 NOVO
@@ -365,12 +365,13 @@ DORADE
   izabrana pilula i kućica za potvrdu su čitljivi na tamnoj pozadini.
 
 NA DRUGI RAČUNAR
-- Program traži **.NET 10 Desktop Runtime (x64)**. Ako ga tamo nema, Windows kaže šta fali i program se ne
-  pokreće — to je jedino što ga zaustavlja.
-- Bez .NET-a: **Napravi prenos.bat** pravi `dist-prenos` (~190 MB) koji ga nosi u sebi; ceo folder se prekopira
-  i Takt.exe radi odmah.
-- **PawnIO drajver** se instalira posebno (pawnio.eu). Bez njega program radi, ali bez temperature procesora,
-  potrošnje, napona i ventilatora ploče.
-- **Usluga** (nadzor u pozadini) traži administratora pri instalaciji; bez nje prozor radi kao običan korisnik,
-  sa onim što sme da pročita.
-- Windows 10 verzija 2004 (build 19041) ili noviji, 64-bitni.
+- Najprostije: **`setup\Takt-Setup-<verzija>.exe`** (pravi ga `Napravi instalaciju.bat`). Setup nosi i .NET u sebi,
+  pa na drugoj mašini ne treba ništa da se instalira pre njega — osim PawnIO drajvera, koji je poseban.
+- Bez Setup-a: ceo folder `dist-prenos` se prekopira i `Takt.exe` radi odmah (isti sadržaj, samo neraspakovan).
+- Program traži **Windows 10 verzija 2004 (build 19041) ili noviji, 64-bitni**.
+- **PawnIO drajver** (pawnio.eu) se instalira posebno. Bez njega program radi, ali bez temperature procesora,
+  potrošnje, napona i ventilatora ploče; zaglavlje piše „…bez drajvera“ i objašnjava gde se uzima.
+- **Usluga** (nadzor u pozadini) traži administratora pri instalaciji; Setup to pita sam. Bez usluge prozor radi
+  kao običan korisnik, sa onim što sme da pročita.
+- Uklanjanje ide kroz „Programi i funkcije“: usluga se zaustavi i obriše, program i prečice odu, a istorija u
+  `C:\ProgramData\BronxSoft Takt` i tvoja podešavanja ostaju.
