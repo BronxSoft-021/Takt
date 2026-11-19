@@ -12,6 +12,7 @@ public sealed class EkranVm : ObservableObject
 {
     private SenzorVm? _izabran;
     private bool _sviSenzori;
+    private int _mrtvih;
     private bool _prviUzorak;
 
     public EkranVm(Grupa grupa, IEnumerable<SenzorVm> senzori)
@@ -81,7 +82,8 @@ public sealed class EkranVm : ObservableObject
         : $"Još {BezVrednosti} {(BezVrednosti % 10 == 1 && BezVrednosti % 100 != 11 ? "senzor" : "senzora")} bez vrednosti";
 
     private bool Prikazati(object stavka) =>
-        _sviSenzori || stavka is not SenzorVm senzor || senzor.ImaloVrednost || Senzori.All(s => !s.ImaloVrednost);
+        _sviSenzori || stavka is not SenzorVm senzor || (senzor.ImaloVrednost && !senzor.Mrtav)
+        || Senzori.All(s => !s.ImaloVrednost);
 
     public void Osvezi(Snimak snimak, double?[] najmanje, double?[] najvise, bool obavesti = true)
     {
@@ -107,6 +109,15 @@ public sealed class EkranVm : ObservableObject
             OnPropertyChanged(nameof(BezVrednosti));
             OnPropertyChanged(nameof(ImaSkrivenih));
             OnPropertyChanged(nameof(SkriveniTekst));
+        }
+
+        // A board channel that stops moving at a high value ("Temperatura 6" at 80,0 °C for ever) is an input with
+        // nothing on it: it leaves the list once it has been still long enough to tell (SenzorVm.Mrtav).
+        int mrtvih = Senzori.Count(s => s.Mrtav);
+        if (mrtvih != _mrtvih)
+        {
+            _mrtvih = mrtvih;
+            Pogled.Refresh();
         }
 
         // The chart is on screen all the time: one int notification keeps it live while the table waits.

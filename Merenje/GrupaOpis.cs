@@ -30,8 +30,12 @@ public static class GrupaOpis
         Grupa.Memorija => "Zauzeće, slobodan RAM, brzina memorije, commit i pagefile.",
         Grupa.Diskovi => "Temperature SSD-a, zdravlje, SMART parametri i životni vek.",
         // Which temperature drives which fan is the board's own curve and is not readable: only the speed, the
-        // board's temperatures and the warning when a fan stops.
-        Grupa.Hladjenje => "Brzina ventilatora, temperature matične ploče i upozorenje kad ventilator stane.",
+        // board's temperatures and the warning when a fan stops. The numbered ones ("Temperatura 3") are inputs of
+        // the Super I/O chip and nothing says what they measure: they never turn amber or red, never light the clip,
+        // and a channel that stands still at a high value is not shown at all.
+        Grupa.Hladjenje => "Brzina ventilatora i temperature matične ploče. Brojane temperature („Temperatura 3“) su " +
+                           "ulazi čipa za koje se ne zna šta mere — ne pale lampicu, a onaj koji stoji na istoj " +
+                           "visokoj vrednosti se i ne prikazuje.",
         _ => "",
     };
 

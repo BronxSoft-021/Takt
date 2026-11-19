@@ -79,6 +79,50 @@ public static class PrikazTestovi
         return Task.CompletedTask;
     }
 
+    /// <summary>
+    /// The board's numbered temperature channels are inputs of the Super I/O chip, and nobody knows what they
+    /// measure. One that stands still at a high value ("Temperatura 6" at 80,0 °C, min = average = max) has nothing
+    /// attached and leaves the list; the one that moves stays, but without colour or clip light (SenzorVm.Pragovi).
+    /// </summary>
+    public static Task MrtvePloce()
+    {
+        var senzori = new[]
+        {
+            new Senzor(new SenzorKljuc(Grupa.Hladjenje, "Ploča", "Temperatura 1"), Jedinica.Celzijus),
+            new Senzor(new SenzorKljuc(Grupa.Hladjenje, "Ploča", "Temperatura 6"), Jedinica.Celzijus),
+            new Senzor(new SenzorKljuc(Grupa.Hladjenje, "Ploča", "Ventilator 1"), Jedinica.Obrtaj),
+        };
+        var vm = senzori.Select((s, i) => new SenzorVm(s, i, new Prsten(80))).ToList();
+        var ekran = new EkranVm(Grupa.Hladjenje, vm);
+
+        for (int i = 0; i < 40; i++)
+        {
+            double zivi = 33 + i % 3;
+            vm[0].Prsten.Dodaj(zivi);
+            vm[1].Prsten.Dodaj(80);
+            vm[2].Prsten.Dodaj(1200);
+            ekran.Osvezi(new Snimak(DateTime.Now, [zivi, 80, 1200]), [zivi, 80, 1200], [zivi, 80, 1200]);
+        }
+
+        Proveri.Da(vm[1].Mrtav, "kanal koji stoji na 80,0 °C je mrtav");
+        Proveri.Da(!vm[0].Mrtav, "kanal koji se menja nije mrtav");
+        Proveri.Jednako(2, ekran.Pogled.Cast<object>().Count(), "mrtav kanal se ne prikazuje");
+        Proveri.Da(!ekran.Pogled.Cast<SenzorVm>().Any(s => s.Ime == "Temperatura 6"), "nema ga u spisku");
+
+        // A channel that never moves but reads low is a real one (a cold board), so it stays.
+        var hladni = new[] { new Senzor(new SenzorKljuc(Grupa.Hladjenje, "Ploča", "Temperatura 2"), Jedinica.Celzijus) };
+        var hladan = new SenzorVm(hladni[0], 0, new Prsten(80));
+        var ekranHladni = new EkranVm(Grupa.Hladjenje, [hladan]);
+        for (int i = 0; i < 40; i++)
+        {
+            hladan.Prsten.Dodaj(34);
+            ekranHladni.Osvezi(new Snimak(DateTime.Now, [34]), [34], [34]);
+        }
+        Proveri.Da(!hladan.Mrtav, "34,0 °C koje stoji nije mrtav kanal");
+        Proveri.Jednako(1, ekranHladni.Pogled.Cast<object>().Count(), "i prikazuje se");
+        return Task.CompletedTask;
+    }
+
     /// <summary>"Kritična granica 84 °C" is a limit: no colour, no bar; the drive's temperature is marked against it.</summary>
     public static Task GraniceDiska()
     {

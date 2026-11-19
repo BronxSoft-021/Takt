@@ -62,8 +62,27 @@ public sealed class SenzorVm : ObservableObject
     }
 
     /// <summary>
-    /// True once the sensor has given at least one number. Without the driver a third of the processor's
-    /// sensors never do; the list keeps those apart instead of showing a wall of "—".
+    /// True when the last <paramref name="koliko"/> readings are one and the same number. A part that works wobbles
+    /// at least a little; a Super I/O input with no probe on it sits on one value for ever (the board's
+    /// "Temperatura 6" at 80,0 °C, min = average = max). Public for a test.
+    /// </summary>
+    public bool Miruje(int koliko = 60)
+    {
+        var skoro = Prsten.Poslednjih(koliko).Where(v => v is not null).Select(v => v!.Value).ToArray();
+        return skoro.Length >= Math.Min(koliko, 30) && skoro.Max() - skoro.Min() < 0.01;
+    }
+
+    /// <summary>
+    /// A board temperature channel that stands still at a high value: almost certainly an input with nothing on it
+    /// (the chip has six, the board uses two). Such a row is not shown at all - the channel's description says why.
+    /// </summary>
+    public bool Mrtav => Senzor.Grupa == Grupa.Hladjenje && Senzor.Jedinica == Jedinica.Celzijus
+                         && Ime.StartsWith("Temperatura ", StringComparison.Ordinal) && char.IsAsciiDigit(Ime[^1])
+                         && Broj is >= 70 && Miruje();
+
+    /// <summary>
+    /// True once the sensor has given at least one number. Without the driver a third of the processor's sensors
+    /// never do; the list keeps those apart instead of showing a wall of "—".
     /// </summary>
     public bool ImaloVrednost
     {

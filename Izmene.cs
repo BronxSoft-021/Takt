@@ -47,6 +47,7 @@ public static class Izmene
             "Uz „1 % low“ vreme kadra sada piše **„prosek“**: ispod grafikona najdužeg kadra stajao je neoznačen prosek i čitao se kao da je najduži.",
             "„Najtopliji“ se računa **samo među temperaturama**: disk bez termometra pada na zauzeće u procentima, a 76 % nije „toplije“ od 45 °C — do sada je pobeđivao veći broj, ma koje jedinice bio.",
             "Merač crta stub samo kad jedinica ima skalu (%, °C, o/min); za volte, vate, megaherce i megabajte ostaje samo broj, jer je 1,2 V na skali 0–100 bio komadić koji izgleda kao udeo.",
+            "Brojane temperature matične ploče („Temperatura 1…6“) su **ulazi čipa** Nuvoton NCT6798D i ne zna se šta mere — ne pale lampicu ni boju (i pre ovoga), a kanal koji stoji na istoj visokoj vrednosti („Temperatura 6“ = 80,0 °C, najmanje = prosek = najviše) je prazan ulaz i **više se ne prikazuje**.",
         ]),
         new("alfa", "19. 11. 2026.",
         [

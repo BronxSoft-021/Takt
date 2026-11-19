@@ -28,6 +28,7 @@ public static class Spisak
         ("grafikon: koliko je star najstariji uzorak", PrikazTestovi.PreKoliko),
         ("ekran: senzori bez vrednosti se sklanjaju", PrikazTestovi.Skriveni),
         ("ekran: granice diska nisu merenja", PrikazTestovi.GraniceDiska),
+        ("ekran: mrtav kanal ploče se ne prikazuje", PrikazTestovi.MrtvePloce),
         ("pult: kanali i njihovi merači", PultTestovi.Kanali),
         ("pult: prazna mesta za diskove i ventilatore", PultTestovi.PraznaMesta),
         ("pult: šest diskova je jedan kanal", PultTestovi.GrupaDiskova),
