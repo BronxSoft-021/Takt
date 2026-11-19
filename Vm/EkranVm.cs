@@ -79,7 +79,7 @@ public sealed class EkranVm : ObservableObject
 
     public string SkriveniTekst => SviSenzori
         ? "Sakrij senzore bez vrednosti"
-        : $"Još {BezVrednosti} {(BezVrednosti % 10 == 1 && BezVrednosti % 100 != 11 ? "senzor" : "senzora")} bez vrednosti";
+        : Tekst.P(BezVrednosti % 10 == 1 && BezVrednosti % 100 != 11 ? "Još {0} senzor bez vrednosti" : "Još {0} senzora bez vrednosti", BezVrednosti);
 
     private bool Prikazati(object stavka) =>
         _sviSenzori || stavka is not SenzorVm senzor || (senzor.ImaloVrednost && !senzor.Mrtav)

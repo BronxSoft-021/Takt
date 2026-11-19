@@ -22,7 +22,7 @@ public static class Pomocnik
         {
             var putanja = Environment.ProcessPath;
             if (string.IsNullOrEmpty(putanja))
-                return (false, "Pomoćnik ne može da se pokrene: putanja programa nije poznata.");
+                return (false, Tekst.T("Pomoćnik ne može da se pokrene: putanja programa nije poznata."));
 
             Process.Start(new ProcessStartInfo(putanja)
             {
@@ -32,17 +32,17 @@ public static class Pomocnik
                 WindowStyle = ProcessWindowStyle.Hidden,
             });
 
-            return (true, "Pomoćnik se pokreće. Ako Windows pita za dozvolu, pritisni „Da“.");
+            return (true, Tekst.T("Pomoćnik se pokreće. Ako Windows pita za dozvolu, pritisni „Da“."));
         }
         catch (Win32Exception ex) when (ex.NativeErrorCode == 1223)
         {
             // ERROR_CANCELLED: the user said no to the UAC question. Not an error, just no full monitoring.
-            return (false, "Pokretanje je otkazano — program ostaje na čitanju bez administratora.");
+            return (false, Tekst.T("Pokretanje je otkazano — program ostaje na čitanju bez administratora."));
         }
         catch (Exception ex)
         {
             Dnevnik.Greska("Pokretanje pomoćnika", ex);
-            return (false, "Pomoćnik nije pokrenut: " + ex.Message);
+            return (false, Tekst.T("Pomoćnik nije pokrenut: ") + ex.Message);
         }
     }
 

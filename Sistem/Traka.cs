@@ -16,13 +16,13 @@ public sealed class Traka : IDisposable
     {
         var meni = new ContextMenuStrip();
 
-        var otvori = new ToolStripMenuItem("Otvori Takt") { Font = new Font(meni.Font, System.Drawing.FontStyle.Bold) };
+        var otvori = new ToolStripMenuItem(Tekst.T("Otvori Takt")) { Font = new Font(meni.Font, System.Drawing.FontStyle.Bold) };
         otvori.Click += (_, _) => Otvori?.Invoke();
 
-        var podesavanja = new ToolStripMenuItem("Podešavanja");
+        var podesavanja = new ToolStripMenuItem(Tekst.T("Podešavanja"));
         podesavanja.Click += (_, _) => Podesavanja?.Invoke();
 
-        var izlaz = new ToolStripMenuItem("Izlaz");
+        var izlaz = new ToolStripMenuItem(Tekst.T("Izlaz"));
         izlaz.Click += (_, _) => Izlaz?.Invoke();
 
         meni.Items.AddRange([otvori, podesavanja, new ToolStripSeparator(), izlaz]);

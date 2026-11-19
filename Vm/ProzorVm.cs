@@ -45,7 +45,7 @@ public sealed class ProzorVm : ObservableObject, IDisposable
         }
 
         PodesavanjaVm = new PodesavanjaVm(Podesavanja, ObrisiIstoriju, PromeniOsvezavanje);
-        Stanje = "Učitavam senzore…";
+        Stanje = Tekst.T("Učitavam senzore…");
     }
 
     /// <summary>The user's saved choices, as the settings screen shows and saves them.</summary>
@@ -232,7 +232,7 @@ public sealed class ProzorVm : ObservableObject, IDisposable
     public void OtvoriDrajver()
     {
         if (PawnIo.Otvori()) return;
-        Upozorenje = $"Adresa nije otvorena. Ukucaj je u pregledač: {PawnIo.Adresa}";
+        Upozorenje = Tekst.P("Adresa nije otvorena. Ukucaj je u pregledač: {0}", PawnIo.Adresa);
     }
 
     public int BrojSenzora => _nadzor?.Senzori.Count ?? 0;
@@ -259,7 +259,7 @@ public sealed class ProzorVm : ObservableObject, IDisposable
 
         try
         {
-            Stanje = "Učitavam senzore…";
+            Stanje = Tekst.T("Učitavam senzore…");
             VrstaStanja = "ceka";
 
             var (izvor, nadzor) = await Task.Run(() =>
@@ -310,7 +310,7 @@ public sealed class ProzorVm : ObservableObject, IDisposable
         catch (Exception ex)
         {
             Dnevnik.Greska("Pokretanje nadzora", ex);
-            Upozorenje = "Program ne može da čita senzore: " + ex.Message;
+            Upozorenje = Tekst.T("Program ne može da čita senzore: ") + ex.Message;
             Stanje = "Nema podataka";
             VrstaStanja = "nema";
         }
@@ -422,7 +422,7 @@ public sealed class ProzorVm : ObservableObject, IDisposable
 
         try
         {
-            Upozorenje = "Tražim administratorska prava…";
+            Upozorenje = Tekst.T("Tražim administratorska prava…");
 
             var (uspeh, poruka) = await Task.Run(() => Pomocnik.Pokreni());
             Upozorenje = poruka;
@@ -440,7 +440,7 @@ public sealed class ProzorVm : ObservableObject, IDisposable
 
             if (klijent is null)
             {
-                Upozorenje = "Pomoćnik se nije javio. Razlog je u greske.log; program nastavlja bez njega.";
+                Upozorenje = Tekst.T("Pomoćnik se nije javio. Razlog je u greske.log; program nastavlja bez njega.");
                 return;
             }
 
@@ -573,7 +573,7 @@ public sealed class ProzorVm : ObservableObject, IDisposable
 
         if (!izvor.Pravi)
         {
-            Upozorenje = "Prikazani su probni podaci, ne stvarna merenja. U podešavanjima isključi „Probni podaci“.";
+            Upozorenje = Tekst.T("Prikazani su probni podaci, ne stvarna merenja. U podešavanjima isključi „Probni podaci“.");
             return;
         }
 
@@ -581,7 +581,7 @@ public sealed class ProzorVm : ObservableObject, IDisposable
         {
             Upozorenje = (izvor.Poruka ?? "Nijedan senzor nije dostupan.") +
                          (Drajver
-                             ? " Uključi potpuni nadzor ili probne podatke u podešavanjima."
+                             ? Tekst.T(" Uključi potpuni nadzor ili probne podatke u podešavanjima.")
                              : $" Nedostaje i PawnIO drajver ({PawnIo.Adresa}).");
             return;
         }
@@ -590,14 +590,14 @@ public sealed class ProzorVm : ObservableObject, IDisposable
         {
             // The driver is the first thing missing; without it administrator rights add only the drives.
             bool vecPovisen = Admin.JeAdmin || izvor is PomocnikKlijent;
-            Upozorenje = "Nedostaje PawnIO drajver, pa nema temperature procesora, potrošnje, napona ni ventilatora. " +
+            Upozorenje = Tekst.T("Nedostaje PawnIO drajver, pa nema temperature procesora, potrošnje, napona ni ventilatora. ") +
                          $"Preuzmi ga sa {PawnIo.Adresa}" +
-                         (vecPovisen ? " i pokreni Takt ponovo." : " i uključi potpuni nadzor.");
+                         Tekst.T(vecPovisen ? " i pokreni Takt ponovo." : " i uključi potpuni nadzor.");
             return;
         }
 
         if (!Admin.JeAdmin && izvor is not PomocnikKlijent)
-            Upozorenje = "Temperatura procesora, potrošnja, ventilatori i diskovi traže potpuni nadzor (administrator).";
+            Upozorenje = Tekst.T("Temperatura procesora, potrošnja, ventilatori i diskovi traže potpuni nadzor (administrator).");
     }
 
     private DateTime _poslednjaTabela = DateTime.MinValue;

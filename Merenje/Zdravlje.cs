@@ -36,8 +36,8 @@ public sealed record StanjeDiska(
 /// <summary>A verdict in a few words: the level for the colour, the title for the line, the detail for the tool tip.</summary>
 public sealed record NalazZdravlja(NivoZdravlja Nivo, string Naslov, string Detalj)
 {
-    public static readonly NalazZdravlja Nema = new(NivoZdravlja.Nepoznato, "Nema podataka o zdravlju",
-        "SMART se čita kao administrator (usluga ili pomoćnik).");
+    public static readonly NalazZdravlja Nema = new(NivoZdravlja.Nepoznato, Takt.Tekst.T("Nema podataka o zdravlju"),
+        Takt.Tekst.T("SMART se čita kao administrator (usluga ili pomoćnik)."));
 }
 
 /// <summary>
@@ -58,35 +58,38 @@ public static class Zdravlje
         var upozorenje = Upozorenje(s);
         if (upozorenje is not null) return upozorenje;
 
-        return new NalazZdravlja(NivoZdravlja.Dobro, "Zdrav", Dobro(s));
+        return new NalazZdravlja(NivoZdravlja.Dobro, Takt.Tekst.T("Zdrav"), Dobro(s));
     }
 
     private static NalazZdravlja? Kvar(StanjeDiska s)
     {
         // Sectors that already failed and are waiting to be replaced: the drive is losing data now.
         if (s.NaCekanju is > 0)
-            return new(NivoZdravlja.Kvar, "Kvar: sektori čekaju popravku",
-                $"{s.NaCekanju} sektora se više ne čita ispravno i čeka zamenu - sačuvaj važne fajlove odmah.");
+            return new(NivoZdravlja.Kvar, Takt.Tekst.T("Kvar: sektori čekaju popravku"),
+                Takt.Tekst.P("{0} sektora se više ne čita ispravno i čeka zamenu - sačuvaj važne fajlove odmah.",
+                    s.NaCekanju));
 
         if (s.Neispravni is > 0)
-            return new(NivoZdravlja.Kvar, "Kvar: neispravni sektori",
-                $"{s.Neispravni} neispravnih sektora - podaci su već izgubljeni na tim mestima; menjaј disk.");
+            return new(NivoZdravlja.Kvar, Takt.Tekst.T("Kvar: neispravni sektori"),
+                Takt.Tekst.P("{0} neispravnih sektora - podaci su već izgubljeni na tim mestima; menjaj disk.",
+                    s.Neispravni));
 
         if (s.MediaGreske is > 0)
-            return new(NivoZdravlja.Kvar, "Kvar: greške u podacima",
-                $"{s.MediaGreske} grešaka u integritetu podataka (NVMe). Sačuvaj važno i planiraj zamenu.");
+            return new(NivoZdravlja.Kvar, Takt.Tekst.T("Kvar: greške u podacima"),
+                Takt.Tekst.P("{0} grešaka u integritetu podataka (NVMe). Sačuvaj važno i planiraj zamenu.", s.MediaGreske));
 
         // NVMe critical warning is a bit mask; any bit means the drive itself is asking for attention.
         if (s.KriticnoUpozorenje is > 0)
-            return new(NivoZdravlja.Kvar, "Kvar: drajv prijavljuje kritično stanje",
-                $"NVMe kritično upozorenje (maska {s.KriticnoUpozorenje}) - proveri Samsung Magician / proizvođački alat.");
+            return new(NivoZdravlja.Kvar, Takt.Tekst.T("Kvar: drajv prijavljuje kritično stanje"),
+                Takt.Tekst.P("NVMe kritično upozorenje (maska {0}) - proveri Samsung Magician / proizvođački alat.",
+                    s.KriticnoUpozorenje));
 
         if (s.ZivotniVek is { } zivot && zivot <= 5)
-            return new(NivoZdravlja.Kvar, "Kvar: životni vek potrošen",
-                $"Ostalo je {zivot:0} % upisanih podataka predviđenih za ovaj disk - zameni ga.");
+            return new(NivoZdravlja.Kvar, Takt.Tekst.T("Kvar: životni vek potrošen"),
+                Takt.Tekst.P("Ostalo je {0} % upisanih podataka predviđenih za ovaj disk - zameni ga.", $"{zivot:0}"));
 
         if (s.Temperatura is { } t && s.KriticnaTemperatura is { } tk && t >= tk)
-            return new(NivoZdravlja.Kvar, "Kvar: pregrijan", $"{t:0} °C je na kritičnoj granici ({tk:0} °C).");
+            return new(NivoZdravlja.Kvar, Takt.Tekst.T("Kvar: pregrijan"), Takt.Tekst.P("{0} °C je na kritičnoj granici ({1} °C).", $"{t:0}", $"{tk:0}"));
 
         return null;
     }
@@ -95,28 +98,31 @@ public static class Zdravlje
     {
         // Replaced sectors are not lost data yet, but the count only ever grows: worth watching.
         if (s.Preraspodeljeni is > 0)
-            return new(NivoZdravlja.Upozorenje, "Upozorenje: preraspoređeni sektori",
-                $"{s.Preraspodeljeni} sektora je disk zamenio rezervnim. Nije kvar, ali prati da broj ne raste.");
+            return new(NivoZdravlja.Upozorenje, Takt.Tekst.T("Upozorenje: preraspoređeni sektori"),
+                Takt.Tekst.P("{0} sektora je disk zamenio rezervnim. Nije kvar, ali prati da broj ne raste.",
+                    s.Preraspodeljeni));
 
         // CRC errors on the cable, not on the platters: usually a bad SATA cable or a loose connector.
         if (s.CrcGreske is > 0)
-            return new(NivoZdravlja.Upozorenje, "Upozorenje: greške u prenosu",
-                $"{s.CrcGreske} CRC grešaka - obično loš SATA kabl ili konektor, ne sam disk.");
+            return new(NivoZdravlja.Upozorenje, Takt.Tekst.T("Upozorenje: greške u prenosu"),
+                Takt.Tekst.P("{0} CRC grešaka - obično loš SATA kabl ili konektor, ne sam disk.", s.CrcGreske));
 
         if (s.ZivotniVek is { } zivot && zivot <= 20)
-            return new(NivoZdravlja.Upozorenje, "Upozorenje: životni vek se troši",
-                $"Ostalo je {zivot:0} % - vreme je da se pravi rezervna kopija i gleda novi disk.");
+            return new(NivoZdravlja.Upozorenje, Takt.Tekst.T("Upozorenje: životni vek se troši"),
+                Takt.Tekst.P("Ostalo je {0} % - vreme je da se pravi rezervna kopija i gleda novi disk.", $"{zivot:0}"));
 
         if (s.Istrosenost is { } istrosenost && istrosenost >= 80)
-            return new(NivoZdravlja.Upozorenje, "Upozorenje: disk je istrošen",
-                $"Istrošenost {istrosenost:0} % - blizu je kraju predviđenog života.");
+            return new(NivoZdravlja.Upozorenje, Takt.Tekst.T("Upozorenje: disk je istrošen"),
+                Takt.Tekst.P("Istrošenost {0} % - blizu je kraju predviđenog života.", $"{istrosenost:0}"));
 
         if (s.RezervniBlokovi is { } rezerva && s.GranicaRezervnih is { } granica && rezerva <= granica * 2)
-            return new(NivoZdravlja.Upozorenje, "Upozorenje: malo rezervnih blokova",
-                $"Rezervnih blokova {rezerva:0} (granica {granica:0}) - disk počinje da troši zamenu.");
+            return new(NivoZdravlja.Upozorenje, Takt.Tekst.T("Upozorenje: malo rezervnih blokova"),
+                Takt.Tekst.P("Rezervnih blokova {0} (granica {1}) - disk počinje da troši zamenu.",
+                    $"{rezerva:0}", $"{granica:0}"));
 
         if (s.Temperatura is { } t && s.GranicaTemperature is { } tg && t >= tg)
-            return new(NivoZdravlja.Upozorenje, "Upozorenje: topao disk", $"{t:0} °C je na granici upozorenja ({tg:0} °C).");
+            return new(NivoZdravlja.Upozorenje, Takt.Tekst.T("Upozorenje: topao disk"),
+                Takt.Tekst.P("{0} °C je na granici upozorenja ({1} °C).", $"{t:0}", $"{tg:0}"));
 
         return null;
     }
@@ -125,10 +131,10 @@ public static class Zdravlje
     {
         var delovi = new List<string>();
 
-        if (s.ZivotniVek is { } zivot) delovi.Add($"životni vek {zivot:0} %");
-        else if (s.Istrosenost is { } istrosenost) delovi.Add($"istrošenost {istrosenost:0} %");
+        if (s.ZivotniVek is { } zivot) delovi.Add(Takt.Tekst.P("životni vek {0} %", $"{zivot:0}"));
+        else if (s.Istrosenost is { } istrosenost) delovi.Add(Takt.Tekst.P("istrošenost {0} %", $"{istrosenost:0}"));
 
-        if (s.SatiRada is { } sati and > 0) delovi.Add($"{sati:N0} h rada".Replace(",", "."));
+        if (s.SatiRada is { } sati and > 0) delovi.Add(Takt.Tekst.P("{0} h rada", sati.ToString("N0", Format.Kultura)));
         if (s.Temperatura is { } t) delovi.Add($"{t:0} °C");
 
         delovi.Add(s.Nvme ? "NVMe" : s.Ssd ? "SSD" : "HDD");

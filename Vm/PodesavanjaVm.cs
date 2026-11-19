@@ -135,14 +135,14 @@ public sealed class PodesavanjaVm : ObservableObject
             bool uspelo = value ? Pokretanje.Ukljuci() : Pokretanje.Iskljuci();
             if (!uspelo)
             {
-                Poruka = "Windows nije prihvatio upis; pokušaj ponovo ili proveri zaštitu.";
+                Poruka = Tekst.T("Windows nije prihvatio upis; pokušaj ponovo ili proveri zaštitu.");
                 OnPropertyChanged();
                 return;
             }
 
             _podesavanja.PokreniSaWindowsom = value;
             _podesavanja.Sacuvaj();
-            Poruka = value ? "Takt će se pokretati sa Windowsom, u traci." : "Takt se više ne pokreće sa Windowsom.";
+            Poruka = Tekst.T(value ? "Takt će se pokretati sa Windowsom, u traci." : "Takt se više ne pokreće sa Windowsom.");
             OnPropertyChanged();
         }
     }
@@ -164,7 +164,7 @@ public sealed class PodesavanjaVm : ObservableObject
         }
     }
 
-    public string TekstBrisanja => PotvrdaBrisanja ? "Da, obriši sve" : "Obriši istoriju";
+    public string TekstBrisanja => Tekst.T(PotvrdaBrisanja ? "Da, obriši sve" : "Obriši istoriju");
 
     public string Folder => Putanje.Podaci;
 
@@ -202,7 +202,7 @@ public sealed class PodesavanjaVm : ObservableObject
     /// The second key to full monitoring, and the one the program cannot turn by itself: pawnio.eu is a
     /// separate, free download, and nothing is opened unless the user clicks the button.
     /// </summary>
-    public string DrajverStanje => PawnIo.JeTu ? "Instaliran" : "Nije instaliran";
+    public string DrajverStanje => Tekst.T(PawnIo.JeTu ? "Instaliran" : "Nije instaliran");
 
     public bool DrajverFali => !PawnIo.JeTu;
 
@@ -253,7 +253,7 @@ public sealed class PodesavanjaVm : ObservableObject
         if (!PotvrdaBrisanja)
         {
             PotvrdaBrisanja = true;
-            Poruka = "Brišu se sva sačuvana merenja iz baze, i to ne može da se vrati. Klikni još jednom za potvrdu.";
+            Poruka = Tekst.T("Brišu se sva sačuvana merenja iz baze, i to ne može da se vrati. Klikni još jednom za potvrdu.");
             return;
         }
 

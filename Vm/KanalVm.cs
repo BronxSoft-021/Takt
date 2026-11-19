@@ -297,8 +297,8 @@ public sealed class KanalVm : ObservableObject
             ? $"{Naslov}: nedostaje PawnIO drajver ({PawnIo.Adresa}). Bez njega ni administrator ne vidi " +
               "temperaturu, potrošnju ni napon. Klikni za objašnjenje."
             : PotpunNadzor
-                ? $"{Naslov}: ovaj deo ne daje senzore ni uz potpuni nadzor. Klikni za objašnjenje."
-                : $"{Naslov}: ovaj deo traži potpuni nadzor (administrator i drajver). Klikni za objašnjenje."
+                ? Tekst.P("{0}: ovaj deo ne daje senzore ni uz potpuni nadzor. Klikni za objašnjenje.", Naslov)
+                : Tekst.P("{0}: ovaj deo traži potpuni nadzor (administrator i drajver). Klikni za objašnjenje.", Naslov)
         : Uredjaj;
 
     /// <summary>

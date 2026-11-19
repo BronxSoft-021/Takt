@@ -255,6 +255,81 @@ public static class TekstEngleski
         ["pre {0} h {1} min"] = "{0} h {1} min ago",
         ["sada"] = "now",
 
+        // ---- Warnings and messages (ProzorVm) ----
+        ["Adresa nije otvorena. Ukucaj je u pregledač: {0}"] = "The address was not opened. Type it in a browser: {0}",
+        ["Program ne može da čita senzore: "] = "The program cannot read the sensors: ",
+        ["Tražim administratorska prava…"] = "Asking for administrator rights…",
+        ["Pomoćnik se nije javio. Razlog je u greske.log; program nastavlja bez njega."] =
+            "The helper did not answer. The reason is in greske.log; the program continues without it.",
+        ["Prikazani su probni podaci, ne stvarna merenja. U podešavanjima isključi „Probni podaci“."] =
+            "Sample data are shown, not real readings. Turn off \"Sample data\" in the settings.",
+        [" Uključi potpuni nadzor ili probne podatke u podešavanjima."] =
+            " Turn on full monitoring or sample data in the settings.",
+        ["Nedostaje PawnIO drajver, pa nema temperature procesora, potrošnje, napona ni ventilatora. "] =
+            "The PawnIO driver is missing, so there is no CPU temperature, power, voltage or fans. ",
+        [" i pokreni Takt ponovo."] = " and start Takt again.",
+        [" i uključi potpuni nadzor."] = " and turn on full monitoring.",
+        ["Temperatura procesora, potrošnja, ventilatori i diskovi traže potpuni nadzor (administrator)."] =
+            "CPU temperature, power, fans and drives need full monitoring (administrator).",
+        ["Istorija je obrisana. Usluga briše i svoju u roku od pola minuta."] =
+            "The history is deleted. The service deletes its own within half a minute.",
+
+        // ---- Settings messages ----
+        ["Windows nije prihvatio upis; pokušaj ponovo ili proveri zaštitu."] =
+            "Windows did not accept the change; try again or check the protection settings.",
+        ["Takt će se pokretati sa Windowsom, u traci."] = "Takt will start with Windows, in the tray.",
+        ["Takt se više ne pokreće sa Windowsom."] = "Takt no longer starts with Windows.",
+        ["Preko njega se čitaju temperatura procesora, potrošnja, napon, ventilatori i SMART diskova."] =
+            "It is what reads the CPU temperature, power, voltage, fans and drive SMART.",
+        ["Bez njega se, i kao administrator, vide samo opterećenje, grafička karta i ono što Windows sam daje. "] =
+            "Without it, even as administrator, only the load, the graphics card and what Windows gives by itself are visible. ",
+        ["Preuzmi ga sa pawnio.eu i pokreni Takt ponovo; program ga ne donosi sa sobom jer nije naš da se deli."] =
+            "Download it from pawnio.eu and start Takt again; the program does not carry it, as it is not ours to share.",
+        ["Brišu se sva sačuvana merenja iz baze, i to ne može da se vrati. Klikni još jednom za potvrdu."] =
+            "Every saved reading is deleted from the database, and that cannot be undone. Click once more to confirm.",
+        ["Sačuvano. Sve važi odmah osim probnih podataka — oni traže ponovno pokretanje programa. Usluga, ako je instalirana, svoje izmene prihvati u roku od pola minuta."] =
+            "Saved. Everything applies at once except sample data - they need the program restarted. The service, if installed, takes its own changes within half a minute.",
+        ["Instaliran"] = "Installed",
+        ["Nije instaliran"] = "Not installed",
+
+        // ---- Hidden sensors (EkranVm) ----
+        ["Još {0} senzor bez vrednosti"] = "{0} sensor without a value",
+        ["Još {0} senzora bez vrednosti"] = "{0} sensors without a value",
+
+        // ---- The helper's answers (Pomocnik) ----
+        ["Pomoćnik ne može da se pokrene: putanja programa nije poznata."] =
+            "The helper cannot start: the program path is unknown.",
+        ["Pomoćnik se pokreće. Ako Windows pita za dozvolu, pritisni „Da“."] =
+            "The helper is starting. If Windows asks for permission, press \"Yes\".",
+        ["Pokretanje je otkazano — program ostaje na čitanju bez administratora."] =
+            "The start was cancelled - the program stays on reading without administrator.",
+        ["Pomoćnik nije pokrenut: "] = "The helper was not started: ",
+
+        // ---- Disk verdicts (Zdravlje) ----
+        ["Zdrav"] = "Healthy",
+        ["Kvar"] = "Failing",
+        ["SMART se čita kao administrator (usluga ili pomoćnik)."] = "SMART is read as administrator (service or helper).",
+        ["Kvar: sektori čekaju popravku"] = "Failing: sectors waiting for repair",
+        ["{0} sektora se više ne čita ispravno i čeka zamenu - sačuvaj važne fajlove odmah."] =
+            "{0} sectors can no longer be read and are waiting to be replaced - save important files now.",
+        ["{0} neispravnih sektora - podaci su već izgubljeni na tim mestima; menjaj disk."] =
+            "{0} bad sectors - data is already lost there; replace the drive.",
+        ["Kvar: greške u podacima"] = "Failing: data errors",
+        ["{0} grešaka u integritetu podataka (NVMe). Sačuvaj važno i planiraj zamenu."] =
+            "{0} data integrity errors (NVMe). Save what matters and plan a replacement.",
+        ["Kvar: drajv prijavljuje kritično stanje"] = "Failing: the drive reports a critical state",
+        ["NVMe kritično upozorenje (maska {0}) - proveri Samsung Magician / proizvođački alat."] =
+            "NVMe critical warning (mask {0}) - check Samsung Magician or the vendor's tool.",
+        ["Kvar: životni vek potrošen"] = "Failing: lifetime used up",
+        ["Ostalo je {0} % upisanih podataka predviđenih za ovaj disk - zameni ga."] =
+            "{0} % of the writes this drive was made for are left - replace it.",
+        ["Kvar: pregrijan"] = "Failing: overheated",
+        ["{0} °C je na kritičnoj granici ({1} °C)."] = "{0} °C is at the critical limit ({1} °C).",
+        ["Upozorenje: preraspoređeni sektori"] = "Warning: reallocated sectors",
+        ["Upozorenje: greške u prenosu"] = "Warning: transfer errors",
+        ["{0} CRC grešaka - obično loš SATA kabl ili konektor, ne sam disk."] =
+            "{0} CRC errors - usually a bad SATA cable or connector, not the drive itself.",
+
         // ---- Sessions screen ----
         ["Sesije igara"] = "Game sessions",
         ["Takt sam snima svaku igru duže od minuta (kad usluga meri kadrove) i posle nje pravi izveštaj."] =
@@ -272,5 +347,28 @@ public static class TekstEngleski
         ["Izveštaji o odigranim sesijama: trajanje, FPS, zastoji, temperature"] =
             "Reports of played sessions: duration, FPS, stalls, temperatures",
         ["Veliki pult preko celog ekrana, za drugi monitor dok igraš (Esc izlazi)"] =
-            "A large console across the whole screen, for a second monitor while you play (Esc leaves)",    };
+            "A large console across the whole screen, for a second monitor while you play (Esc leaves)",        ["Kvar: neispravni sektori"] = "Failing: bad sectors",
+        ["Upozorenje: životni vek se troši"] = "Warning: lifetime running out",
+        ["Upozorenje: disk je istrošen"] = "Warning: the drive is worn",
+        ["Upozorenje: malo rezervnih blokova"] = "Warning: few spare blocks",
+        ["Upozorenje: topao disk"] = "Warning: the drive runs hot",
+        ["Nema podataka o zdravlju"] = "No health data",
+        ["{0} sektora je disk zamenio rezervnim. Nije kvar, ali prati da broj ne raste."] =
+            "{0} sectors were replaced by spares. Not a failure, but watch that the number does not grow.",
+        ["Ostalo je {0} % - vreme je da se pravi rezervna kopija i gleda novi disk."] =
+            "{0} % is left - time for a backup and a look at a new drive.",
+        ["Istrošenost {0} % - blizu je kraju predviđenog života."] =
+            "{0} % worn - close to the end of its design life.",
+        ["Rezervnih blokova {0} (granica {1}) - disk počinje da troši zamenu."] =
+            "{0} spare blocks (limit {1}) - the drive is starting to use them up.",
+        ["{0} °C je na granici upozorenja ({1} °C)."] = "{0} °C is at the warning limit ({1} °C).",
+        ["životni vek {0} %"] = "lifetime {0} %",
+        ["istrošenost {0} %"] = "wear {0} %",
+        ["{0} h rada"] = "{0} h on",        ["Otvori Takt"] = "Open Takt",
+        ["{0}: nedostaje PawnIO drajver ({1}). Bez njega ni administrator ne vidi temperaturu, potrošnju ni napon. Klikni za objašnjenje."] =
+            "{0}: the PawnIO driver is missing ({1}). Without it even an administrator sees no temperature, power or voltage. Click for the explanation.",
+        ["{0}: ovaj deo ne daje senzore ni uz potpuni nadzor. Klikni za objašnjenje."] =
+            "{0}: this part gives no sensors even with full monitoring. Click for the explanation.",
+        ["{0}: ovaj deo traži potpuni nadzor (administrator i drajver). Klikni za objašnjenje."] =
+            "{0}: this part needs full monitoring (administrator and driver). Click for the explanation.",    };
 }
