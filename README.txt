@@ -1,4 +1,20 @@
-﻿BronxSoft Takt 0.34.49 alfa
+﻿BronxSoft Takt 0.36.51 alfa
+19. 11. 2026.
+
+NOVO
+- Točkić miša više ne skače: pult i stranica podešavanja klize do novog mesta u oko 0,2 s, a drugi
+  pokret točkića nastavlja odakle je krenuo.
+- Merači idu zeleno → žuto → crveno po visini; kada deo prijavi svoje granice, žuto počinje na granici
+  upozorenja, a crveno na kritičnoj - hladan deo nikad ne izgleda vruć samo zato što je visoko na skali.
+
+DORADE
+- Nova paleta: hladniji i dublji tonovi (plavo-sivi umesto braon-sivih), svetliji tekst, tiša linija;
+  ćilibar ostaje akcenat, a boju sada nose merači.
+- Naponi napajanja sa matične ploče (+3,3 V, +5 V, +12 V, -12 V, 3VSB...) više se ne prikazuju: to su
+  grube procene Super I/O čipa, retko u ±10 %, i samo su gušili kanal "Vent.". Naponi procesora i
+  grafičke karte ostaju - njih daju sami delovi.
+
+BronxSoft Takt 0.34.49 alfa
 19. 11. 2026.
 
 NOVO

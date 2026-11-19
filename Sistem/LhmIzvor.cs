@@ -187,6 +187,12 @@ public sealed class LhmIzvor : IIzvorSenzora
                 if (jedinica == Jedinica.Nepoznato) continue;
                 if (Zanemari(senzor.Name, jedinica)) continue;
 
+                // The board's Super I/O reports the power rails as rough ADC guesses (+3.3 V, +5 V, +12 V, -12 V,
+                // 3VSB…): rarely within ten percent, and nothing a person can act on - a real check needs a
+                // multimeter. They are left out instead of crowding the fan channel. The processor's and the card's
+                // own voltages stay; those are read from the parts themselves (Vcore on Ryzen comes from the CPU).
+                if (g == Grupa.Hladjenje && jedinica == Jedinica.Volt) continue;
+
                 var osnovno = Prevedi(g, senzor.Name, jedinica);
                 var ime = Jedinstveno(osnovno, uredjaj, g, jedinica, stavke);
                 // The library's own path is the stable key: the name beside it may be translated or renamed.

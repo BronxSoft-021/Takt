@@ -83,11 +83,13 @@ public partial class GlavniProzor : Window
         e.Handled = true;
     }
 
-    /// <summary>The console scrolls sideways; the mouse wheel moves it, as nobody looks for a thin bar at the bottom.</summary>
+    /// <summary>The console scrolls sideways; the mouse wheel moves it smoothly, as nobody looks for a thin bar below.</summary>
     private void NaTockicPulta(object sender, MouseWheelEventArgs e)
     {
         if (sender is not System.Windows.Controls.ScrollViewer pult || pult.ScrollableWidth <= 0) return;
-        pult.ScrollToHorizontalOffset(pult.HorizontalOffset - e.Delta / 2.0);
+
+        // One notch is 120; about 70 pixels of travel feels like one step of a page, and the rest is the glide.
+        Glatko.Vodoravno(pult, -e.Delta * 0.6);
         e.Handled = true;
     }
 

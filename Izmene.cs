@@ -22,6 +22,15 @@ public static class Izmene
     [
         new("alfa", "19. 11. 2026.",
         [
+            "Točkić miša više ne skače: pult i stranica podešavanja klize do novog mesta u oko 0,2 s, a drugi pokret točkića nastavlja odakle je krenuo (`Prikaz/Glatko.cs`).",
+            "Merači idu zeleno → žuto → crveno po visini; kada deo prijavi svoje granice, žuto počinje na granici upozorenja, a crveno na kritičnoj, pa hladan deo nikad ne izgleda vruć samo zato što je visoko na skali.",
+        ],
+        [
+            "Nova paleta: hladniji i dublji tonovi (plavo-sivi umesto braon-sivih), svetliji tekst, tiša linija; ćilibar ostaje akcenat, a boju sada nose merači.",
+            "Naponi napajanja sa matične ploče (+3,3 V, +5 V, +12 V, −12 V, 3VSB…) više se ne prikazuju: to su grube procene Super I/O čipa, retko u ±10 %, i samo su gušili kanal „Vent.“. Naponi procesora i grafičke karte ostaju — njih daju sami delovi.",
+        ]),
+        new("alfa", "19. 11. 2026.",
+        [
             "Senzor dobija stabilno ime (`Ident`) — putanju iz biblioteke, npr. `/amdcpu/0/temperature/2` — pa istorija preživljava preimenovanje i budući prevod na engleski.",
         ],
         [

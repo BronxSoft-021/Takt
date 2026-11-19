@@ -90,6 +90,23 @@ public static class PultTestovi
         return Task.CompletedTask;
     }
 
+    /// <summary>The ramp: green at the bottom, amber halfway, red at the top; the part's own limits move the amber.</summary>
+    public static Task Rampa()
+    {
+        Proveri.Blizu(0, VuMerac.Polozaj(0, null, null), 0.01, "dno je zeleno");
+        Proveri.Blizu(50, VuMerac.Polozaj(0.5, null, null), 0.01, "pola skale je žuto");
+        Proveri.Blizu(100, VuMerac.Polozaj(1, null, null), 0.01, "vrh je crven");
+
+        // With the part's limits: amber starts at the warm limit, red at the hot one.
+        Proveri.Blizu(50, VuMerac.Polozaj(0.8, 0.8, 0.95), 0.01, "toplo je žuto");
+        Proveri.Blizu(100, VuMerac.Polozaj(0.95, 0.8, 0.95), 0.01, "vruće je crveno");
+        Proveri.Da(VuMerac.Polozaj(0.7, 0.8, 0.95) < 50, "ispod toplog još nije žuto");
+
+        Proveri.Jednako(0, VuMerac.Upaljeno(0, 20), "ništa upaljeno na nuli");
+        Proveri.Jednako(20, VuMerac.Upaljeno(1, 20), "sve upaljeno na vrhu");
+        return Task.CompletedTask;
+    }
+
     /// <summary>The peak holds two seconds, then falls one segment (of twenty) per second; a higher value lifts it at once.</summary>
     public static Task Vrh()
     {

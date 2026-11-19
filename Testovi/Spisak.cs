@@ -34,6 +34,7 @@ public static class Spisak
         ("pult: tiho čitanje pa obaveštenje", PultTestovi.TihoIPaObavesti),
         ("pult: traka se osvežava i kad tabela čeka", PultTestovi.BezTabele),
         ("pult: segmenti i skala temperature", PultTestovi.Segmenti),
+        ("pult: rampa zeleno-žuto-crveno", PultTestovi.Rampa),
         ("cev: pravi se i pušta klijenta", CevTestovi.PraviIPusta),
         ("prozor: sačuvano mesto se koristi samo ako je na ekranu", ProzorTestovi.Sredi),
         ("prozor: podešavanja iz trake se ne zatvaraju drugim klikom", ProzorTestovi.Podesavanja),

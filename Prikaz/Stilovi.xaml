@@ -3,25 +3,26 @@
                     xmlns:prikaz="clr-namespace:Takt.Prikaz"
                     xmlns:sys="clr-namespace:System;assembly=mscorlib">
 
-    <!-- The console: dark equipment, one orange accent. Flat, 4 px controls, 8 px panels. -->
-    <Color x:Key="BojaPozadina">#101214</Color>
-    <Color x:Key="BojaPanel">#15181B</Color>
-    <Color x:Key="BojaPovrsina">#1C2024</Color>
-    <Color x:Key="BojaPovrsinaHover">#242A2F</Color>
-    <Color x:Key="BojaLinija">#2A3035</Color>
-    <Color x:Key="BojaLinijaJaka">#3A4249</Color>
-    <Color x:Key="BojaTekst">#EDE9E1</Color>
-    <Color x:Key="BojaMutan">#A8A49C</Color>
-    <Color x:Key="BojaBled">#6E6B66</Color>
-    <Color x:Key="BojaAkcenat">#F0A23B</Color>
-    <Color x:Key="BojaAkcenatHover">#F5B25A</Color>
-    <Color x:Key="BojaAkcenatPritisak">#D8871F</Color>
-    <Color x:Key="BojaNaAkcentu">#1B1206</Color>
-    <Color x:Key="BojaUpozorenje">#E8B33A</Color>
-    <Color x:Key="BojaVruce">#E5654C</Color>
-    <Color x:Key="BojaDobro">#6CC28A</Color>
-    <Color x:Key="BojaGrafikon">#121518</Color>
-    <Color x:Key="BojaIzabrano">#262B30</Color>
+    <!-- The console: dark equipment, one amber accent. Flat, 4 px controls, 8 px panels.
+         Colours are cool and deep (blue-grey, not brown-grey): the meters carry the colour, the chrome stays quiet. -->
+    <Color x:Key="BojaPozadina">#0A0C10</Color>
+    <Color x:Key="BojaPanel">#10131A</Color>
+    <Color x:Key="BojaPovrsina">#171B23</Color>
+    <Color x:Key="BojaPovrsinaHover">#212834</Color>
+    <Color x:Key="BojaLinija">#222934</Color>
+    <Color x:Key="BojaLinijaJaka">#333D4C</Color>
+    <Color x:Key="BojaTekst">#E8EDF4</Color>
+    <Color x:Key="BojaMutan">#94A0B0</Color>
+    <Color x:Key="BojaBled">#5E6A79</Color>
+    <Color x:Key="BojaAkcenat">#F2A33C</Color>
+    <Color x:Key="BojaAkcenatHover">#F7B45F</Color>
+    <Color x:Key="BojaAkcenatPritisak">#D98A22</Color>
+    <Color x:Key="BojaNaAkcentu">#14100A</Color>
+    <Color x:Key="BojaUpozorenje">#E7B84A</Color>
+    <Color x:Key="BojaVruce">#F2634F</Color>
+    <Color x:Key="BojaDobro">#45C08A</Color>
+    <Color x:Key="BojaGrafikon">#0C0F14</Color>
+    <Color x:Key="BojaIzabrano">#1D2430</Color>
 
     <SolidColorBrush x:Key="Pozadina" Color="{StaticResource BojaPozadina}" />
     <SolidColorBrush x:Key="Panel" Color="{StaticResource BojaPanel}" />

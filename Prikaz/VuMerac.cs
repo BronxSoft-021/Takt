@@ -4,20 +4,26 @@ using System.Windows.Media;
 namespace Takt.Prikaz;
 
 /// <summary>
-/// A column of segments, like the meter on a mixing desk. Lit from the bottom up to the value; the peak is one
-/// dimmer segment above it; segments above the part's warm and hot limits light amber and red, and the
-/// segment at the hot limit glows faintly even when unlit, so the limit is always on the scale.
+/// A column of segments, like the meter on a mixing desk. Lit from the bottom up to the value, in a ramp that
+/// goes green - amber - red as it climbs; the peak is the same colour, dimmed, one or two segments above.
+/// When the part reports its own warm and hot limits the ramp follows them (amber from the warm limit, red at
+/// the hot one), so a cool part never looks hot just because it sits high on a fixed scale.
 /// Drawn by hand: twenty rectangles, redrawn only when a value changes.
 /// </summary>
 public sealed class VuMerac : FrameworkElement
 {
-    private static readonly Brush Ugaseno = Zamrzni(Color.FromRgb(0x22, 0x27, 0x2B));
-    private static readonly Brush GranicaUgaseno = Zamrzni(Color.FromRgb(0x4A, 0x24, 0x20));
-    private static readonly Brush Akcenat = Zamrzni(Color.FromRgb(0xF0, 0xA2, 0x3B));
-    private static readonly Brush Toplo = Zamrzni(Color.FromRgb(0xE8, 0xB3, 0x3A));
-    private static readonly Brush Vruce = Zamrzni(Color.FromRgb(0xE5, 0x65, 0x4C));
-    private static readonly Brush VrhObican = Zamrzni(Color.FromRgb(0x8A, 0x66, 0x30));
-    private static readonly Brush VrhVruc = Zamrzni(Color.FromRgb(0x8A, 0x3A, 0x2C));
+    private static readonly Brush Ugaseno = Zamrzni(Color.FromRgb(0x17, 0x1C, 0x24));
+    private static readonly Brush GranicaUgaseno = Zamrzni(Color.FromRgb(0x3F, 0x1F, 0x1C));
+
+    private static readonly Color Zeleno = Color.FromRgb(0x45, 0xC0, 0x8A);
+    private static readonly Color Zuto = Color.FromRgb(0xE7, 0xB8, 0x4A);
+    private static readonly Color Crveno = Color.FromRgb(0xF2, 0x63, 0x4F);
+
+    /// <summary>Green to red in 101 frozen steps: a segment asks for the colour by its place on the scale.</summary>
+    private static readonly Brush[] Rampa = NapraviRampu(1.0);
+
+    /// <summary>The same ramp, darker: the peak marker, which must not outshine the segments.</summary>
+    private static readonly Brush[] RampaTamna = NapraviRampu(0.45);
 
     public static readonly DependencyProperty UdeoProperty = Svojstvo(nameof(Udeo), 0.0);
     public static readonly DependencyProperty VrhProperty = Svojstvo(nameof(Vrh), 0.0);
@@ -34,6 +40,41 @@ public sealed class VuMerac : FrameworkElement
         var cetka = new SolidColorBrush(boja);
         cetka.Freeze();
         return cetka;
+    }
+
+    private static Brush[] NapraviRampu(double jacina)
+    {
+        var rampa = new Brush[101];
+        for (int i = 0; i <= 100; i++)
+        {
+            double t = i / 100.0;
+            var boja = t < 0.5 ? Pomesaj(Zeleno, Zuto, t * 2) : Pomesaj(Zuto, Crveno, (t - 0.5) * 2);
+            rampa[i] = Zamrzni(jacina >= 1 ? boja : Pomesaj(Color.FromRgb(0x0A, 0x0C, 0x10), boja, jacina));
+        }
+        return rampa;
+    }
+
+    private static Color Pomesaj(Color od, Color ka, double t) => Color.FromRgb(
+        (byte)Math.Round(od.R + (ka.R - od.R) * t),
+        (byte)Math.Round(od.G + (ka.G - od.G) * t),
+        (byte)Math.Round(od.B + (ka.B - od.B) * t));
+
+    /// <summary>
+    /// Where a segment sits on the green - amber - red ramp (0 green, 50 amber, 100 red). With the part's own
+    /// limits the amber starts at the warm limit and the red at the hot one; without them the scale is the ramp.
+    /// Public for a test.
+    /// </summary>
+    public static double Polozaj(double udeo, double? toplo, double? vruce)
+    {
+        if (vruce is { } v && v > 0.02)
+        {
+            double topla = toplo is { } t && t > 0.02 && t < v ? t : v * 0.75;
+            if (udeo >= v) return 100;
+            if (udeo >= topla) return 50 + 50 * (udeo - topla) / (v - topla);
+            return Math.Clamp(50 * udeo / topla, 0, 50);
+        }
+
+        return Math.Clamp(udeo * 100, 0, 100);
     }
 
     public double Udeo { get => (double)GetValue(UdeoProperty); set => SetValue(UdeoProperty, value); }
@@ -75,12 +116,12 @@ public sealed class VuMerac : FrameworkElement
             int redni = i + 1;                      // 1 = bottom segment
             double donjiUdeo = (double)i / n;       // where this segment starts on the scale
 
-            bool vruc = VruceGranica is { } v && donjiUdeo >= v - 1e-9;
-            bool topao = !vruc && ToploGranica is { } t && donjiUdeo >= t - 1e-9;
+            // The colour follows the segment's own place: green low, amber halfway, red at the top.
+            int mesto = (int)Math.Round(Polozaj(donjiUdeo, ToploGranica, VruceGranica));
 
-            Brush? boja = redni <= upaljeno
-                ? vruc ? Vruce : topao ? Toplo : Akcenat
-                : redni == vrh ? vruc ? VrhVruc : VrhObican : null;
+            Brush? boja = redni <= upaljeno ? Rampa[mesto]
+                : redni == vrh ? RampaTamna[mesto]
+                : null;
             if (boja is null) continue;
 
             double y = visina - redni * visinaSegmenta - i * razmak;
