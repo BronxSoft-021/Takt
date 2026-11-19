@@ -1,4 +1,4 @@
-﻿BronxSoft Takt 0.38.61 alfa
+﻿BronxSoft Takt 0.38.63 alfa
 19. 11. 2026.
 
 NOVO

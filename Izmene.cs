@@ -33,6 +33,8 @@ public static class Izmene
             "Ispravka koja se meri: LHM je pitao diskove **svake sekunde**, a jedno pitanje traje 1,2–1,6 s (šest diskova) — čitanje je bilo **750 ms** (75 % jezgra). Sada se diskovi pitaju na 10 minuta: čitanje je **15 ms** (1,5 %).",
             "Trake „Aktivnost“, „Aktivnost upisa“ i „Aktivnost čitanja“ su **sklonjene** sa diskova: brojale su se iz istih SMART brojača, pa bi uz pitanje na 10 minuta bile zamrznuta laž. Ostaju temperatura, zauzeće i slobodan prostor.",
             "Podnožje više ne laže o pravima: pisalo je „običan korisnik“ i kad je gore stajalo „Potpuni nadzor · usluga“. Sada zaglavlje i podnožje dolaze iz **istog prekidača** (`ProzorVm.OpisStanja`): „usluga“, „pomoćnik“, „administrator“ ili — samo kad niko ne pomaže — „običan korisnik“.",
+            "FPS više ne nestaje kad je **prozor sam povišen**: merenje kadrova je bilo samo u usluzi i pomoćniku, pa je baš najviše prava imao prozor koji igru ne vidi. Sada povišen prozor meri kadrove sam — i samo tada, jer uz uslugu ili pomoćnika postoji jedna ETW sesija, ne dve.",
+            "Usluga se Windowsu javi **odmah**, a motor (drajver, diskovi) otvara u pozadini: `OnStart` je blokirao dok se sve ne otvori — mereno **9 s** do „Running“, a sa uspavanim diskovima to bi prešlo 30 s koliko SCM daje i Windows bi rekao da usluga nije pokrenuta.",
         ]),
         new("alfa", "19. 11. 2026.",
         [

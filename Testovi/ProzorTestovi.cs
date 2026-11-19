@@ -27,6 +27,20 @@ public static class ProzorTestovi
     }
 
     /// <summary>
+    /// FPS in the one case that used to have no game at all: the window itself elevated, nobody helping. ETW
+    /// gives frame events only to administrators, so that window becomes its own counter - and only then: with a
+    /// service or helper there must be one ETW session, not two.
+    /// </summary>
+    public static Task Kadrovi()
+    {
+        Proveri.Da(ProzorVm.SamMeriKadrove(imaPomocnika: false, admin: true), "povišen prozor meri kadrove sam");
+        Proveri.Da(!ProzorVm.SamMeriKadrove(imaPomocnika: true, admin: true),
+            "uz uslugu ili pomoćnika prozor ne pravi drugu sesiju");
+        Proveri.Da(!ProzorVm.SamMeriKadrove(imaPomocnika: false, admin: false), "bez prava se ne meri");
+        return Task.CompletedTask;
+    }
+
+    /// <summary>
     /// Header and footer must tell the same story. „Potpuni nadzor · usluga“ above and „običan korisnik“ below
     /// was the lie a report pointed at (19. 11. 2026): the footer asked only this window, never the helper.
     /// </summary>

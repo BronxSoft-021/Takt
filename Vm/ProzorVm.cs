@@ -19,6 +19,7 @@ public sealed class ProzorVm : ObservableObject, IDisposable
 
     private Nadzor? _nadzor;
     private PomocnikKlijent? _pomocnik;
+    private MeracKadrova? _kadrovi;
     private object? _prikaz;
     private KanalVm? _kanal;
     private string _stanje = "";
@@ -334,7 +335,28 @@ public sealed class ProzorVm : ObservableObject, IDisposable
         _pomocnik = gotov ?? PomocnikKlijent.Probaj();
         if (_pomocnik is not null) return _pomocnik;
 
+        // Frames belong to the service or the helper - but when the window itself was started as administrator
+        // and nobody else is running, it is the only one who may count them. Without this, exactly the most
+        // privileged window would be the one without FPS.
+        if (SamMeriKadrove(imaPomocnika: false, Admin.JeAdmin)) PokreniKadrove();
+
         return new SlozeniIzvor(new LhmIzvor(), new RamIzvor());
+    }
+
+    /// <summary>
+    /// Who counts frames: the service/helper whenever there is one (one ETW session, one driver), otherwise this
+    /// window - if it is elevated. Public for a test.
+    /// </summary>
+    public static bool SamMeriKadrove(bool imaPomocnika, bool admin) => !imaPomocnika && admin;
+
+    private void PokreniKadrove()
+    {
+        if (_kadrovi is not null) return;
+
+        _kadrovi = new MeracKadrova();
+        _kadrovi.Pokreni();
+        if (_kadrovi.Greska is { } greska)
+            _dispatcher.BeginInvoke(new Action(() => Upozorenje = greska));
     }
 
     /// <summary>True while a button offering the helper makes sense: real data, not elevated, no helper yet.</summary>
@@ -397,6 +419,10 @@ public sealed class ProzorVm : ObservableObject, IDisposable
         Upozorenje = null;
 
         if (stari is not null) await Task.Run(() => stari.Dispose());
+
+        // The helper brings its own frame counter (and the ETW session has one name): stop ours before it starts.
+        _kadrovi?.Dispose();
+        _kadrovi = null;
 
         await PokreniAsync(klijent);
 
@@ -551,9 +577,11 @@ public sealed class ProzorVm : ObservableObject, IDisposable
         foreach (var kanal in Kanali)
             kanal.Osvezi(snimak, najmanje, najvise, sada, tabela && ReferenceEquals(kanal, Kanal));
 
-        // The game: only the service and the helper measure frames (Windows gives frame events to administrators).
-        // Probe data play a made-up game too, so the Scene can be seen (and pictured) without one.
+        // The game: the service and the helper count frames (Windows gives frame events to administrators); when
+        // the window itself is the elevated one, it counts them (see PraviIzvor). Probe data play a made-up game
+        // too, so the Scene can be seen (and pictured) without one.
         Igra.Postavi(_pomocnik is { } izvor ? _birac.Izaberi(izvor.Igre)
+            : _kadrovi is { } kadrovi ? _birac.Izaberi(kadrovi.Stanje().ToArray())
             : _rad.ProbniPodaci ? ProbnaIgra(snimak.Vreme) : null);
         Sesija?.Uzmi(Igra, Kanali, sada);
         ProveriZdravlje();
@@ -726,5 +754,16 @@ public sealed class ProzorVm : ObservableObject, IDisposable
         }
         _nadzor = null;
         _pomocnik = null;
+
+        // The window counted frames itself (elevated, no service): its ETW session goes with it.
+        try
+        {
+            _kadrovi?.Dispose();
+        }
+        catch (Exception ex)
+        {
+            Dnevnik.Greska("Zatvaranje merenja kadrova", ex);
+        }
+        _kadrovi = null;
     }
 }

@@ -39,6 +39,7 @@ public static class Spisak
         ("prozor: sačuvano mesto se koristi samo ako je na ekranu", ProzorTestovi.Sredi),
         ("prozor: podešavanja iz trake se ne zatvaraju drugim klikom", ProzorTestovi.Podesavanja),
         ("prozor: podnožje kaže ko čita senzore", ProzorTestovi.Prava),
+        ("prozor: FPS i kad je prozor sam povišen", ProzorTestovi.Kadrovi),
         ("pokretanje: linija za Windows Run", ProzorTestovi.PokretanjeSaWindowsom),
         ("pokretanje: upis u Run, čitanje i brisanje", PokretanjeTest.UpisiProcitajObrisi),
         ("drajver: fajl ili upis u registru znače instaliran", PawnIoTest.Provera),
