@@ -50,6 +50,7 @@ public static class Izmene
             "Brojane temperature matične ploče („Temperatura 1…6“) su **ulazi čipa** Nuvoton NCT6798D i ne zna se šta mere — ne pale lampicu ni boju (i pre ovoga), a kanal koji stoji na istoj visokoj vrednosti („Temperatura 6“ = 80,0 °C, najmanje = prosek = najviše) je prazan ulaz i **više se ne prikazuje**.",
             "Na **manjem ekranu** (laptop 1366×768, projektor) prozor se sada skrati da stane: ranije je sačuvan prozor od 1240×760 ostajao veći od ekrana i desna ivica i statusna traka su ispadale. Prozor koji je potpuno van ekrana se i dalje odbacuje (monitor je odkačen), a sa dva monitora se ništa ne pomera.",
             "Kanal više ne ostaje prazan kad mašina **drugačije zove** svoje senzore (npr. „CPU Total“ umesto „Opterećenje procesora“): ako tačnog imena nema, merač uzima prvi senzor odgovarajuće jedinice (% levo, °C desno) — do sada je pult pokazivao „traži nadzor“ dok solo panel ima 32 jezgra.",
+            "**Prenos na drugi računar**: `Napravi prenos.bat` pravi `dist-prenos` (~209 MB) sa .NET-om u sebi, pa program radi i tamo gde .NET 10 nije instaliran. Obična instalacija i dalje traži .NET 10 Desktop Runtime (x64); PawnIO drajver se u oba slučaja instalira posebno.",
         ]),
         new("alfa", "19. 11. 2026.",
         [

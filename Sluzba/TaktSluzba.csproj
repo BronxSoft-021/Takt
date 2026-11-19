@@ -10,7 +10,7 @@
     <SelfContained>false</SelfContained>
     <AssemblyName>TaktSluzba</AssemblyName>
     <RootNamespace>TaktSluzba</RootNamespace>
-    <Version>0.38.78</Version>
+    <Version>0.38.79</Version>
     <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
     <Product>BronxSoft Takt - usluga</Product>
     <Company>BronxSoft</Company>

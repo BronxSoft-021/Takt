@@ -1,4 +1,4 @@
-BronxSoft Takt 0.38.78 alfa
+BronxSoft Takt 0.38.79 alfa
 19. 11. 2026.
 
 NOVO
@@ -363,3 +363,14 @@ DORADE
 - Pokretanje pomoćnika ide sa pozadinske niti: ni Windowsovo pitanje za dozvolu ne blokira prozor.
 - Grafikon sam otvara prvi senzor koji ima vrednost, ose uskog raspona dobijaju decimale,
   izabrana pilula i kućica za potvrdu su čitljivi na tamnoj pozadini.
+
+NA DRUGI RAČUNAR
+- Program traži **.NET 10 Desktop Runtime (x64)**. Ako ga tamo nema, Windows kaže šta fali i program se ne
+  pokreće — to je jedino što ga zaustavlja.
+- Bez .NET-a: **Napravi prenos.bat** pravi `dist-prenos` (~190 MB) koji ga nosi u sebi; ceo folder se prekopira
+  i Takt.exe radi odmah.
+- **PawnIO drajver** se instalira posebno (pawnio.eu). Bez njega program radi, ali bez temperature procesora,
+  potrošnje, napona i ventilatora ploče.
+- **Usluga** (nadzor u pozadini) traži administratora pri instalaciji; bez nje prozor radi kao običan korisnik,
+  sa onim što sme da pročita.
+- Windows 10 verzija 2004 (build 19041) ili noviji, 64-bitni.
