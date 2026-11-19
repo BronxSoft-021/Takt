@@ -175,36 +175,41 @@ public static class RazneMasine
     }
 
     /// <summary>
-    /// The same number from two sources is one row: memory from the hardware library and from Windows would stand
-    /// side by side otherwise. The first source wins, and a reading still means the same sensor.
+    /// Two drives both have a sensor called "Temperatura" and both must stay: merging the sources by name alone once
+    /// threw five of six drives away (125 sensors became 93 - seen live 19. 11. 2026). The device is part of a sensor.
     /// </summary>
-    public static Task BezDuplikata()
+    public static Task IstaImenaRazniUredjaji()
     {
-        var prvi = new Jedan(new Senzor(new SenzorKljuc(Grupa.Memorija, "Računar", "Zauzeto"), Jedinica.Megabajt), 100);
-        var drugi = new Jedan(new Senzor(new SenzorKljuc(Grupa.Memorija, "ASUS", "Zauzeto"), Jedinica.Megabajt), 999);
-        using var spoj = new SlozeniIzvor(prvi, drugi);
+        var diskovi = new Jedan(
+            (new Senzor(new SenzorKljuc(Grupa.Diskovi, "Samsung 870", "Temperatura"), Jedinica.Celzijus), 34),
+            (new Senzor(new SenzorKljuc(Grupa.Diskovi, "ST12000VE", "Temperatura"), Jedinica.Celzijus), 37));
+        using var spoj = new SlozeniIzvor(diskovi);
 
-        Proveri.Jednako(1, spoj.Senzori.Count, "isto ime i jedinica se prikazuje jednom");
-        Proveri.Jednako(100.0, spoj.Uzmi().Vrednosti[0], "pobeđuje prvi izvor");
+        Proveri.Jednako(2, spoj.Senzori.Count, "oba diska zadržavaju svoju temperaturu");
+        Proveri.Jednako("Samsung 870", spoj.Senzori[0].Uredjaj, "prvi disk");
+        Proveri.Jednako("ST12000VE", spoj.Senzori[1].Uredjaj, "drugi disk");
+        var vrednosti = spoj.Uzmi().Vrednosti;
+        Proveri.Jednako(34.0, vrednosti[0], "prva vrednost je prvog diska");
+        Proveri.Jednako(37.0, vrednosti[1], "druga vrednost je drugog diska");
         return Task.CompletedTask;
     }
 
-    /// <summary>One sensor, one value: the smallest source there is, for the merge test.</summary>
+    /// <summary>A few sensors, one value each: the smallest source there is, for the merge tests.</summary>
     private sealed class Jedan : IIzvorSenzora
     {
-        private readonly double _vrednost;
+        private readonly double[] _vrednosti;
 
-        public Jedan(Senzor senzor, double vrednost)
+        public Jedan(params (Senzor Senzor, double Vrednost)[] senzori)
         {
-            Senzori = [senzor];
-            _vrednost = vrednost;
+            Senzori = senzori.Select(s => s.Senzor).ToArray();
+            _vrednosti = senzori.Select(s => s.Vrednost).ToArray();
         }
 
         public string Naziv => "probni";
         public bool Pravi => true;
         public IReadOnlyList<Senzor> Senzori { get; }
         public string? Poruka => null;
-        public Snimak Uzmi() => new(DateTime.Now, [_vrednost]);
+        public Snimak Uzmi() => new(DateTime.Now, _vrednosti.Select(v => (double?)v).ToArray());
         public void Dispose() { }
     }
 }

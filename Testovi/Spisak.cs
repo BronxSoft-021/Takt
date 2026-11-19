@@ -82,7 +82,7 @@ public static class Spisak
         ("mašina: ploča bez ventilatora", RazneMasine.PlocaBezVentilatora),
         ("mašina: 150 senzora se pravi brzo", RazneMasine.StoPedesetSenzora),
         ("mašina: strana imena senzora ostaju kakva su", RazneMasine.NepoznataImena),
-        ("mašina: isti senzor iz dva izvora je jedan red", RazneMasine.BezDuplikata),
+        ("mašina: isti naziv na dva uređaja ostaje dva reda", RazneMasine.IstaImenaRazniUredjaji),
     ];
 }
 

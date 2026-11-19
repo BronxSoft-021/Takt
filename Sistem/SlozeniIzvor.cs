@@ -16,20 +16,15 @@ public sealed class SlozeniIzvor : IIzvorSenzora
     {
         _delovi = delovi;
 
-        // One sensor shown once: the same group, name and unit from two sources would be the same number twice on
-        // screen (memory from the library and from Windows is the case that happens). The first source wins, and
-        // the order of the merged list stays fixed, so an index into a reading always means the same sensor.
-        var vidjeni = new HashSet<(Grupa, string, Jedinica)>();
-
+        // No de-duplication here: two disks both have a sensor called "Temperatura" and both must stay. The one
+        // duplicate that was real (memory read by the library and by Windows) is settled at the source, by turning
+        // the library's memory off - see LhmIzvor.
         for (int deo = 0; deo < delovi.Length; deo++)
         {
             var izvor = delovi[deo];
             for (int i = 0; i < izvor.Senzori.Count; i++)
             {
-                var senzor = izvor.Senzori[i];
-                if (!vidjeni.Add((senzor.Grupa, senzor.Ime, senzor.Jedinica))) continue;
-
-                _senzori.Add(senzor);
+                _senzori.Add(izvor.Senzori[i]);
                 _mapa.Add((deo, i));
             }
         }
