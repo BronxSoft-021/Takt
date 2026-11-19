@@ -20,7 +20,6 @@ public sealed class IgraVm : ObservableObject
     private ImageSource? _ikona;
     private double? _fps, _low1, _frametime;
     private int _tik;
-    private string _sesija = "";
     private readonly Queue<int> _zastoji = new();
 
     /// <summary>The longest frame of each second (ms), for the chart. 600 = ten minutes at one reading per second.</summary>
@@ -46,7 +45,12 @@ public sealed class IgraVm : ObservableObject
 
     public string FpsTekst => _fps is { } f ? Format.Broj(f, Jedinica.Kadrovi) : Format.Nema;
     public string Low1Tekst => _low1 is { } l ? Format.Broj(l, Jedinica.Kadrovi) : Format.Nema;
-    public string FrametimeTekst => Format.Vrednost(_frametime, Jedinica.Milisekunda);
+
+    /// <summary>
+    /// The average frame time of the last second. It says "prosek" because the chart beside it draws the longest
+    /// frame of each second - two different numbers that used to stand one under the other unlabelled.
+    /// </summary>
+    public string FrametimeTekst => _frametime is null ? Format.Nema : "prosek " + Format.Vrednost(_frametime, Jedinica.Milisekunda);
 
     public double? Fps => _fps;
 
@@ -72,13 +76,11 @@ public sealed class IgraVm : ObservableObject
         }
     }
 
-    /// <summary>"snima sesiju 1:42:10" while a game session is being recorded.</summary>
-    public string Sesija
-    {
-        get => _sesija;
-        set => SetProperty(ref _sesija, value);
-    }
-
+    /// <summary>
+    /// The session's own line ("snima sesiju 1:42:10") lives in <see cref="SnimacSesije"/> and nowhere else: beside
+    /// it the Scene draws a dot, and the two used to come from different owners - after a game stopped the dot was
+    /// out while this text still said "snima sesiju" (fixed 19. 11. 2026, one master).
+    /// </summary>
     public int Tik
     {
         get => _tik;

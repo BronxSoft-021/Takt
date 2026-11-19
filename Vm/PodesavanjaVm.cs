@@ -159,8 +159,10 @@ public sealed class PodesavanjaVm : ObservableObject
     {
         _podesavanja.Sacuvaj();
         PotvrdaBrisanja = false;
-        Poruka = "Sačuvano. Osvežavanje i broj dana važe odmah, ostalo posle ponovnog pokretanja " +
-                 "(usluga, ako je instalirana, prihvata izmene sama za pola minuta).";
+        // Only the probe data need a restart: the source is chosen when the program starts. Everything else the
+        // window takes at once, and the service reads the file again within half a minute.
+        Poruka = "Sačuvano. Sve važi odmah osim probnih podataka — oni traže ponovno pokretanje programa. " +
+                 "Usluga, ako je instalirana, svoje izmene prihvati u roku od pola minuta.";
     }
 
     public void OtvoriFolder()

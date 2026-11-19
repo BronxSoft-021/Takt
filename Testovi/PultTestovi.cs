@@ -28,6 +28,64 @@ public static class PultTestovi
     }
 
     /// <summary>
+    /// The hottest disk means the hottest **temperature**. A disk without a thermometer falls back to its used space
+    /// in percent, and 76 % used is not "hotter" than 45 °C - comparing bare numbers across units was the lie.
+    /// </summary>
+    public static Task Najtopliji()
+    {
+        var senzori = new List<SenzorVm>
+        {
+            new(new Senzor(new SenzorKljuc(Grupa.Diskovi, "Topli", "Temperatura"), Jedinica.Celzijus), 0, new Prsten(4)),
+            new(new Senzor(new SenzorKljuc(Grupa.Diskovi, "Topli", "Zauzeće"), Jedinica.Procenat), 1, new Prsten(4)),
+            new(new Senzor(new SenzorKljuc(Grupa.Diskovi, "Puni", "Zauzeće"), Jedinica.Procenat), 2, new Prsten(4)),
+        };
+
+        var diskovi = KanalVm.Napravi(senzori).Single(k => k.Naslov == "Diskovi");
+        double?[] vrednosti = [45, 20, 76];
+        diskovi.Osvezi(new Snimak(DateTime.Now, vrednosti), vrednosti, vrednosti, DateTime.Now);
+
+        Proveri.Jednako("Temperatura", diskovi.Glavni?.Ime, "glavni je temperatura, ne 76 % zauzeća");
+        Proveri.Jednako("najtopliji", diskovi.DrugiTekst, "reč stoji uz temperaturu");
+
+        // No thermometer anywhere: the big number is a percentage and must not be called "the hottest".
+        var bez = new List<SenzorVm>
+        {
+            new(new Senzor(new SenzorKljuc(Grupa.Diskovi, "Jedan", "Zauzeće"), Jedinica.Procenat), 0, new Prsten(4)),
+            new(new Senzor(new SenzorKljuc(Grupa.Diskovi, "Dva", "Zauzeće"), Jedinica.Procenat), 1, new Prsten(4)),
+        };
+        var grupa = KanalVm.Napravi(bez).Single(k => k.Naslov == "Diskovi");
+        double?[] procenti = [40, 76];
+        grupa.Osvezi(new Snimak(DateTime.Now, procenti), procenti, procenti, DateTime.Now);
+        Proveri.Jednako("", grupa.DrugiTekst, "bez temperature nema reči „najtopliji“");
+        return Task.CompletedTask;
+    }
+
+    /// <summary>
+    /// A meter needs a scale. Volts, watts, megahertz and megabytes have no natural top, so their meter draws no
+    /// column and leaves only the number - a 1,2 V sensor on a 0-100 scale was a sliver pretending to be a share.
+    /// </summary>
+    public static Task BezSkale()
+    {
+        var vati = new MeracVm(
+            new SenzorVm(new Senzor(new SenzorKljuc(Grupa.Procesor, "CPU", "Potrošnja procesora"), Jedinica.Vat), 0, new Prsten(4)),
+            "W");
+        Proveri.Da(!vati.ImaSkalu, "vati nemaju skalu");
+        vati.Osvezi(DateTime.Now);
+        Proveri.Jednako(0.0, vati.Udeo, "bez skale nema stuba");
+
+        var opterecenje = new MeracVm(
+            new SenzorVm(new Senzor(new SenzorKljuc(Grupa.Procesor, "CPU", "Opterećenje procesora"), Jedinica.Procenat), 0, new Prsten(4)),
+            "%");
+        Proveri.Da(opterecenje.ImaSkalu, "procenat ima skalu");
+
+        var obrtaji = new MeracVm(
+            new SenzorVm(new Senzor(new SenzorKljuc(Grupa.Hladjenje, "Ploča", "Ventilator 1"), Jedinica.Obrtaj), 0, new Prsten(4)),
+            "1");
+        Proveri.Da(obrtaji.ImaSkalu, "obrtaji imaju skalu");
+        return Task.CompletedTask;
+    }
+
+    /// <summary>
     /// Six disks used to be six strips and pushed the rest off the console. Now they are one group: one meter
     /// per disk, the hottest one in the readout, and the solo panel switches between them.
     /// </summary>

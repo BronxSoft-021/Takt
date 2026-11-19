@@ -40,6 +40,13 @@ public static class Izmene
             "Prozor više ne ostaje bez usluge: ako se podigne dok se usluga još diže (posle instalacije, na prijavi), pita cev **svakih 5 s** i sam pređe na potpuni nadzor — ranije je tako ostajao na „Ograničen nadzor“ do zatvaranja i ponovnog otvaranja.",
             "Grafikon više ne stoji u praznom: korak skale je skakao sa 2 na 5, pa se linija od 51,6–58,4 °C crtala u prozoru 50–70 (donja trećina). Sada korak ide 1, 2, **2,5**, 5, 10 — ista linija dobija 50–60. Visina grafikona je ograničena na **300 px**, pa u velikom prozoru tabela senzora dobija prostor umesto praznine.",
             "**Jedna kultura za ceo program**: redovi i osa grafikona forsiraju srpski (52,8), a sve ostalo je pratilo Windows — na ovoj mašini en-GB, pa je izveštaj pisao „52.8 °C“ pored ekrana koji piše „52,8 °C“. Sada se kultura postavlja na startu (prozor, usluga, testovi) i sve interpolacije pišu zapetu.",
+            "Tačka snimanja i tajmer sesije imaju **jednog gospodara** (`SnimacSesije`): ranije su dolazili iz dva mesta, pa je posle prestanka igre tačka bila ugašena, a tekst je još pisao „snima sesiju 1:42:10“.",
+            "Igra ne nestaje više posle **tri** sekunde bez kadrova: pauza, meni ili učitavanje su je brisali sa Scene. Sada čeka **15 s**, isto koliko i snimač sesije pre nego što prekine snimanje.",
+            "Opisi više ne obećavaju ono što se ne meri: „thermal throttling“ je izbačen (program ne čita te zastavice), a umesto „temperature koje pokreću ventilatore“ piše šta se stvarno vidi — brzina, temperature ploče i upozorenje kad ventilator stane.",
+            "Poruka posle čuvanja podešavanja govori istinu: sve važi **odmah** osim probnih podataka (oni traže ponovno pokretanje), a usluga svoje izmene prihvati u roku od pola minuta — ranije je pisalo „ostalo posle ponovnog pokretanja“ i za stvari koje važe odmah.",
+            "Uz „1 % low“ vreme kadra sada piše **„prosek“**: ispod grafikona najdužeg kadra stajao je neoznačen prosek i čitao se kao da je najduži.",
+            "„Najtopliji“ se računa **samo među temperaturama**: disk bez termometra pada na zauzeće u procentima, a 76 % nije „toplije“ od 45 °C — do sada je pobeđivao veći broj, ma koje jedinice bio.",
+            "Merač crta stub samo kad jedinica ima skalu (%, °C, o/min); za volte, vate, megaherce i megabajte ostaje samo broj, jer je 1,2 V na skali 0–100 bio komadić koji izgleda kao udeo.",
         ]),
         new("alfa", "19. 11. 2026.",
         [

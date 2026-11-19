@@ -96,6 +96,16 @@ public sealed class PomocnikKlijent : IIzvorSenzora
     private Protokol.Igra[] _igre = [];
     private DateTime _igreVreme = DateTime.MinValue;
 
+    /// <summary>
+    /// How old the frame list may be and still count. Fifteen seconds, not three: a loading screen, a menu or an
+    /// Alt+Tab stops the frames for a moment and the game card vanished from the Scene each time - the same
+    /// tolerance the session recorder uses before it ends a session.
+    /// </summary>
+    public static readonly TimeSpan IgreSvezina = TimeSpan.FromSeconds(15);
+
+    /// <summary>Public for a test: five seconds without frames is a pause, not a game that ended.</summary>
+    public static bool IgreSveze(TimeSpan starost) => starost < IgreSvezina;
+
     private Protokol.DiskZdravlje[] _diskovi = [];
     private DateTime _diskoviVreme = DateTime.MinValue;
 
@@ -114,15 +124,15 @@ public sealed class PomocnikKlijent : IIzvorSenzora
 
     /// <summary>
     /// The programs that drew frames in the last second, as the service measured them; empty when the list is
-    /// older than three seconds (the service stopped measuring, or nothing draws). Only the service and the helper
-    /// send it: frame events need administrator.
+    /// older than <see cref="IgreSvezina"/> (the service stopped measuring, or nothing draws). Only the service and
+    /// the helper send it: frame events need administrator.
     /// </summary>
     public Protokol.Igra[] Igre
     {
         get
         {
             lock (_brava)
-                return DateTime.UtcNow - _igreVreme < TimeSpan.FromSeconds(3) ? _igre : [];
+                return IgreSveze(DateTime.UtcNow - _igreVreme) ? _igre : [];
         }
     }
 

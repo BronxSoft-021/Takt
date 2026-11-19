@@ -56,6 +56,7 @@ public static class IgreTestovi
         var vm = new IgraVm();
         for (int i = 0; i < 5; i++) vm.Postavi(igra with { NajviseMs = 20 + i });
         Proveri.Jednako(5, vm.Frametime.Broj, "grafikon kadrova raste dok igra traje");
+        Proveri.Da(vm.FrametimeTekst.StartsWith("prosek"), "vreme kadra piše da je prosek, jer grafikon crta najduži");
 
         Proveri.Jednako("jezgro 6", KanalVm.ImeJezgra("Opterećenje jezgra 6"), "natpis jezgra u nominativu");
         return Task.CompletedTask;
@@ -78,7 +79,8 @@ public static class IgreTestovi
         }
 
         Proveri.Da(snimac.Snima, "sesija se snima dok igra radi");
-        Proveri.Da(igra.Sesija.StartsWith("snima sesiju"), "Scena kaže da se snima");
+        Proveri.Da(snimac.Snima, "sesija se snima");
+        Proveri.Da(snimac.Tekst.StartsWith("snima sesiju"), "Scena kaže da se snima");
 
         for (int s = 120; s < 140; s++)
         {
@@ -87,6 +89,7 @@ public static class IgreTestovi
         }
 
         Proveri.Da(!snimac.Snima, "sesija se završava 15 s posle igre");
+        Proveri.Jednako("", snimac.Tekst, "kad se ne snima, ni tekst ne kaže da snima (jedan gospodar)");
         Proveri.Da(zavrsena is not null, "izveštaj je napravljen");
         Proveri.Jednako("Dead Space", zavrsena!.Igra, "ime igre");
         Proveri.Blizu(60, zavrsena.ProsekFps, 0.01, "prosečan FPS");
@@ -121,6 +124,18 @@ public static class IgreTestovi
 
         var cetiristo = Enumerable.Repeat(60.0, 396).Concat(Enumerable.Repeat(10.0, 4)).ToList();
         Proveri.Blizu(10, IzvestajSesije.Najgorih1Procenat(cetiristo), 0.01, "1 % od četiristo su četiri najgora");
+        return Task.CompletedTask;
+    }
+
+    /// <summary>
+    /// A loading screen or a menu stops frames for a few seconds, and the game card used to vanish from the Scene
+    /// each time (three seconds of patience). Fifteen seconds is the same patience the session recorder has.
+    /// </summary>
+    public static Task NeNestaje()
+    {
+        Proveri.Da(PomocnikKlijent.IgreSveze(TimeSpan.FromSeconds(5)), "pet sekundi bez kadrova je pauza");
+        Proveri.Da(PomocnikKlijent.IgreSveze(TimeSpan.FromSeconds(14)), "i četrnaest je još pauza");
+        Proveri.Da(!PomocnikKlijent.IgreSveze(TimeSpan.FromSeconds(20)), "posle dvadeset igra je otišla");
         return Task.CompletedTask;
     }
 

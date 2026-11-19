@@ -101,6 +101,18 @@ public sealed class SnimacSesije : ObservableObject
 
     public bool Snima => _igra is not null;
 
+    private string _tekst = "";
+
+    /// <summary>
+    /// "snima sesiju 1:42:10", from the recorder itself - the same owner as the dot beside it
+    /// (<see cref="Snima"/>), so the two cannot disagree. Empty when nothing is recorded.
+    /// </summary>
+    public string Tekst
+    {
+        get => _tekst;
+        private set => SetProperty(ref _tekst, value);
+    }
+
     public string Folder => _folder;
 
     /// <summary>Raised when a session ends and is saved; the window says so from the tray.</summary>
@@ -120,12 +132,13 @@ public sealed class SnimacSesije : ObservableObject
 
                 _igra = igra.Ime;
                 _pocetak = _kandidatOd.Value;
-                OnPropertyChanged(nameof(Snima));
+                Tekst = "";
+        OnPropertyChanged(nameof(Snima));
             }
 
             _poslednje = sada;
             Dodaj(fps, igra, kanali, sada);
-            igra.Sesija = $"snima sesiju {Formatiraj(sada - _pocetak)}";
+            Tekst = $"snima sesiju {Formatiraj(sada - _pocetak)}";
             return;
         }
 
@@ -191,6 +204,7 @@ public sealed class SnimacSesije : ObservableObject
         _najCpuKada = _najGpuKada = null;
         _najJezgro = null;
         _najJezgroProcenat = 0;
+        Tekst = "";
         OnPropertyChanged(nameof(Snima));
     }
 

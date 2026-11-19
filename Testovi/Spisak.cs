@@ -31,6 +31,8 @@ public static class Spisak
         ("pult: kanali i njihovi merači", PultTestovi.Kanali),
         ("pult: prazna mesta za diskove i ventilatore", PultTestovi.PraznaMesta),
         ("pult: šest diskova je jedan kanal", PultTestovi.GrupaDiskova),
+        ("pult: najtopliji je samo među temperaturama", PultTestovi.Najtopliji),
+        ("pult: merač bez skale ne crta stub", PultTestovi.BezSkale),
         ("pult: VU vrh drži pa pada", PultTestovi.Vrh),
         ("pult: tiho čitanje pa obaveštenje", PultTestovi.TihoIPaObavesti),
         ("pult: traka se osvežava i kad tabela čeka", PultTestovi.BezTabele),
@@ -64,6 +66,7 @@ public static class Spisak
         ("igre: 1% low sesije iz najgorih 1 % sekundi", IgreTestovi.Low1Sesije),
         ("igre: koja je igra (prvi plan, Takt, pregledač)", IgreTestovi.Birac),
         ("igre: sesija se snima sama i pravi izveštaj", IgreTestovi.Sesija),
+        ("igre: igra ne nestaje posle tri sekunde", IgreTestovi.NeNestaje),
         ("pult: clip lampica se pali i ostaje do klika", IgreTestovi.Clip),
         ("izmene: broj verzije se poklapa sa Takt.csproj", IzmeneTestovi.Verzija),
     ];

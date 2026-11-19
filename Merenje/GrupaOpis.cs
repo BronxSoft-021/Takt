@@ -24,11 +24,14 @@ public static class GrupaOpis
 
     public static string Opis(Grupa grupa) => grupa switch
     {
-        Grupa.Procesor => "Temperatura po jezgrima, opterećenje, takt, potrošnja, napon i thermal throttling.",
+        // No "thermal throttling": nothing here reads the throttling flags, so promising them would be a lie.
+        Grupa.Procesor => "Temperatura po jezgrima, opterećenje, takt, potrošnja i napon.",
         Grupa.Grafika => "Temperatura i hotspot, VRAM, opterećenje, takt jezgra i memorije, potrošnja i ventilatori.",
         Grupa.Memorija => "Zauzeće, slobodan RAM, brzina memorije, commit i pagefile.",
         Grupa.Diskovi => "Temperature SSD-a, zdravlje, SMART parametri i životni vek.",
-        Grupa.Hladjenje => "Brzina ventilatora, temperature koje ih pokreću i praćenje anomalija.",
+        // Which temperature drives which fan is the board's own curve and is not readable: only the speed, the
+        // board's temperatures and the warning when a fan stops.
+        Grupa.Hladjenje => "Brzina ventilatora, temperature matične ploče i upozorenje kad ventilator stane.",
         _ => "",
     };
 

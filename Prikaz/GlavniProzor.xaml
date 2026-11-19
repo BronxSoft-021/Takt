@@ -69,7 +69,8 @@
                                         <prikaz:VuMerac HorizontalAlignment="Center"
                                                         Width="{Binding Tag.SirinaMeraca, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
                                                         Udeo="{Binding Udeo}" Vrh="{Binding Vrh}"
-                                                        ToploGranica="{Binding Toplo}" VruceGranica="{Binding Vruce}" />
+                                                        ToploGranica="{Binding Toplo}" VruceGranica="{Binding Vruce}"
+                                                        Visibility="{Binding ImaSkalu, Converter={StaticResource BoolUVidljivost}}" />
                                         <TextBlock Grid.Row="1" Text="{Binding Oznaka}" Style="{StaticResource Natpis}" FontSize="10"
                                                    TextAlignment="Center" Margin="0,5,0,0" />
                                     </Grid>

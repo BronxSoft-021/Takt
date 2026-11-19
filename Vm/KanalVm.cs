@@ -30,6 +30,8 @@ public sealed class MeracVm : ObservableObject
             Jedinica.Obrtaj => (0.0, 3000.0),
             _ => (0.0, 100.0),
         };
+
+        ImaSkalu = senzor.Senzor.Jedinica is Jedinica.Procenat or Jedinica.Celzijus or Jedinica.Obrtaj;
     }
 
     public SenzorVm Senzor { get; }
@@ -62,6 +64,13 @@ public sealed class MeracVm : ObservableObject
 
     public bool ImaVrednost => Senzor.Broj is not null;
 
+    /// <summary>
+    /// False for units without a natural top (volts, watts, megahertz, megabytes). The strip then draws no column
+    /// and shows only the number: a 1,2 V sensor on a 0-100 scale would either be a sliver or, worse, a full column
+    /// pretending to be "100 %" of something.
+    /// </summary>
+    public bool ImaSkalu { get; }
+
     private double UUdeo(double vrednost) => Math.Clamp((vrednost - SkalaOd) / (SkalaDo - SkalaOd), 0, 1);
 
     /// <summary>After the sensor took its reading. <paramref name="sada"/> is passed in so a test can move time.</summary>
@@ -82,7 +91,7 @@ public sealed class MeracVm : ObservableObject
             Vruce = UUdeo(prag.Vruce);
         }
 
-        double udeo = Senzor.Broj is { } broj ? UUdeo(broj) : 0;
+        double udeo = ImaSkalu && Senzor.Broj is { } broj ? UUdeo(broj) : 0;
         double proteklo = _poslednje == DateTime.MinValue ? 0 : Math.Max(0, (sada - _poslednje).TotalSeconds);
         _poslednje = sada;
 
@@ -243,12 +252,19 @@ public sealed class KanalVm : ObservableObject
     }
 
     /// <summary>
-    /// The big number under the meters: the left meter's sensor, or in the disk group the hottest disk (the one
-    /// worth watching). Null on an empty strip.
+    /// The big number under the meters: the left meter's sensor, or in the disk group the hottest **temperature**
+    /// (the one worth watching). A meter that has no thermometer falls back to its used space in percent, and a
+    /// 76 % cannot be "hotter" than 45 °C - comparing bare numbers across units was the lie. Null on an empty strip.
     /// </summary>
     public SenzorVm? Glavni => JeGrupa
-        ? Meraci.Select(m => m.Senzor).Where(s => s.Broj is not null).MaxBy(s => s.Broj) ?? Levi?.Senzor
+        ? Meraci.Select(m => m.Senzor).Where(s => s.Broj is not null)
+              .OrderByDescending(s => s.Senzor.Jedinica == Jedinica.Celzijus)
+              .ThenByDescending(s => s.Broj)
+              .FirstOrDefault() ?? Levi?.Senzor
         : Levi?.Senzor;
+
+    /// <summary>"najtopliji" only when the big number really is a temperature; otherwise the line stays empty.</summary>
+    private string Najtopliji => Glavni is { Senzor.Jedinica: Jedinica.Celzijus } ? "najtopliji" : "";
 
     /// <summary>
     /// True when the window gets everything there is to get (driver, and administrator through the service, the
@@ -259,7 +275,7 @@ public sealed class KanalVm : ObservableObject
 
     /// <summary>The small line under it: the right meter's value, "najtopliji" for the group, and what an empty place waits for.</summary>
     public string DrugiTekst => Prazan ? (!PawnIo.JeTu ? "traži drajver" : PotpunNadzor ? "nema senzora" : "traži nadzor")
-        : JeGrupa ? (Meraci.Count > 1 ? "najtopliji" : "")
+        : JeGrupa ? (Meraci.Count > 1 ? Najtopliji : "")
         : Desni?.Senzor.Vrednost ?? "";
 
     /// <summary>Tool tip of the strip: the device, or what is missing on an empty place.</summary>

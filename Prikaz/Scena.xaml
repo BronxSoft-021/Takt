@@ -26,7 +26,7 @@
                                VerticalAlignment="Center" />
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
-                    <TextBlock Text="{Binding Igra.Sesija}" Foreground="{StaticResource Mutan}" FontSize="12"
+                    <TextBlock Text="{Binding Sesija.Tekst}" Foreground="{StaticResource Mutan}" FontSize="12"
                                VerticalAlignment="Center" Margin="0,0,10,0" Typography.NumeralAlignment="Tabular" />
                     <Ellipse Width="8" Height="8" Fill="{StaticResource Vruce}" Margin="0,0,14,0" VerticalAlignment="Center"
                              Visibility="{Binding Sesija.Snima, Converter={StaticResource BoolUVidljivost}}" />
@@ -139,7 +139,8 @@
                                             <prikaz:VuMerac HorizontalAlignment="Center" Segmenata="24"
                                                             Width="{Binding Tag.SirinaMeracaScene, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
                                                             Udeo="{Binding Udeo}" Vrh="{Binding Vrh}"
-                                                            ToploGranica="{Binding Toplo}" VruceGranica="{Binding Vruce}" />
+                                                            ToploGranica="{Binding Toplo}" VruceGranica="{Binding Vruce}"
+                                                        Visibility="{Binding ImaSkalu, Converter={StaticResource BoolUVidljivost}}" />
                                             <TextBlock Grid.Row="1" Text="{Binding Oznaka}" Style="{StaticResource Natpis}"
                                                        FontSize="12" TextAlignment="Center" Margin="0,6,0,0" />
                                         </Grid>
