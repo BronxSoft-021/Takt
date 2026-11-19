@@ -491,7 +491,8 @@ public sealed class KanalVm : ObservableObject
             {
                 var senzori = sviSenzori.Where(s => s.Senzor.Grupa == grupa && s.Uredjaj == uredjaji[i]).ToList();
                 rezultat.Add(new KanalVm($"{grupa}|{uredjaji[i]}", naslov(i, uredjaji.Count), uredjaji[i],
-                    new EkranVm(grupa, senzori), [Merac(senzori, levo, oznakaL), Merac(senzori, desno, oznakaD)]));
+                    new EkranVm(grupa, senzori), [Merac(senzori, levo, oznakaL, Jedinica.Procenat),
+                        Merac(senzori, desno, oznakaD, Jedinica.Celzijus)]));
             }
             return rezultat;
         }
@@ -535,11 +536,22 @@ public sealed class KanalVm : ObservableObject
     }
 
     /// <summary>The first of the wanted names that this device has.</summary>
-    private static MeracVm? Merac(List<SenzorVm> senzori, string[] imena, string oznaka)
+    /// <summary>
+    /// A meter from the first sensor with one of <paramref name="imena"/>, or - when a machine names its sensors
+    /// differently (an older library, an untranslated one) - from the first sensor of the unit the meter is meant
+    /// to show. Without that fallback a processor whose total load is called "CPU Total" left the strip empty
+    /// while the solo panel had thirty-two cores to show.
+    /// </summary>
+    private static MeracVm? Merac(List<SenzorVm> senzori, string[] imena, string oznaka, Jedinica? umesto = null)
     {
         foreach (var ime in imena)
             if (senzori.FirstOrDefault(s => s.Ime == ime) is { } nadjen)
                 return new MeracVm(nadjen, oznaka);
+
+        if (umesto is { } jedinica
+            && senzori.FirstOrDefault(s => s.Senzor.Jedinica == jedinica) is { } kakavTakav)
+            return new MeracVm(kakavTakav, oznaka);
+
         return null;
     }
 }

@@ -1,4 +1,4 @@
-BronxSoft Takt 0.38.76 alfa
+BronxSoft Takt 0.38.78 alfa
 19. 11. 2026.
 
 NOVO

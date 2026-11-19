@@ -27,6 +27,31 @@ public static class ProzorTestovi
     }
 
     /// <summary>
+    /// The same settings on a smaller machine: a 1240-wide window saved on a big screen would lose its right edge
+    /// and its status bar on a 1366×768 laptop. It is shrunk to the screen and kept inside; on two monitors the
+    /// virtual desktop is wide enough, so nothing moves.
+    /// </summary>
+    public static Task MaliEkran()
+    {
+        var laptop = new Rect(0, 0, 1366, 728);   // the screen without the taskbar
+        var sređen = ProzorPamet.Sredi(new Rect(100, 50, 1240, 900), laptop);
+        Proveri.Da(sređen is not null, "prozor se prihvata");
+        Proveri.Blizu(1240, sređen!.Value.Width, 0.01, "širina staje");
+        Proveri.Blizu(728, sređen.Value.Height, 0.01, "visina je skraćena na ekran");
+        Proveri.Da(sređen.Value.Bottom <= laptop.Bottom, "donja ivica (statusna traka) je na ekranu");
+
+        var usko = ProzorPamet.Sredi(new Rect(1000, 40, 1240, 760), laptop);
+        Proveri.Blizu(1366 - 1240, usko!.Value.X, 0.01, "prozor je pomeren levo da stane");
+
+        // Two monitors: the desktop is wide, so a window on the second one keeps its place.
+        var dva = new Rect(0, 0, 3840, 1080);
+        var naDrugom = ProzorPamet.Sredi(new Rect(1920, 50, 1200, 760), dva);
+        Proveri.Blizu(1920, naDrugom!.Value.X, 0.01, "na dva monitora se ne pomera");
+        Proveri.Blizu(1200, naDrugom.Value.Width, 0.01, "i ne skraćuje");
+        return Task.CompletedTask;
+    }
+
+    /// <summary>
     /// FPS in the one case that used to have no game at all: the window itself elevated, nobody helping. ETW
     /// gives frame events only to administrators, so that window becomes its own counter - and only then: with a
     /// service or helper there must be one ETW session, not two.

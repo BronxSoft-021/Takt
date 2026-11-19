@@ -41,6 +41,7 @@ public static class Spisak
         ("pult: rampa zeleno-žuto-crveno", PultTestovi.Rampa),
         ("cev: pravi se i pušta klijenta", CevTestovi.PraviIPusta),
         ("prozor: sačuvano mesto se koristi samo ako je na ekranu", ProzorTestovi.Sredi),
+        ("prozor: mali ekran skraćuje prozor da stane", ProzorTestovi.MaliEkran),
         ("prozor: podešavanja iz trake se ne zatvaraju drugim klikom", ProzorTestovi.Podesavanja),
         ("prozor: podnožje kaže ko čita senzore", ProzorTestovi.Prava),
         ("prozor: FPS i kad je prozor sam povišen", ProzorTestovi.Kadrovi),
@@ -70,6 +71,15 @@ public static class Spisak
         ("igre: igra ne nestaje posle tri sekunde", IgreTestovi.NeNestaje),
         ("pult: clip lampica se pali i ostaje do klika", IgreTestovi.Clip),
         ("izmene: broj verzije se poklapa sa Takt.csproj", IzmeneTestovi.Verzija),
+        ("mašina: nema nijednog senzora", RazneMasine.NemaSenzora),
+        ("mašina: samo procenti (bez drajvera)", RazneMasine.SamoProcenti),
+        ("mašina: 32 niti u pultu", RazneMasine.TridesetDvaJezgra),
+        ("mašina: dvanaest diskova", RazneMasine.DvanaestDiskova),
+        ("mašina: diskovi bez termometra", RazneMasine.DiskoviBezTermometra),
+        ("mašina: grafička bez VRAM senzora", RazneMasine.GrafikaBezVram),
+        ("mašina: ploča bez ventilatora", RazneMasine.PlocaBezVentilatora),
+        ("mašina: 150 senzora se pravi brzo", RazneMasine.StoPedesetSenzora),
+        ("mašina: strana imena senzora ostaju kakva su", RazneMasine.NepoznataImena),
     ];
 }
 

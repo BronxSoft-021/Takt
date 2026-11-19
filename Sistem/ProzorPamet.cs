@@ -26,10 +26,19 @@ public static class ProzorPamet
         if (okvir.Width < 600 || okvir.Height < 400) return null;
         if (double.IsNaN(okvir.Left) || double.IsNaN(okvir.Top)) return null;
 
+        // Off the screens entirely (a monitor unplugged since): not trusted, the window opens where Windows puts it.
         var vidljiv = Rect.Intersect(okvir, ekrani);
         if (vidljiv.IsEmpty || vidljiv.Width < 200 || vidljiv.Height < 100) return null;
 
-        return okvir;
+        // Partly on screen, but bigger than the screen (saved on a big monitor, opened on a laptop): shrink it to
+        // the screen and move it inside, or the right edge and the status bar would fall off. Ekrani is the whole
+        // virtual desktop, so with two monitors nothing is shrunk or moved.
+        double sirina = Math.Min(okvir.Width, ekrani.Width);
+        double visina = Math.Min(okvir.Height, ekrani.Height);
+        return new Rect(
+            Math.Clamp(okvir.X, ekrani.Left, Math.Max(ekrani.Left, ekrani.Right - sirina)),
+            Math.Clamp(okvir.Y, ekrani.Top, Math.Max(ekrani.Top, ekrani.Bottom - visina)),
+            sirina, visina);
     }
 
     public static void Primeni(Window prozor, Podesavanja podesavanja)
