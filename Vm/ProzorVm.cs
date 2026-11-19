@@ -533,25 +533,25 @@ public sealed class ProzorVm : ObservableObject, IDisposable
     public static (string Stanje, string Vrsta, string Prava) OpisStanja(bool pravi, bool usluga, bool pomocnik,
         bool drajver, int senzora, bool admin)
     {
-        if (!pravi) return ("Probni podaci", "probno", Admin.Stanje);
+        if (!pravi) return (Tekst.T("Probni podaci"), "probno", Admin.Stanje);
 
         if (pomocnik)
         {
-            string ko = usluga ? "usluga" : "pomoćnik";
-            string nadzor = drajver ? $"Potpuni nadzor · {ko}" : $"Potpuni nadzor · {ko}, bez drajvera";
+            string ko = usluga ? Tekst.T("usluga") : Tekst.T("pomoćnik");
+            string nadzor = drajver ? $"{Tekst.T("Potpuni nadzor")} · {ko}" : $"{Tekst.T("Potpuni nadzor")} · {ko}, {Tekst.T("bez drajvera")}";
             return (nadzor, drajver ? "pomocnik" : "pravo", ko);
         }
 
-        if (senzora == 0) return ("Nema podataka", "nema", admin ? "administrator" : Admin.Stanje);
+        if (senzora == 0) return (Tekst.T("Nema podataka"), "nema", admin ? Tekst.T("administrator") : Admin.Stanje);
 
         if (!admin)
             return drajver
-                ? ("Ograničen nadzor", "pravo", Admin.Stanje)
-                : ("Ograničen nadzor · bez drajvera", "pravo", Admin.Stanje);
+                ? (Tekst.T("Ograničen nadzor"), "pravo", Admin.Stanje)
+                : ($"{Tekst.T("Ograničen nadzor")} · {Tekst.T("bez drajvera")}", "pravo", Admin.Stanje);
 
         return drajver
-            ? ("Potpuni nadzor · administrator", "pomocnik", "administrator")
-            : ("Ograničen nadzor · bez drajvera", "pravo", "administrator");
+            ? ($"{Tekst.T("Potpuni nadzor")} · {Tekst.T("administrator")}", "pomocnik", Tekst.T("administrator"))
+            : ($"{Tekst.T("Ograničen nadzor")} · {Tekst.T("bez drajvera")}", "pravo", Tekst.T("administrator"));
     }
 
     private void PostaviStanje(IIzvorSenzora izvor)

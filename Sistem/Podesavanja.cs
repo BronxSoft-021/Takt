@@ -20,6 +20,9 @@ public sealed class Podesavanja
 
     public string Faza { get; set; } = "alfa";
 
+    /// <summary>"sr" (Serbian) or "en" (English). Takes effect at the next start, like the driver.</summary>
+    public string Jezik { get; set; } = Tekst.Srpski;
+
     /// <summary>Channels the user muted (M) on the console, by <c>KanalVm.Kljuc</c>.</summary>
     public List<string> Utisani { get; set; } = [];
 
@@ -103,6 +106,7 @@ public sealed class Podesavanja
     {
         if (Osvezavanje is not (1 or 2 or 5)) Osvezavanje = 1;
         if (IstorijaDana is not (1 or 7 or 30 or 90)) IstorijaDana = 7;
+        if (Jezik is not (Tekst.Srpski or Tekst.Engleski)) Jezik = Tekst.Srpski;
         Utisani ??= [];
         return this;
     }

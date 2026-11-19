@@ -14,21 +14,21 @@ public static class GrupaOpis
 
     public static string Naslov(Grupa grupa) => grupa switch
     {
-        Grupa.Procesor => "Procesor",
-        Grupa.Grafika => "Grafička karta",
-        Grupa.Memorija => "Memorija",
-        Grupa.Diskovi => "Diskovi",
-        Grupa.Hladjenje => "Hlađenje",
+        Grupa.Procesor => Tekst.T("Procesor"),
+        Grupa.Grafika => Tekst.T("Grafička karta"),
+        Grupa.Memorija => Tekst.T("Memorija"),
+        Grupa.Diskovi => Tekst.T("Diskovi"),
+        Grupa.Hladjenje => Tekst.T("Hlađenje"),
         _ => grupa.ToString(),
     };
 
     public static string Opis(Grupa grupa) => grupa switch
     {
         // No "thermal throttling": nothing here reads the throttling flags, so promising them would be a lie.
-        Grupa.Procesor => "Temperatura po jezgrima, opterećenje, takt, potrošnja i napon.",
-        Grupa.Grafika => "Temperatura i hotspot, VRAM, opterećenje, takt jezgra i memorije, potrošnja i ventilatori.",
-        Grupa.Memorija => "Zauzeće, slobodan RAM, brzina memorije, commit i pagefile.",
-        Grupa.Diskovi => "Temperature SSD-a, zdravlje, SMART parametri i životni vek.",
+        Grupa.Procesor => Tekst.T("Temperatura po jezgrima, opterećenje, takt, potrošnja i napon."),
+        Grupa.Grafika => Tekst.T("Temperatura i hotspot, VRAM, opterećenje, takt jezgra i memorije, potrošnja i ventilatori."),
+        Grupa.Memorija => Tekst.T("Zauzeće, slobodan RAM, brzina memorije, commit i pagefile."),
+        Grupa.Diskovi => Tekst.T("Temperature SSD-a, zdravlje, SMART parametri i životni vek."),
         // Which temperature drives which fan is the board's own curve and is not readable: only the speed, the
         // board's temperatures and the warning when a fan stops. The numbered ones ("Temperatura 3") are inputs of
         // the Super I/O chip and nothing says what they measure: they never turn amber or red, never light the clip,
@@ -53,13 +53,13 @@ public static class GrupaOpis
                                    "administratorska prava sama nisu dovoljna.",
         (Grupa.Hladjenje, false) => "Ventilatori kućišta i procesora i temperature matične ploče traže PawnIO drajver " +
                                      "(pawnio.eu). Bez njega ni administrator ne dobija te senzore.",
-        (_, false) => "Ovaj deo traži PawnIO drajver (pawnio.eu); bez njega ni administrator ne dobija te senzore.",
+        (_, false) => Tekst.T("Ovaj deo traži PawnIO drajver (pawnio.eu); bez njega ni administrator ne dobija te senzore."),
 
         (Grupa.Diskovi, true) => "Temperatura, zdravlje i SMART diskova se čitaju preko drajvera, a on traži administratora. " +
                                  "Uključi potpuni nadzor i diskovi će se pojaviti ovde.",
         (Grupa.Hladjenje, true) => "Ventilatore kućišta i procesora i temperature matične ploče čita Super I/O čip, a do njega " +
                                    "se stiže samo preko drajvera. Uključi potpuni nadzor.",
-        _ => "Ovaj deo računara ne daje nijedan senzor bez drajvera. Uključi potpuni nadzor.",
+        _ => Tekst.T("Ovaj deo računara ne daje nijedan senzor bez drajvera. Uključi potpuni nadzor."),
     };
 
     /// <summary>
@@ -71,8 +71,8 @@ public static class GrupaOpis
         Grupa.Hladjenje => "Matična ploča ovog računara ne daje ventilatore ni svoje temperature ni uz potpuni nadzor " +
                            "(čip za ventilatore nije prepoznat ili nijedan ventilator nije priključen na ploču). " +
                            "Ventilator grafičke karte je na kanalu GPU.",
-        Grupa.Diskovi => "Nijedan disk ne daje temperaturu ni SMART (npr. diskovi preko nekih USB kućišta ili RAID-a).",
-        _ => "Ovaj deo računara ne daje senzore ni uz potpuni nadzor.",
+        Grupa.Diskovi => Tekst.T("Nijedan disk ne daje temperaturu ni SMART (npr. diskovi preko nekih USB kućišta ili RAID-a)."),
+        _ => Tekst.T("Ovaj deo računara ne daje senzore ni uz potpuni nadzor."),
     };
 
     /// <summary>

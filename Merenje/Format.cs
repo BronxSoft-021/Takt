@@ -2,19 +2,20 @@ using System.Globalization;
 
 namespace Takt.Merenje;
 
-/// <summary>Numbers and units as the user reads them: decimal comma, never a dot.</summary>
+/// <summary>Numbers and units as the user reads them: decimal comma in Serbian, decimal point in English.</summary>
 public static class Format
 {
-    /// <summary>The one culture of the program: rows, chart labels and every interpolation must agree.</summary>
-    public static readonly CultureInfo Kultura = CultureInfo.GetCultureInfo("sr-Latn-RS");
+    /// <summary>The culture of the chosen language: rows, chart labels and every interpolation must agree.</summary>
+    public static CultureInfo Kultura { get; private set; } = CultureInfo.GetCultureInfo("sr-Latn-RS");
 
     /// <summary>
-    /// Called once at start (window, service, tests): the text is Serbian, so the numbers are too. Without this the
-    /// rows read "52,8 °C" and a report line reads "52.8 °C" - the same number told two ways, because Format forced
-    /// sr-Latn-RS while everything else followed Windows (found 19. 11. 2026, Windows in en-GB).
+    /// Called once at start (window, service, tests): the text and the numbers speak the same language. Without this
+    /// the rows read "52,8 °C" and a report line reads "52.8 °C" - the same number told two ways.
     /// </summary>
-    public static void PostaviKulturu()
+    public static void PostaviKulturu(CultureInfo? kultura = null)
     {
+        if (kultura is not null) Kultura = kultura;
+
         CultureInfo.DefaultThreadCurrentCulture = Kultura;
         CultureInfo.DefaultThreadCurrentUICulture = Kultura;
         CultureInfo.CurrentCulture = Kultura;

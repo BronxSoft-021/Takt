@@ -205,7 +205,7 @@ public sealed class KanalVm : ObservableObject
     public string Kratko => JeGrupa ? BrojDiskova(Podkanali.Count)
         // The board's sensors come as "ASUS TUF GAMING B550-PLUS WIFI II › Nuvoton NCT6798D": far too wide for a
         // strip. The full name stays in the tool tip and the solo panel.
-        : _uredjaj.Contains('›') ? "Matična ploča"
+        : _uredjaj.Contains('›') ? Tekst.T("Matična ploča")
         : Skrati(_uredjaj);
 
     /// <summary>The sensors in the solo panel; for the disk group, those of the chosen disk.</summary>
@@ -264,7 +264,7 @@ public sealed class KanalVm : ObservableObject
         : Levi?.Senzor;
 
     /// <summary>"najtopliji" only when the big number really is a temperature; otherwise the line stays empty.</summary>
-    private string Najtopliji => Glavni is { Senzor.Jedinica: Jedinica.Celzijus } ? "najtopliji" : "";
+    private string Najtopliji => Glavni is { Senzor.Jedinica: Jedinica.Celzijus } ? Tekst.T("najtopliji") : "";
 
     /// <summary>
     /// True when the window gets everything there is to get (driver, and administrator through the service, the
@@ -274,7 +274,7 @@ public sealed class KanalVm : ObservableObject
     public static bool PotpunNadzor { get; set; }
 
     /// <summary>The small line under it: the right meter's value, "najtopliji" for the group, and what an empty place waits for.</summary>
-    public string DrugiTekst => Prazan ? (!PawnIo.JeTu ? "traži drajver" : PotpunNadzor ? "nema senzora" : "traži nadzor")
+    public string DrugiTekst => Prazan ? (!PawnIo.JeTu ? Tekst.T("traži drajver") : PotpunNadzor ? Tekst.T("nema senzora") : Tekst.T("traži nadzor"))
         : JeGrupa ? (Meraci.Count > 1 ? Najtopliji : "")
         : Desni?.Senzor.Vrednost ?? "";
 

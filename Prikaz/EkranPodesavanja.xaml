@@ -1,6 +1,7 @@
 <UserControl x:Class="Takt.Prikaz.EkranPodesavanja"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:prikaz="clr-namespace:Takt.Prikaz"
              Background="Transparent">
 
     <ScrollViewer VerticalScrollBarVisibility="Auto" PreviewMouseWheel="NaTockic">
@@ -38,23 +39,35 @@
 
                     <Border Height="1" Background="{StaticResource Linija}" Margin="0,18,0,16" />
 
-                    <TextBlock Style="{StaticResource NaslovSekcije}" Text="ISTORIJA" />
-                    <CheckBox Content="Čuvaj istoriju u bazi (jedan red u minuti)" IsChecked="{Binding Istorija}"
+                    <TextBlock Style="{StaticResource NaslovSekcije}" Text="{prikaz:T 'JEZIK'}" />
+                    <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+                        <RadioButton Content="{prikaz:T 'Srpski'}" IsChecked="{Binding Srpski}" GroupName="Jezik"
+                                     VerticalAlignment="Center" />
+                        <RadioButton Content="{prikaz:T 'Engleski'}" IsChecked="{Binding Engleski}" GroupName="Jezik"
+                                     Margin="18,0,0,0" VerticalAlignment="Center" />
+                    </StackPanel>
+                    <TextBlock Text="{prikaz:T 'Jezik važi posle ponovnog pokretanja programa.'}"
+                               Foreground="{StaticResource Bled}" FontSize="11" Margin="0,7,0,0" />
+
+                    <Border Height="1" Background="{StaticResource Linija}" Margin="0,18,0,16" />
+
+                    <TextBlock Style="{StaticResource NaslovSekcije}" Text="{prikaz:T 'ISTORIJA'}" />
+                    <CheckBox Content="{prikaz:T 'Čuvaj istoriju u bazi (jedan red u minuti)'}" IsChecked="{Binding Istorija}"
                               Margin="0,10,0,0" />
                     <StackPanel Orientation="Horizontal" Margin="0,11,0,0">
                         <ListBox Style="{StaticResource Pilule}"
                                  ItemsSource="{Binding OpcijeDana}"
                                  SelectedItem="{Binding IstorijaDana}" />
-                        <TextBlock Text="dana se čuva, starije se briše" Foreground="{StaticResource Mutan}"
+                        <TextBlock Text="{prikaz:T 'dana se čuva, starije se briše'}" Foreground="{StaticResource Mutan}"
                                    FontSize="12" VerticalAlignment="Center" Margin="6,0,0,0" />
                     </StackPanel>
 
                     <Border Height="1" Background="{StaticResource Linija}" Margin="0,18,0,16" />
 
-                    <TextBlock Style="{StaticResource NaslovSekcije}" Text="PODACI" />
-                    <CheckBox Content="Probni podaci (izmišljena merenja, za pregled i slike ekrana)"
+                    <TextBlock Style="{StaticResource NaslovSekcije}" Text="{prikaz:T 'PODACI'}" />
+                    <CheckBox Content="{prikaz:T 'Probni podaci (izmišljena merenja, za pregled i slike ekrana)'}"
                               IsChecked="{Binding ProbniPodaci}" Margin="0,10,0,0" />
-                    <TextBlock Text="Istorija i probni podaci važe posle ponovnog pokretanja programa."
+                    <TextBlock Text="{prikaz:T 'Istorija i probni podaci važe posle ponovnog pokretanja programa.'}"
                                Foreground="{StaticResource Bled}" FontSize="11" Margin="0,7,0,0" />
 
                     <Border Height="1" Background="{StaticResource Linija}" Margin="0,18,0,16" />

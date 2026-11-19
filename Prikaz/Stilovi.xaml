@@ -327,6 +327,37 @@
         </Setter>
     </Style>
 
+    <!-- ===== Radio button (the language) ===== -->
+    <Style TargetType="RadioButton">
+        <Setter Property="Foreground" Value="{StaticResource Tekst}" />
+        <Setter Property="FontSize" Value="12" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="RadioButton">
+                    <StackPanel Orientation="Horizontal" Background="Transparent">
+                        <Grid Width="16" Height="16" VerticalAlignment="Center">
+                            <Ellipse x:Name="Krug" Stroke="{StaticResource Linija}" StrokeThickness="1.5" Fill="#171C24" />
+                            <Ellipse x:Name="Tacka" Width="8" Height="8" Fill="{StaticResource Akcenat}"
+                                     Visibility="Collapsed" />
+                        </Grid>
+                        <ContentPresenter Margin="7,0,0,0" VerticalAlignment="Center" />
+                    </StackPanel>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsChecked" Value="True">
+                            <Setter TargetName="Tacka" Property="Visibility" Value="Visible" />
+                            <Setter TargetName="Krug" Property="Stroke" Value="{StaticResource Akcenat}" />
+                        </Trigger>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Krug" Property="Stroke" Value="{StaticResource Tekst}" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
     <!-- ===== Check box ===== -->
     <Style TargetType="CheckBox">
         <Setter Property="Foreground" Value="{StaticResource Tekst}" />

@@ -130,6 +130,36 @@ public sealed class PodesavanjaVm : ObservableObject
 
     public string Folder => Putanje.Podaci;
 
+    /// <summary>Serbian is the program's own language; English is the second one. Both take effect at the next start.</summary>
+    public bool Srpski
+    {
+        get => _podesavanja.Jezik != Tekst.Engleski;
+        set
+        {
+            if (value) PostaviJezik(Tekst.Srpski);
+        }
+    }
+
+    public bool Engleski
+    {
+        get => _podesavanja.Jezik == Tekst.Engleski;
+        set
+        {
+            if (value) PostaviJezik(Tekst.Engleski);
+        }
+    }
+
+    private void PostaviJezik(string jezik)
+    {
+        if (_podesavanja.Jezik == jezik) return;
+
+        _podesavanja.Jezik = jezik;
+        _podesavanja.Sacuvaj();
+        OnPropertyChanged(nameof(Srpski));
+        OnPropertyChanged(nameof(Engleski));
+        Poruka = Tekst.T("Jezik važi posle ponovnog pokretanja programa.");
+    }
+
     /// <summary>
     /// The second key to full monitoring, and the one the program cannot turn by itself: pawnio.eu is a
     /// separate, free download, and nothing is opened unless the user clicks the button.

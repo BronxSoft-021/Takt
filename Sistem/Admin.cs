@@ -7,7 +7,7 @@ public static class Admin
 {
     public static bool JeAdmin { get; } = Odredi();
 
-    public static string Stanje => JeAdmin ? "administrator" : "običan korisnik";
+    public static string Stanje => JeAdmin ? Tekst.T("administrator") : Tekst.T("običan korisnik");
 
     private static bool Odredi()
     {

@@ -15,6 +15,7 @@ public static class Spisak
         ("prsten: prazan i kapacitet", PrstenTestovi.Prazan),
         ("format: zapeta, jedinice i crtica", FormatTestovi.Zapeta),
         ("format: jedna kultura za ceo program", FormatTestovi.Kultura),
+        ("jezik: srpski izvor, engleska tabela, kultura prati jezik", TekstTestovi.DvaJezika),
         ("kriva: podrazumevana i između tačaka", KrivaTestovi.Podrazumevana),
         ("kriva: provera pogrešnih kriva", KrivaTestovi.Provera),
         ("baza: upis senzora i vrednosti", BazaTestovi.UpisICitanje),

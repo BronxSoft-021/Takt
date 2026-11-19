@@ -22,6 +22,14 @@ public static class Izmene
     [
         new("alfa", "19. 11. 2026.",
         [
+            "**Engleski jezik**: izbor u Podešavanjima (Srpski / Engleski). Svaki tekst u kodu je napisan na srpskom i predstavlja ključ; `Tekst.T` uzima engleski iz tabele (`Tekst.en.cs`), a tekst kojeg u tabeli nema ostaje srpski — vidi se gde fali, ništa nije prazno. Brojevi prate jezik: **52,8 °C** ili **52.8 °C** (kultura ide uz jezik, ne uz Windows).",
+        ],
+        [
+            "Prevedeno za sada: naslovi i opisi kanala, prazna stanja („traži drajver“, „nema senzora“), stanje u zaglavlju i podnožju („Potpuni nadzor · usluga“), ceo ekran Podešavanja, imena prava („administrator“, „običan korisnik“) i kanal „Vent.“. Ostaje: Scena, tabela senzora, ekran sesija, izveštaji i `Izmene`.",
+            "Jezik važi posle ponovnog pokretanja programa (kao drajver); prekidač je u Podešavanjima i odmah upisuje izbor.",
+        ]),
+        new("alfa", "19. 11. 2026.",
+        [
             "Zdravlje diskova: čitaju se samo brojke koje odlučuju (preraspoređeni i sektori na čekanju, neispravni, CRC greške, rezervni blokovi, životni vek, sati rada, temperature) i daje se presuda — Zdrav / Upozorenje / Kvar, sa jednom rečenicom šta se dešava. Puna SMART tabela se nikad ne prikazuje.",
             "`Testovi --zdravlje`: ispiše presudu za svaki disk, isto što program pokaže (kao administrator).",
         ],
