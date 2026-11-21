@@ -247,7 +247,7 @@ public static class TekstEngleski
         ["Izađi iz Scene  (Esc)"] = "Leave the Scene  (Esc)",
         ["Najduži kadar svake sekunde (ms) — zastoj je šiljak"] = "Longest frame of each second (ms) — a stall is the spike",
         ["Računar"] = "This computer",
-        ["Scene  F1"] = "Scene  F1",
+        ["Scena  F1"] = "Scene  F1",
 
         // ---- Chart labels ----
         ["pre {0} s"] = "{0} s ago",
@@ -305,6 +305,11 @@ public static class TekstEngleski
         ["Pokretanje je otkazano — program ostaje na čitanju bez administratora."] =
             "The start was cancelled - the program stays on reading without administrator.",
         ["Pomoćnik nije pokrenut: "] = "The helper was not started: ",
+
+        // ---- Limits a part reports about itself (Granice) ----
+        ["Granica upozorenja"] = "Warning limit",
+        ["Kritična granica"] = "Critical limit",
+        ["Granica rezervnih blokova"] = "Spare blocks limit",
 
         // ---- Disk verdicts (Zdravlje) ----
         ["Zdrav"] = "Healthy",
@@ -373,5 +378,9 @@ public static class TekstEngleski
         ["{0}: ovaj deo traži potpuni nadzor (administrator i drajver). Klikni za objašnjenje."] =
             "{0}: this part needs full monitoring (administrator and driver). Click for the explanation.",        ["Otvori pawnio.eu"] = "Open pawnio.eu",
         ["Sačuvaj"] = "Save",
-        ["Otvori folder"] = "Open folder",    };
+        ["Otvori folder"] = "Open folder",        ["Kriva mora imati bar dve tačke."] = "A curve needs at least two points.",
+        ["Temperatura u krivoj mora biti između 0 i 120 °C."] = "The temperature in a curve must be between 0 and 120 °C.",
+        ["Brzina ventilatora mora biti između 0 i 100 %."] = "The fan speed must be between 0 and 100 %.",
+        ["Temperature u krivoj moraju rasti."] = "Temperatures in a curve must rise.",
+        ["Brzina ventilatora ne sme da padne kad temperatura raste."] = "The fan speed must not fall as the temperature rises.",    };
 }

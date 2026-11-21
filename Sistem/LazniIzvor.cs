@@ -22,10 +22,10 @@ public sealed class LazniIzvor : IIzvorSenzora
         // group, device, name, unit, base, amplitude, period in samples
         var tabela = new (Grupa Grupa, string Uredjaj, string Ime, Jedinica Jedinica, double Osnova, double Amplituda, double Perioda)[]
         {
-            (Grupa.Procesor, "Procesor", "Temperatura jezgra 1", Jedinica.Celzijus, 48, 12, 90),
-            (Grupa.Procesor, "Procesor", "Temperatura jezgra 2", Jedinica.Celzijus, 47, 11, 90),
-            (Grupa.Procesor, "Procesor", "Temperatura jezgra 3", Jedinica.Celzijus, 50, 13, 90),
-            (Grupa.Procesor, "Procesor", "Temperatura jezgra 4", Jedinica.Celzijus, 49, 12, 90),
+            (Grupa.Procesor, Takt.Tekst.T("Procesor"), "Temperatura jezgra 1", Jedinica.Celzijus, 48, 12, 90),
+            (Grupa.Procesor, Takt.Tekst.T("Procesor"), "Temperatura jezgra 2", Jedinica.Celzijus, 47, 11, 90),
+            (Grupa.Procesor, Takt.Tekst.T("Procesor"), "Temperatura jezgra 3", Jedinica.Celzijus, 50, 13, 90),
+            (Grupa.Procesor, Takt.Tekst.T("Procesor"), "Temperatura jezgra 4", Jedinica.Celzijus, 49, 12, 90),
             (Grupa.Procesor, "Procesor", "Opterećenje procesora", Jedinica.Procenat, 35, 30, 45),
             (Grupa.Procesor, "Procesor", "Prosečan takt", Jedinica.Megaherc, 4200, 600, 30),
             (Grupa.Procesor, "Procesor", "Potrošnja paketa", Jedinica.Vat, 85, 40, 60),

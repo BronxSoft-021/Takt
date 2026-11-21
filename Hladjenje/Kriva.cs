@@ -64,22 +64,22 @@ public sealed class Kriva
     /// <summary>Checks the curve as written, without sorting it: a curve must already be in order.</summary>
     public static string? Proveri(IReadOnlyList<Tacka> tacke)
     {
-        if (tacke.Count < 2) return "Kriva mora imati bar dve tačke.";
+        if (tacke.Count < 2) return Takt.Tekst.T("Kriva mora imati bar dve tačke.");
 
         foreach (var tacka in tacke)
         {
             if (tacka.Temperatura < 0 || tacka.Temperatura > 120)
-                return "Temperatura u krivoj mora biti između 0 i 120 °C.";
+                return Takt.Tekst.T("Temperatura u krivoj mora biti između 0 i 120 °C.");
             if (tacka.Procenat < 0 || tacka.Procenat > 100)
-                return "Brzina ventilatora mora biti između 0 i 100 %.";
+                return Takt.Tekst.T("Brzina ventilatora mora biti između 0 i 100 %.");
         }
 
         for (int i = 1; i < tacke.Count; i++)
         {
             if (tacke[i].Temperatura <= tacke[i - 1].Temperatura)
-                return "Temperature u krivoj moraju rasti.";
+                return Takt.Tekst.T("Temperature u krivoj moraju rasti.");
             if (tacke[i].Procenat < tacke[i - 1].Procenat)
-                return "Brzina ventilatora ne sme da padne kad temperatura raste.";
+                return Takt.Tekst.T("Brzina ventilatora ne sme da padne kad temperatura raste.");
         }
 
         return null;

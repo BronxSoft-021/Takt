@@ -27,6 +27,8 @@ public static class Izmene
         [
             "Esc (ili dugme u Sceni) poštuje se do kraja te igre — Scena se neće sama vratiti dok ne krene sledeća.",
             "Postavka je u Podešavanjima uz „Prozor i traka“, radi u oba jezika; test „scena: sama se pali kad igra počne, Esc se poštuje“ čuva pravilo.",
+            "**Scena ide na drugi ekran kad ga ima**: ako su priključena dva, otvara se na onom gde prozor nije (igra zadrži svoj ekran, pult se gleda na drugom) i vraća se tamo gde je bio kad se zatvori. Sa **jednim** ekranom ništa se ne pomera — većina ljudi ima jedan, a prozor koji skače je gori od Scene na istom ekranu.",
+            "Prevod dovršen i u dodacima: **granice koje disk sam prijavljuje** („Warning limit“, „Critical limit“, „Spare blocks limit“ — a `Granice.JeGranica` ih prepoznaje u oba jezika, pa u engleskom prozoru granica više nije nacrtana kao merenje), poruke provere krive ventilatora i ime uređaja u probnim podacima.",
         ]),
         new("alfa", "19. 11. 2026.",
         [

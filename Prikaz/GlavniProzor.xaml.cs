@@ -42,12 +42,18 @@ public partial class GlavniProzor : Window
         else if (e.Key == Key.Escape && vm.Scena) { vm.UgasiScenuRukom(); e.Handled = true; }
     }
 
+    private Rect? _preMesto;
+
     private void PrimeniScenu(bool scena)
     {
         if (scena)
         {
             if (_preScene is not null) return;
             _preScene = (WindowState, WindowStyle, ResizeMode);
+            _preMesto = new Rect(Left, Top, Width, Height);
+
+            NaDrugiEkran();
+
             WindowStyle = WindowStyle.None;
             ResizeMode = ResizeMode.NoResize;
             // Normal first: a window already maximized keeps its frame-size otherwise.
@@ -61,6 +67,47 @@ public partial class GlavniProzor : Window
         WindowStyle = pre.Stil;
         ResizeMode = pre.Velicina;
         WindowState = pre.Stanje == WindowState.Minimized ? WindowState.Normal : pre.Stanje;
+
+        // Back where it was before the Scene: the Scene may have taken the other screen. The place is set after the
+        // window has come out of the maximized state - WPF re-applies its own "restore bounds" on that change and
+        // would overwrite a Left/Top written before it (measured 19. 11. 2026: the window came back at the wrong
+        // place, 2335 instead of 100).
+        if (_preMesto is { } mesto)
+        {
+            Dispatcher.BeginInvoke(new Action(() =>
+            {
+                Left = mesto.Left;
+                Top = mesto.Top;
+                Width = mesto.Width;
+                Height = mesto.Height;
+            }), System.Windows.Threading.DispatcherPriority.Background);
+        }
+        _preMesto = null;
+    }
+
+    /// <summary>
+    /// Two screens: the Scene takes the one the window is not on, so the game keeps its own screen and the console
+    /// is watched on the other one. One screen: nothing moves - most people have one, and a window that jumps is
+    /// worse than a Scene on the same screen.
+    /// </summary>
+    private void NaDrugiEkran()
+    {
+        var ekrani = System.Windows.Forms.Screen.AllScreens;
+        if (ekrani.Length < 2) return;
+
+        var handle = new System.Windows.Interop.WindowInteropHelper(this).Handle;
+        var sada = handle != IntPtr.Zero ? System.Windows.Forms.Screen.FromHandle(handle) : ekrani[0];
+
+        // Already on the second screen (the person put it there): leave it be. On the first: take the other one.
+        if (!sada.Primary) return;
+        var drugi = ekrani.FirstOrDefault(e => e.DeviceName != sada.DeviceName);
+        if (drugi is null) return;
+
+        var okvir = drugi.Bounds;
+        Left = okvir.Left + 50;
+        Top = okvir.Top + 50;
+        Width = Math.Min(1200, okvir.Width - 100);
+        Height = Math.Min(800, okvir.Height - 100);
     }
 
     private void NaScenu(object sender, RoutedEventArgs e)
