@@ -631,6 +631,7 @@ public sealed class ProzorVm : ObservableObject, IDisposable
             : _kadrovi is { } kadrovi ? _birac.Izaberi(kadrovi.Stanje().ToArray())
             : _rad.ProbniPodaci ? ProbnaIgra(snimak.Vreme) : null);
         Sesija?.Uzmi(Igra, Kanali, sada);
+        ProveriAutoScenu();
         ProveriZdravlje();
         OsveziZdravlje();
     }
@@ -644,6 +645,40 @@ public sealed class ProzorVm : ObservableObject, IDisposable
     /// every second. The window itself cannot read SMART (that needs administrator); the service or the helper
     /// reads it and sends the verdicts.
     /// </summary>
+    private bool _igraBilaAktivna;
+    private bool _scenaUgasenaRukom;
+
+    /// <summary>
+    /// The Scene by itself: a game starts, the Scene comes on; the game stops drawing, it goes. The focus is given
+    /// back to the game, or it would minimise and stop drawing - the Scene would then be the thing that broke the
+    /// game. A person who pressed Esc keeps the Scene off until the next game (the flag is cleared when the game
+    /// stops, so a different game may still open it).
+    /// </summary>
+    private void ProveriAutoScenu()
+    {
+        bool igra = Igra.Aktivna;
+
+        if (AutoScena.Odluci(_rad.ScenaSaIgre, igra, _igraBilaAktivna, _scenaUgasenaRukom, Scena) == AutoScena.Odluka.Uci)
+        {
+            Scena = true;
+            if (Igra.Pid is { } pid && pid > 0) Fokus.Na(pid);
+        }
+        else if (AutoScena.Odluci(_rad.ScenaSaIgre, igra, _igraBilaAktivna, _scenaUgasenaRukom, Scena) == AutoScena.Odluka.Izadji)
+        {
+            Scena = false;
+        }
+
+        if (!igra) _scenaUgasenaRukom = false;   // next game may open it again
+        _igraBilaAktivna = igra;
+    }
+
+    /// <summary>The Scene was closed by hand (Esc, or its own button): do not open it again for this game.</summary>
+    public void UgasiScenuRukom()
+    {
+        _scenaUgasenaRukom = true;
+        Scena = false;
+    }
+
     private void ProveriZdravlje()
     {
         if (_pomocnik is not { } izvor) return;

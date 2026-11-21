@@ -54,6 +54,9 @@ public sealed class IgraVm : ObservableObject
 
     public double? Fps => _fps;
 
+    /// <summary>The game's process: the window that gets the focus back when the Scene opens.</summary>
+    public int? Pid => _pid;
+
     /// <summary>The 1 % low of the last reading, as a number (the session keeps these).</summary>
     public double? Low1 => _low1;
 

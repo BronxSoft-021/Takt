@@ -39,7 +39,7 @@ public partial class GlavniProzor : Window
         // The button says "Scene F1" and the handler listened only for F11, so the key written on the button did
         // nothing (found 19. 11. 2026). Both open it now.
         if (e.Key is Key.F1 or Key.F11) { vm.Scena = !vm.Scena; e.Handled = true; }
-        else if (e.Key == Key.Escape && vm.Scena) { vm.Scena = false; e.Handled = true; }
+        else if (e.Key == Key.Escape && vm.Scena) { vm.UgasiScenuRukom(); e.Handled = true; }
     }
 
     private void PrimeniScenu(bool scena)

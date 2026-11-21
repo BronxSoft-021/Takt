@@ -23,6 +23,9 @@ public sealed class Podesavanja
     /// <summary>The quantity the drive strip measures: "Temperatura", "Zauzeće" or "Životni vek".</summary>
     public string DiskMetar { get; set; } = "Temperatura";
 
+    /// <summary>The Scene opens by itself when a game starts, and closes when the game stops drawing.</summary>
+    public bool ScenaSaIgre { get; set; }
+
     /// <summary>"sr" (Serbian) or "en" (English). Takes effect at the next start, like the driver.</summary>
     public string Jezik { get; set; } = Tekst.Srpski;
 

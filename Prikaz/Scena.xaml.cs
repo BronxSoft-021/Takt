@@ -14,14 +14,16 @@ public partial class Scena : UserControl
 
     private void NaIzlaz(object sender, RoutedEventArgs e)
     {
-        if (Vm is { } vm) vm.Scena = false;
+        // The button in the Scene's own header: closed by hand, so it must not come back for this game.
+        if (Vm is { } vm) vm.UgasiScenuRukom();
     }
 
     private void NaKanal(object sender, MouseButtonEventArgs e)
     {
         if (sender is FrameworkElement { DataContext: KanalVm kanal } && Vm is { } vm)
         {
-            vm.Scena = false;
+            // Picking a channel leaves the Scene on purpose (the person wants to look at that channel).
+            vm.UgasiScenuRukom();
             vm.Kanal = kanal;
         }
     }

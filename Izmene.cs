@@ -22,6 +22,14 @@ public static class Izmene
     [
         new("alfa", "19. 11. 2026.",
         [
+            "**Scena se pali sama kad igra počne**: nova postavka „Prelazi u Scenu kad igra počne“ (podrazumevano isključena). `BiracIgre` već zna koja je igra u prvom planu, pa se Scena otvori kad igra počne da crta, a zatvori kad prestane (15 s tolerancije, isto kao snimač sesija). Fokus se vraća igri, jer bi inače ostala iza Scene i prestala da crta.",
+        ],
+        [
+            "Esc (ili dugme u Sceni) poštuje se do kraja te igre — Scena se neće sama vratiti dok ne krene sledeća.",
+            "Postavka je u Podešavanjima uz „Prozor i traka“, radi u oba jezika; test „scena: sama se pali kad igra počne, Esc se poštuje“ čuva pravilo.",
+        ]),
+        new("alfa", "19. 11. 2026.",
+        [
             "**Engleski jezik**: izbor u Podešavanjima (Srpski / Engleski). Svaki tekst u kodu je napisan na srpskom i predstavlja ključ; `Tekst.T` uzima engleski iz tabele (`Tekst.en.cs`), a tekst kojeg u tabeli nema ostaje srpski — vidi se gde fali, ništa nije prazno. Brojevi prate jezik: **52,8 °C** ili **52.8 °C** (kultura ide uz jezik, ne uz Windows).",
         ],
         [

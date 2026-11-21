@@ -71,6 +71,7 @@ public static class Spisak
         ("prozor: samo jedan Takt, drugi otvara prvog", BezbednostTestovi.JedanTakt),
         ("igre: FPS, najduži kadar, 1% low i zastoji", IgreTestovi.Kadrovi),
         ("igre: maksimizovan prozor nije ceo ekran", IgreTestovi.Pokrivanje),
+        ("scena: sama se pali kad igra počne, Esc se poštuje", PrikazTestovi.ScenaSama),
         ("igre: 1% low sesije iz najgorih 1 % sekundi", IgreTestovi.Low1Sesije),
         ("igre: koja je igra (prvi plan, Takt, pregledač)", IgreTestovi.Birac),
         ("igre: sesija se snima sama i pravi izveštaj", IgreTestovi.Sesija),

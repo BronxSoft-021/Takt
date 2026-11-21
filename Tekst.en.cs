@@ -103,6 +103,7 @@ public static class TekstEngleski
         ["Jezik važi posle ponovnog pokretanja programa."] = "The language takes effect after the program is restarted.",
         ["PROZOR I TRAKA"] = "WINDOW AND TRAY",
         ["Zatvori u traku umesto gašenja (X)"] = "Close to the tray instead of quitting (X)",
+        ["Prelazi u Scenu kad igra počne"] = "Open the Scene when a game starts",
         ["Pokreni sa Windowsom, u traci (bez prozora)"] = "Start with Windows, in the tray (no window)",
         ["Ikonica pored sata vraća prozor; bez nje se sakriveni prozor ne može vratiti. Ako traka ne uspe, X gasi program."] =
             "The icon by the clock brings the window back; without it a hidden window cannot be restored. If the tray " +

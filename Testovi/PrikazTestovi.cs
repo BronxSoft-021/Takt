@@ -105,6 +105,38 @@ public static class PrikazTestovi
     }
 
     /// <summary>
+    /// The Scene by itself: a game starts and it opens, the game stops drawing and it goes. A person who pressed Esc
+    /// keeps it closed until the next game. The caller gives the focus back to the game afterwards, or the game would
+    /// minimise and stop drawing - the Scene would then be what broke the game.
+    /// </summary>
+    public static Task ScenaSama()
+    {
+        // Off: nothing ever happens, whatever the game does.
+        Proveri.Jednako(AutoScena.Odluka.Nista,
+            AutoScena.Odluci(ukljuceno: false, igraAktivna: true, bilaAktivna: false, ugasenaRukom: false, uSceni: false),
+            "isključeno ne dira ništa");
+
+        // A game appears: the Scene opens, once.
+        Proveri.Jednako(AutoScena.Odluka.Uci,
+            AutoScena.Odluci(true, igraAktivna: true, bilaAktivna: false, ugasenaRukom: false, uSceni: false),
+            "igra je počela - ulaz u Scenu");
+        Proveri.Jednako(AutoScena.Odluka.Nista,
+            AutoScena.Odluci(true, igraAktivna: true, bilaAktivna: true, ugasenaRukom: false, uSceni: true),
+            "dok igra traje, ništa se ne menja");
+
+        // The game stops drawing: the Scene goes.
+        Proveri.Jednako(AutoScena.Odluka.Izadji,
+            AutoScena.Odluci(true, igraAktivna: false, bilaAktivna: true, ugasenaRukom: false, uSceni: true),
+            "igra je prestala - izlaz iz Scene");
+
+        // A person closed it with Esc: the same game must not reopen it.
+        Proveri.Jednako(AutoScena.Odluka.Nista,
+            AutoScena.Odluci(true, igraAktivna: true, bilaAktivna: false, ugasenaRukom: true, uSceni: false),
+            "Esc se poštuje do kraja igre");
+        return Task.CompletedTask;
+    }
+
+    /// <summary>
     /// The chosen quantity is matched in the language the sensors arrive in: a service speaking English sends
     /// "Temperature", and comparing it with the Serbian "Temperatura" left the whole strip without a single bar
     /// (the bug a report found, 19. 11. 2026).

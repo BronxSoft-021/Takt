@@ -30,6 +30,18 @@ public sealed class PodesavanjaVm : ObservableObject
     public int[] OpcijeOsvezavanja { get; } = [1, 2, 5];
     public int[] OpcijeDana { get; } = [1, 7, 30, 90];
 
+    /// <summary>The Scene opens by itself when a game starts, and closes when the game stops drawing.</summary>
+    public bool ScenaSaIgre
+    {
+        get => _podesavanja.ScenaSaIgre;
+        set
+        {
+            if (_podesavanja.ScenaSaIgre == value) return;
+            _podesavanja.ScenaSaIgre = value;
+            OnPropertyChanged();
+        }
+    }
+
     /// <summary>The three quantities the drive strip can show, each with its name in the chosen language.</summary>
     public OpcijaMetra[] OpcijeMetra { get; } =
     [
